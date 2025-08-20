@@ -176,25 +176,25 @@ echo "${arr[@]}"
 
 ## 🗂️ Changelog
 
-* ✅ **Fehlerhandling vereinheitlicht:** Alle Fehler mit `echo "❌ ERROR: ..."` + `return 2`.
-* ⚡ **Kompaktes Argumenten-Parsing:** `case`-Blöcke in einer Zeile, Hilfsfunktion `check_value` für Pflichtwerte.
-* 🟢 **Separator-Verarbeitung modernisiert:** `IFS + read -a` für schnelle und kompakte Array-Erstellung.
-* 📝 **Lesbarkeit & Struktur verbessert:** Kommentare klarer, explizites `return 0` am Ende.
+**Version 1.1.0 – Verbesserungen gegenüber 1.0.0**
+
+- ❌ **Consistent error output**: Alle Fehlermeldungen verwenden nun das gleiche Icon-Format `❌ ERROR: ...`
+- ⚡ **Compact argument parsing**: `case`-Blöcke wurden kompakter geschrieben und Parameter direkt geprüft
+- 🟢 **Optimized separator handling**: Separatoren werden jetzt mit `IFS + read -r -a` gesplittet, statt verschachtelte Schleifen
+- 💡 **Defined return values 0/2**: Erfolg gibt `0` zurück, Fehler immer `2`
+- 📝 **Improved readability & structure**: Klarere Kommentare und kompakte Funktionsstruktur, Helper-Funktion `check_value` eingeführt
+
+> Alle anderen Features wie Mehrfachinputs oder der optionale Separator `-s` waren bereits in 1.0.0 vorhanden und sind unverändert.
 
 ### Unterschiede zur Version 1.0.0
 
-| Feature / Änderung                                      | 1.1.0 | 1.0.0 |
-|---------------------------------------------------------|-------|-------|
-| ❌ Konsistente Fehlerausgabe                            |  ✅  |  ❌  |
-| ⚡ Kompaktes Argumenten-Parsing                         |  ✅  |  ❌  |
-| 🟢 Separator-Verarbeitung                               |  ✅  |  ❌  |
-| 💡 Klar definierte Return-Werte 0/2                     |  ✅  |  ❌  |
-| 📝 Lesbarkeit & Struktur                                |  ✅  |  ❌  |
-| 🔹 Unterstützung mehrerer Inputs                        |  ✅  |  ❌  |
-| 🧩 Optionaler zusätzlicher Separator -s                 |  ✅  |  ❌  |
-| ✅ Mehrfachaufruf von Input/Separator                   |  ✅  |  ❌  |
-| 🌐 Einheitliche englische und deutsche Fehlermeldungen  |  ✅  |  ❌  |
-| ⚡ Exit-Option `-x/--exit` verfügbar                    |  ✅  |  ❌  |
+| Feature / Änderung                     | 1.1.0 | 1.0.0 |
+|---------------------------------------|-------|-------|
+| ❌ Konsistente Fehlerausgabe mit Icon |  ✅  |  ❌  |
+| ⚡ Kompaktes Argumenten-Parsing       |  ✅  |  ❌  |
+| 🟢 Separator-Verarbeitung optimiert   |  ✅  |  ❌  |
+| 💡 Klar definierte Return-Werte 0/2   |  ✅  |  ❌  |
+| 📝 Lesbarkeit & Struktur verbessert   |  ✅  |  ❌  |
 
 ---
 

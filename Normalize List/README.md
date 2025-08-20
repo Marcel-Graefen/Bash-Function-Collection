@@ -176,25 +176,27 @@ echo "${arr[@]}"
 
 ## 🗂️ Changelog
 
-* ✅ **Unified error handling:** All errors now print `echo "❌ ERROR: ..."` + `return 2`.
-* ⚡ **Compact argument parsing:** `case` blocks are one-line, with `check_value` helper for required values.
-* 🟢 **Modernized separator handling:** Uses `IFS + read -a` for fast and compact array creation.
-* 📝 **Improved readability & structure:** Clearer comments and explicit `return 0` at the end.
+**Version 1.1.0 – Improvements over 1.0.0**
+
+- ❌ **Consistent error output**: All error messages now use the same icon format `❌ ERROR: ...`
+- ⚡ **Compact argument parsing**: `case` blocks are now more compact and parameters are validated directly
+- 🟢 **Optimized separator handling**: Separators are now split using `IFS + read -r -a` instead of nested loops
+- 💡 **Defined return values 0/2**: Success returns `0`, errors always return `2`
+- 📝 **Improved readability & structure**: Clearer comments and compact function structure, helper function `check_value` introduced
+
+> All other features, such as multiple inputs or the optional `-s` separator, were already present in 1.0.0 and remain unchanged.
+
+---
 
 ### Differences to Version 1.0.0
 
-| Feature / Change                                | 1.1.0 | 1.0.0 |
-|-------------------------------------------------|-------|-------|
-| ❌ Consistent error output                      |  ✅  |  ❌  |
-| ⚡ Compact argument parsing                     |  ✅  |  ❌  |
-| 🟢 Separator handling                           |  ✅  |  ❌  |
-| 💡 Clearly defined return values 0/2            |  ✅  |  ❌  |
-| 📝 Readability & structure                      |  ✅  |  ❌  |
-| 🔹 Support for multiple inputs                  |  ✅  |  ❌  |
-| 🧩 Optional additional separator `-s`           |  ✅  |  ❌  |
-| ✅ Multiple calls for input/separator           |  ✅  |  ❌  |
-| 🌐 Consistent English and German error messages |  ✅  |  ❌  |
-| ⚡ Exit option `-x/--exit` available            |  ✅  |  ❌  |
+| Feature / Change                    | 1.1.0 | 1.0.0 |
+|-------------------------------------|-------|-------|
+| ❌ Consistent error output          |  ✅  |  ❌  |
+| ⚡ Compact argument parsing         |  ✅  |  ❌  |
+| 🟢 Optimized separator handling     |  ✅  |  ❌  |
+| 💡 Defined return values 0/2        |  ✅  |  ❌  |
+| 📝 Improved readability & structure |  ✅  |  ❌  |
 
 
 ---
