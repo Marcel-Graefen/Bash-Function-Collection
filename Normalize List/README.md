@@ -1,26 +1,23 @@
 # 📋 Bash Function: normalize_list
 
-[![Back to Main-README](https://img.shields.io/badge/Main-README-blue?style=flat&logo=github)](../README.md)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](#)
+[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat&logo=github)](../README.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](#)
 [![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
-A flexible Bash function to normalize input strings into arrays. It splits strings based on spaces, commas, pipes, or custom separators and returns a clean array.
+A flexible Bash function to normalize input strings into arrays. It splits strings using spaces, commas, pipes, or custom separators and returns a clean array. Errors are handled consistently with `echo` + `return 2`.
 
 ---
 
 ## 🚀 Table of Contents
 
 * [📌 Important Notes](#-important-notes)
-* [🛠️ Features & Functions](#-features--functions)
+* [🛠️ Features](#-features)
 * [⚙️ Requirements](#%EF%B8%8F-requirements)
 * [📦 Installation](#-installation)
 * [📝 Usage](#-usage)
-  * [Basic Call](#basic-call)
-  * [Custom Separators](#custom-separators)
-  * [Multiple Inputs at Once](#multiple-inputs-at-once)
-  * [Complex Separators](#complex-separators)
 * [📌 API Reference](#-api-reference)
+* [🗂️ Changelog](#-changelog)
 * [👤 Author & Contact](#-author--contact)
 * [🤖 Generation Note](#-generation-note)
 * [📜 License](#-license)
@@ -29,26 +26,27 @@ A flexible Bash function to normalize input strings into arrays. It splits strin
 
 ## 📌 Important Notes
 
-* ⚠️ **Output only via `-o|--output`:** Without specifying the output array, no result is returned.
-* ⚠️ **Bash 4.0+ required:** The function uses namerefs for arrays.
-* ⚠️ **Separators:** Default separators are space, pipe `|`, and comma `,`. Additional separators can be added with `-s`.
+* ⚠️ **Output only via `-o|--output`:** No result is returned without specifying the output array.
+* ⚠️ **Bash 4.0+ required:** The function uses Namerefs for arrays.
+* ⚠️ **Error handling:** All errors print `echo "❌ ERROR: ..."` and return `2`.
+* ⚠️ **Separators:** By default space, pipe `|`, and comma `,`. Additional separators can be set with `-s`.
 
 ---
 
-## 🛠️ Features & Functions
+## 🛠️ Features
 
-* 🟢 **Flexible Input:** Accepts one or multiple input strings at once.
-* 🔹 **Custom Separators:** Regex-supported, e.g., space, comma, pipe, or custom characters.
-* 🟣 **Array Output:** Populates a Bash array using a nameref (`-o|--output`).
-* 🔒 **Robust Error Handling:** Warns if the output parameter is missing.
-* ⚡ **Easy Integration:** Can be directly included in scripts with no dependencies.
-* 💡 **Return Value:** 0 on success, 2 if `-o|--output` is missing.
+* 🟢 **Flexible input:** Accepts one or multiple strings simultaneously.
+* 🔹 **Custom separators:** Supports regex-like splitting, e.g., space, comma, pipe, or custom characters.
+* 🟣 **Array output:** Populates a Bash array using Nameref (`-o|--output`).
+* 🔒 **Robust error handling:** Detects missing parameters and reports errors.
+* ⚡ **Easy integration:** Can be directly embedded into scripts with no external dependencies.
+* 💡 **Return value:** `0` on success, `2` on errors.
 
 ---
 
 ## ⚙️ Requirements
 
-* 🐚 **Bash** version 4.0 or higher (for namerefs and arrays).
+* 🐚 **Bash** version 4.0 or higher (for Namerefs and arrays).
 
 ---
 
@@ -73,7 +71,6 @@ declare -a my_array
 
 normalize_list -i "apple orange banana" -o my_array
 
-# Check output
 printf "%s\n" "${my_array[@]}"
 ```
 
@@ -153,13 +150,13 @@ val4
 
 ### `normalize_list`
 
-Splits strings into an array based on separators.
+Splits strings into an array based on separators. Errors are printed as `echo "❌ ERROR: ..."` and return `2`.
 
 **Arguments:**
 
-* `-i|--input` : Input string(s) (can be used multiple times)
-* `-o|--output`: Name of the array to populate (**required!**)
-* `-s|--separator`: Additional characters as separators (optional)
+* `-i|--input` : Input string (multiple allowed).
+* `-o|--output`: Name of the array to populate (**required!**).
+* `-s|--separator`: Additional characters as separators (optional).
 
 **Example:**
 
@@ -170,10 +167,35 @@ echo "${arr[@]}"
 # Output: foo bar baz qux
 ```
 
-**Return Values:**
+**Return values:**
 
 * `0` on success
-* `2` if `-o|--output` is missing
+* `2` if output parameter is missing or other errors occur
+
+---
+
+## 🗂️ Changelog
+
+* ✅ **Unified error handling:** All errors now print `echo "❌ ERROR: ..."` + `return 2`.
+* ⚡ **Compact argument parsing:** `case` blocks are one-line, with `check_value` helper for required values.
+* 🟢 **Modernized separator handling:** Uses `IFS + read -a` for fast and compact array creation.
+* 📝 **Improved readability & structure:** Clearer comments and explicit `return 0` at the end.
+
+### Differences to Version 1.0.0
+
+| Feature / Change                                | 1.1.0 | 1.0.0 |
+|-------------------------------------------------|-------|-------|
+| ❌ Consistent error output                      |  ✅  |  ❌  |
+| ⚡ Compact argument parsing                     |  ✅  |  ❌  |
+| 🟢 Separator handling                           |  ✅  |  ❌  |
+| 💡 Clearly defined return values 0/2            |  ✅  |  ❌  |
+| 📝 Readability & structure                      |  ✅  |  ❌  |
+| 🔹 Support for multiple inputs                  |  ✅  |  ❌  |
+| 🧩 Optional additional separator `-s`           |  ✅  |  ❌  |
+| ✅ Multiple calls for input/separator           |  ✅  |  ❌  |
+| 🌐 Consistent English and German error messages |  ✅  |  ❌  |
+| ⚡ Exit option `-x/--exit` available            |  ✅  |  ❌  |
+
 
 ---
 
@@ -186,7 +208,7 @@ echo "${arr[@]}"
 
 ## 🤖 Generation Note
 
-This project was developed with the assistance of Artificial Intelligence (AI). The AI helped create the script, comments, and documentation (README.md). The final version was reviewed and adjusted by me.
+This project was developed with the help of an AI. The AI assisted in writing the script, comments, and documentation. The final result was reviewed and adapted manually.
 
 ---
 
