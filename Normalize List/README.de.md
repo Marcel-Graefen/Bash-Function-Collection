@@ -16,6 +16,10 @@ Eine flexible Bash-Funktion zum Normalisieren von Eingabe-Strings in Arrays. Sie
 * [⚙️ Voraussetzungen](#%EF%B8%8F-voraussetzungen)
 * [📦 Installation](#-installation)
 * [📝 Nutzung](#-nutzung)
+  * [1️⃣ Grundlegender Aufruf](#1️⃣-grundlegender-aufruf)
+  * [2️⃣ Benutzerdefinierte Separatoren](#2️⃣-benutzerdefinierte-separatoren)
+  * [3️⃣ Mehrere Inputs gleichzeitig](#3️⃣-mehrere-inputs-gleichzeitig)
+  * [4️⃣ Komplexe Separatoren](#4️⃣-komplexe-separatoren)
 * [📌 API-Referenz](#-api-referenz)
 * [🗂️ Changelog](#-changelog)
 * [👤 Autor & Kontakt](#-autor--kontakt)
@@ -58,13 +62,13 @@ Binde die Funktion einfach in dein Bash-Skript ein:
 #!/usr/bin/env bash
 
 source "/pfad/zu/normalize_list.sh"
-````
+```
 
 ---
 
 ## 📝 Nutzung
 
-### Grundlegender Aufruf
+### 1️⃣ Grundlegender Aufruf
 
 ```bash
 declare -a my_array
@@ -84,7 +88,7 @@ banana
 
 ---
 
-### Benutzerdefinierte Separatoren
+### 2️⃣ Benutzerdefinierte Separatoren
 
 ```bash
 declare -a fruits
@@ -104,7 +108,7 @@ banana
 
 ---
 
-### Mehrere Inputs gleichzeitig
+### 3️⃣ Mehrere Inputs gleichzeitig
 
 ```bash
 declare -a items
@@ -125,7 +129,7 @@ kiwi
 
 ---
 
-### Komplexe Separatoren
+### 4️⃣ Komplexe Separatoren
 
 ```bash
 declare -a values

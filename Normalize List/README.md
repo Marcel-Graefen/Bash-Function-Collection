@@ -16,6 +16,10 @@ A flexible Bash function to normalize input strings into arrays. It splits strin
 * [⚙️ Requirements](#%EF%B8%8F-requirements)
 * [📦 Installation](#-installation)
 * [📝 Usage](#-usage)
+  * [1️⃣ Basic Call](#1️⃣-basic-ball)
+  * [2️⃣ Custom Separators](#2️⃣-custom-separatoren)
+  * [3️⃣ Multiple Inputs at Once](#3️⃣-multiple-inputs-at-once)
+  * [4️⃣ Complex Separatoren](#4️⃣-complex-separatoren)
 * [📌 API Reference](#-api-reference)
 * [🗂️ Changelog](#-changelog)
 * [👤 Author & Contact](#-author--contact)
@@ -58,13 +62,13 @@ Simply include the function in your Bash script:
 #!/usr/bin/env bash
 
 source "/path/to/normalize_list.sh"
-````
+```
 
 ---
 
 ## 📝 Usage
 
-### Basic Call
+### 1️⃣ Basic Call
 
 ```bash
 declare -a my_array
@@ -84,7 +88,7 @@ banana
 
 ---
 
-### Custom Separators
+### 2️⃣ Custom Separators
 
 ```bash
 declare -a fruits
@@ -104,7 +108,7 @@ banana
 
 ---
 
-### Multiple Inputs at Once
+### 3️⃣ Multiple Inputs at Once
 
 ```bash
 declare -a items
@@ -125,7 +129,7 @@ kiwi
 
 ---
 
-### Complex Separators
+### 4️⃣ Complex Separators
 
 ```bash
 declare -a values

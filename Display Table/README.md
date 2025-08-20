@@ -16,10 +16,10 @@ A flexible Bash function to display formatted tables in the terminal. It automat
 * [⚙️ Requirements](#%EF%B8%8F-requirements)
 * [📦 Installation](#-installation)
 * [📝 Usage](#-usage)
-  * [Basic Call](#basic-call)
-  * [Multiple Rows](#multiple-rows)
-  * [Custom Separator](#custom-separator)
-  * [Write output to a variable](#write-output-to-a-variable)
+  * [1️⃣ Basic Call](#1️⃣-basic-call)
+  * [2️⃣ Multiple Rows](#2️⃣-multiple-rows)
+  * [3️⃣ Custom Separator](#3️⃣-custom-separator)
+  * [4️⃣ Write output to a variable](#4️⃣-write-output-to-a-variable)
 * [📌 API Reference](#-api-reference)
 * [👤 Author & Contact](#-author--contact)
 * [🤖 Generation Note](#-generation-note)
@@ -62,13 +62,13 @@ Simply include the function in your Bash script:
 
 source "/path/to/display_table.sh"
 source "/path/to/normalize_list.sh"
-````
+```
 
 ---
 
 ## 📝 Usage
 
-### Basic Call
+### 1️⃣ Basic Call
 
 ```bash
 display_table -H "My Table" -v "Value1,Value2,Value3"
@@ -86,7 +86,7 @@ display_table -H "My Table" -v "Value1,Value2,Value3"
 
 ---
 
-### Multiple Rows
+### 2️⃣ Multiple Rows
 
 ```bash
 display_table -H "My Table" \
@@ -108,7 +108,7 @@ display_table -H "My Table" \
 
 ---
 
-### Custom Separator
+### 3️⃣ Custom Separator
 
 ```bash
 display_table -H "My Table" \
@@ -128,7 +128,7 @@ display_table -H "My Table" \
 
 ---
 
-### Write output to a variable
+### 4️⃣ Write output to a variable
 
 ```bash
 # Stores the output in a variable

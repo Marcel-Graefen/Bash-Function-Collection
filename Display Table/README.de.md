@@ -16,10 +16,10 @@ Eine flexible Bash-Funktion zum Anzeigen von formatierten Tabellen im Terminal. 
 * [⚙️ Voraussetzungen](#%EF%B8%8F-voraussetzungen)
 * [📦 Installation](#-installation)
 * [📝 Nutzung](#-nutzung)
-  * [Grundlegender Aufruf](#grundlegender-aufruf)
-  * [Mehrere Zeilen](#mehrere-zeilen)
-  * [Benutzerdefinierter Separator](#benutzerdefinierter-separator)
-  * [Ausgabe in eine Variable schreiben](#ausgabe-in-eine-variable-schreiben)
+  * [1️⃣ Grundlegender Aufruf](#1️⃣-grundlegender-aufruf)
+  * [2️⃣ Mehrere Zeilen](#2️⃣-mehrere-zeilen)
+  * [3️⃣ Benutzerdefinierter Separator](#3️⃣-benutzerdefinierter-separator)
+  * [4️⃣ Ausgabe in eine Variable schreiben](#4️⃣-ausgabe-in-eine-variable-schreiben)
 * [📌 API-Referenz](#-api-referenz)
 * [👤 Autor & Kontakt](#-autor--kontakt)
 * [🤖 Generierungshinweis](#-generierungshinweis)
@@ -62,13 +62,13 @@ Binde die Funktion einfach in dein Bash-Skript ein:
 
 source "/pfad/zu/display_table.sh"
 source "/pfad/zu/normalize_list.sh"
-````
+```
 
 ---
 
 ## 📝 Nutzung
 
-### Grundlegender Aufruf
+### 1️⃣ Grundlegender Aufruf
 
 ```bash
 display_table -H "Meine Tabelle" -v "Value1,Value2,Value3"
@@ -86,7 +86,7 @@ display_table -H "Meine Tabelle" -v "Value1,Value2,Value3"
 
 ---
 
-### Mehrere Zeilen
+### 2️⃣ Mehrere Zeilen
 
 ```bash
 display_table -H "Meine Tabelle" \
@@ -108,7 +108,7 @@ display_table -H "Meine Tabelle" \
 
 ---
 
-### Benutzerdefinierter Separator
+### 3️⃣ Benutzerdefinierter Separator
 
 ```bash
 display_table -H "Meine Tabelle" \
@@ -128,7 +128,7 @@ display_table -H "Meine Tabelle" \
 
 ---
 
-### Ausgabe in eine Variable schreiben
+### 4️⃣ Ausgabe in eine Variable schreiben
 
 ```bash
 # Speichert die Ausgabe in einer Variable
