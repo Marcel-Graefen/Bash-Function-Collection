@@ -12,9 +12,10 @@ Dieses Repository enthält eine Sammlung nützlicher Bash-Funktionen, die modula
 
 Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte eingebunden werden können.
 
-* [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Zerlegt Eingabe-Strings anhand von Leerzeichen, Kommas, Pipes oder eigenen Trennzeichen und gibt ein sauberes Array zurück. [Vollständige Dokumentation](Normalize%20List/README.de.md)
-* [📋 Display Table](#-display-table) – Zeigt formatierte Tabellen im Terminal an, berechnet Spaltenbreiten automatisch und zentriert den Header. Unterstützt mehrere Zeilen und benutzerdefinierte Separatoren. [Vollständige Dokumentation](Display%20Table/README.de.md)
-* [✅ Check Requirements](#-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [Vollständige Dokumentation](Check%20Requirements/README.de.md)
+* [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Zerlegt Eingabe-Strings anhand von Leerzeichen, Kommas, Pipes oder eigenen Trennzeichen und gibt ein sauberes Array zurück. [🔗 Vollständige Dokumentation](Normalize%20List/README.de.md)
+* [📋 Display Table](#-display-table) – Zeigt formatierte Tabellen im Terminal an, berechnet Spaltenbreiten automatisch und zentriert den Header. Unterstützt mehrere Zeilen und benutzerdefinierte Separatoren. [🔗 Vollständige Dokumentation](Display%20Table/README.de.md)
+* [✅ Check Requirements](#-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [🔗 Vollständige Dokumentation](Check%20Requirements/README.de.md)
+* [📂 Resolve Paths](#-resolve-paths) - Normalisiert Eingabepfade, wandelt sie in absolute Pfade um und klassifiziert sie anschließend nach Existenz, Lesbarkeit und Schreibberechtigung.[🔗 Vollständige Dokumentation](Resolve%20Paths/README.de.md)
 * [👤 Autor & Kontakt](#-autor--kontakt)
 * [🤖 Generierungshinweis](#-generierungshinweis)
 * [📜 Lizenz](#-lizenz)
@@ -52,7 +53,7 @@ banana
 kiwi
 ```
 
-Für die vollständige Dokumentation und weitere Optionen siehe [Vollständige Dokumentation](Normalize%20List/README.de.md).
+[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Normalize%20List/README.de.md).
 
 ---
 
@@ -87,7 +88,7 @@ display_table -H "My Table" \
 +--------+--------+--------+
 ```
 
-Für die vollständige Dokumentation siehe [Vollständige Dokumentation](Display%20Table/README.de.md).
+[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Display%20Table/README.de.md).
 
 ---
 
@@ -110,9 +111,43 @@ Für die vollständige Dokumentation siehe [Vollständige Dokumentation](Display
 check_requirements --major 4 --funcs "normalize_list" --programs "awk" --programs-alternative "git svn" --root
 ```
 
-Für die vollständige Dokumentation siehe [Vollständige Dokumentation](Check%20Requirements/README.de.md).
+[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Check%20Requirements/README.de.md).
 
 ---
+## 📂 Resolve Paths
+
+### Eine Bash-Funktion zum Normalisieren und Auflösen von Dateipfaden, Klassifizieren nach Existenz, Lesbarkeit und Schreibbarkeit sowie optionales Mapping der Ergebnisse in benannte Arrays.
+
+* 🟢 **Eingaben normalisieren:** Unterstützt mehrere Pfade und benutzerdefinierte Trennzeichen.
+* 🔹 **Absolute Pfade:** Wandelt relative Pfade in absolute Pfade um (`realpath`).
+* 🟣 **Existenzprüfung:** Trennt vorhandene von fehlenden Pfaden.
+* 🔒 **Lesbar/Schreibbar prüfen:** Trennt lesbare/schreibbare und nicht-lesbare/nicht-schreibbare Pfade.
+* ⚡ **Flexible Ausgabe:** Ergebnisse können in ein oder mehrere benannte Arrays geschrieben werden.
+* 💡 **Rückgabewerte:** `0` bei Erfolg, `2` bei Fehler (z. B. fehlende Eingabe, unbekannte Option).
+
+**Kurzes Beispiel:**
+
+```bash
+declare -a all exist
+
+resolve_paths -i "file1.txt,file2.txt,/tmp/file3" -o-all all -o-exist exist
+
+printf "All: %s\nExist: %s\n" "${all[*]}" "${exist[*]}"
+```
+
+Es zeigt **alle Pfade** und **nur existierende Pfade** in zwei Arrays.
+
+**Output:**
+
+```
+All: file1.txt file2.txt /tmp/file3
+Exist: /tmp/file3
+```
+
+[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Resolve%20Paths/README.de.md)
+
+---
+
 
 ## 👤 Autor & Kontakt
 

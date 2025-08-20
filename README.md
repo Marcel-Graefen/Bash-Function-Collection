@@ -4,17 +4,18 @@
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
 Welcome to the **Bash Functions Collection**!
-This repository contains a collection of useful Bash functions that are modular, documented, and can be integrated directly into your scripts.
+This repository contains a set of useful Bash functions, which are modular, documented, and can be directly integrated into your own scripts.
 
 ---
 
-## 📌 Quick Overview
+## 📌 Short Summary
 
-This repository provides modular Bash functions that can be included directly in scripts.
+This repository provides modular Bash functions that can be directly included in scripts.
 
-* [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Splits input strings based on spaces, commas, pipes, or custom separators and returns a clean array. [Full documentation](Normalize%20List/README.md)
-* [📋 Display Table](#-display-table) – Displays formatted tables in the terminal, automatically calculates column widths, and centers the header. Supports multiple rows and custom separators. [Full documentation](Display%20Table/README.de.md)
-* [✅ Check Requirements](#-check-requirements) – Checks Bash version, required functions, programs, alternative program groups, and optionally root privileges. [Full documentation](Check%20Requirements/README.md)
+* [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Splits input strings based on spaces, commas, pipes, or custom separators and returns a clean array. [🔗 Full documentation](Normalize%20List/README.md)
+* [📋 Display Table](#-display-table) – Displays formatted tables in the terminal, automatically calculating column widths and centering the header. Supports multiple rows and custom separators. [🔗 Full documentation](Display%20Table/README.md)
+* [✅ Check Requirements](#-check-requirements) – Checks Bash version, required functions, programs, alternative program groups, and optionally root privileges. [🔗 Full documentation](Check%20Requirements/README.md)
+* [📂 Resolve Paths](#-resolve-paths) – Normalizes input paths, converts them to absolute paths, and classifies them by existence, readability, and writability. [🔗 Full documentation](Resolve%20Paths/README.md)
 * [👤 Author & Contact](#-author--contact)
 * [🤖 Generation Note](#-generation-note)
 * [📜 License](#-license)
@@ -25,12 +26,12 @@ This repository provides modular Bash functions that can be included directly in
 
 ### A flexible Bash function to normalize input strings into arrays. It splits strings by spaces, commas, pipes, or custom separators and returns a clean array.
 
-* 🟢 **Flexible Input:** Accepts one or multiple strings at once.
-* 🔹 **Custom Separators:** Regex-like, e.g., space, comma, pipe, or custom characters.
+* 🟢 **Flexible Input:** Accepts one or more strings at a time.
+* 🔹 **Custom Separators:** Regex-like, e.g., space, comma, pipe, or user-defined characters.
 * 🟣 **Array Output:** Populates a Bash array via nameref (`-o|--output`).
 * 🔒 **Robust Error Handling:** Detects and reports missing parameters.
-* ⚡ **Easy Integration:** Can be embedded directly into scripts; no external dependencies.
-* 💡 **Return Value:** 0 on success, 2 on error.
+* ⚡ **Easy Integration:** Can be directly embedded in scripts with no external dependencies.
+* 💡 **Return Value:** 0 on success, 2 on errors.
 
 **Quick Example:**
 
@@ -52,19 +53,19 @@ banana
 kiwi
 ```
 
-For full documentation and additional options see [Full documentation](Normalize%20List/README.de.md).
+[🔗 Full documentation and more options available here](Normalize%20List/README.md)
 
 ---
 
 ## 📋 Display Table
 
-### A flexible Bash function to display formatted tables in the terminal. It calculates column widths automatically, centers the header, and outputs each row neatly.
+### A flexible Bash function to display formatted tables in the terminal. Automatically calculates column widths, centers the header, and prints each row neatly.
 
 * 🟢 **Flexible Rows & Columns:** Each row can contain multiple columns.
-* 🔹 **Automatic Column Widths:** Adjusts column widths to longest content.
+* 🔹 **Automatic Column Widths:** Adjusts column widths to the longest content.
 * 🟣 **Header Centering:** Optional table header is centered.
-* 🔒 **Robust Error Checking:** Checks for missing functions.
-* ⚡ **Easy Integration:** Can be embedded directly into Bash scripts.
+* 🔒 **Robust Error Checking:** Detects missing functions.
+* ⚡ **Easy Integration:** Can be directly embedded in Bash scripts.
 * 💡 **Return Value:** 0 on success, 2 if required functions are missing.
 
 **Quick Example:**
@@ -87,30 +88,62 @@ display_table -H "My Table" \
 +--------+--------+--------+
 ```
 
-For full documentation see [Full documentation](Display%20Table/README.de.md).
+[🔗 Full documentation and more options available here](Display%20Table/README.md)
 
 ---
 
 ## ✅ Check Requirements
 
-### A Bash function to verify script requirements, such as Bash version, required functions, and programs. Root privileges can be checked optionally, and alternative programs can be grouped.
+### A Bash function to check script requirements such as Bash version, required functions, and programs. Optionally checks for root privileges and alternative program groups.
 
-* 🟢 **Check Bash Version:** Optional major/minor version specification.
-* 🄵 **Check Functions:** Specify functions to check with `--funcs/-f`.
+* 🟢 **Check Bash Version:** Optional major/minor version requirement.
+* ⚙️ **Check Functions:** Use `--funcs/-f` to specify required functions.
 * 🟣 **Check Programs:** Via `--programs/-p` or groups `--programs-alternative/-a`.
 * 🔒 **Check Root Privileges:** Optional via `--root/-r` or `--sudo/-s`.
-* ⚡ **Flexible Error Handling:** `--exit/-x` allows controlling whether the script exits immediately on error or just returns.
-* 🔍 **Complete Check:** All specified requirements are evaluated first; return or exit occurs only after all checks.
+* ⚡ **Flexible Error Handling:** `--exit/-x` controls immediate exit on first error or returns a code.
+* 🔍 **Comprehensive Check:** All specified requirements are verified first; return or exit occurs after all checks.
 * 💡 **Return Values:** 0 on success, 2 on one or more errors.
 
 **Quick Example:**
 
 ```bash
-# Check Bash ≥ 4, function normalize_list, program awk, at least one of git or svn, and root privileges
+# Checks Bash ≥ 4, normalize_list function, awk program, at least one of git or svn, and root privileges
 check_requirements --major 4 --funcs "normalize_list" --programs "awk" --programs-alternative "git svn" --root
 ```
 
-For full documentation see [Full documentation](Check%20Requirements/README.md).
+[🔗 Full documentation and more options available here](Check%20Requirements/README.md)
+
+---
+
+## 📂 Resolve Paths
+
+### A Bash function to normalize and resolve file paths, classify them by existence, readability, and writability, and optionally map the results into named arrays.
+
+* 🟢 **Normalize Input:** Supports multiple paths and custom separators.
+* 🔹 **Absolute Paths:** Converts relative paths to absolute (`realpath`).
+* 🟣 **Existence Check:** Separates existing from missing paths.
+* 🔒 **Read/Write Check:** Separates readable/writable and non-readable/non-writable paths.
+* ⚡ **Flexible Output:** Results can be written to one or more named arrays.
+* 💡 **Return Values:** 0 on success, 2 on error (e.g., missing input, unknown option).
+
+**Quick Example:**
+
+```bash
+declare -a all exist
+
+resolve_paths -i "file1.txt,file2.txt,/tmp/file3" -o-all all -o-exist exist
+
+printf "All: %s\nExist: %s\n" "${all[*]}" "${exist[*]}"
+```
+
+**Output:**
+
+```
+All: file1.txt file2.txt /tmp/file3
+Exist: /tmp/file3
+```
+
+[🔗 Full documentation and more options available here](Resolve%20Paths/README.md)
 
 ---
 
@@ -123,9 +156,9 @@ For full documentation see [Full documentation](Check%20Requirements/README.md).
 
 ## 🤖 Generation Note
 
-This project was created with the help of artificial intelligence (AI).
-The AI assisted in creating the scripts, comments, and documentation (README.md).
-The final result was reviewed and adjusted by me.
+This project was developed with the help of Artificial Intelligence (AI).
+The AI assisted in creating the script, comments, and documentation (README.md).
+The final result was reviewed and adapted by me.
 
 ---
 
