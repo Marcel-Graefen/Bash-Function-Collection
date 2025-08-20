@@ -13,8 +13,8 @@ Dieses Repository enthält eine Sammlung nützlicher Bash-Funktionen, die modula
 Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte eingebunden werden können.
 
 * [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Zerlegt Eingabe-Strings anhand von Leerzeichen, Kommas, Pipes oder eigenen Trennzeichen und gibt ein sauberes Array zurück. [Vollständige Dokumentation](Normalize%20List/README.de.md)
-* [📋 Display Table](#%EF%B8%8F-display-table) – Zeigt formatierte Tabellen im Terminal an, berechnet Spaltenbreiten automatisch und zentriert den Header. Unterstützt mehrere Zeilen und benutzerdefinierte Separatoren. [Vollständige Dokumentation](Display%20Table/README.de.md)
-* [✅ Check Requirements](#%EF%B8%8F-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [Vollständige Dokumentation](Check%20Requirements/README.md)
+* [📋 Display Table](#-display-table) – Zeigt formatierte Tabellen im Terminal an, berechnet Spaltenbreiten automatisch und zentriert den Header. Unterstützt mehrere Zeilen und benutzerdefinierte Separatoren. [Vollständige Dokumentation](Display%20Table/README.de.md)
+* [✅ Check Requirements](#-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [Vollständige Dokumentation](Check%20Requirements/README.md)
 * [👤 Autor & Kontakt](#-autor--kontakt)
 * [🤖 Generierungshinweis](#-generierungshinweis)
 * [📜 Lizenz](#-lizenz)

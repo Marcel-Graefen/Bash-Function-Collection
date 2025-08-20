@@ -13,8 +13,8 @@ This repository contains a collection of useful Bash functions that are modular,
 This repository provides modular Bash functions that can be included directly in scripts.
 
 * [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Splits input strings based on spaces, commas, pipes, or custom separators and returns a clean array. [Full documentation](Normalize%20List/README.md)
-* [📋 Display Table](#%EF%B8%8F-display-table) – Displays formatted tables in the terminal, automatically calculates column widths, and centers the header. Supports multiple rows and custom separators. [Full documentation](Display%20Table/README.de.md)
-* [✅ Check Requirements](#%EF%B8%8F-check-requirements) – Checks Bash version, required functions, programs, alternative program groups, and optionally root privileges. [Full documentation](Check%20Requirements/README.md)
+* [📋 Display Table](#-display-table) – Displays formatted tables in the terminal, automatically calculates column widths, and centers the header. Supports multiple rows and custom separators. [Full documentation](Display%20Table/README.de.md)
+* [✅ Check Requirements](#-check-requirements) – Checks Bash version, required functions, programs, alternative program groups, and optionally root privileges. [Full documentation](Check%20Requirements/README.md)
 * [👤 Author & Contact](#-author--contact)
 * [🤖 Generation Note](#-generation-note)
 * [📜 License](#-license)
