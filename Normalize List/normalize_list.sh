@@ -5,8 +5,8 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 1.0.0
-# @date        : 2025-08-18
+# @version     : 1.1.0
+# @date        : 2025-08-20
 #
 # @requires    : Bash 4.0+
 #
@@ -42,48 +42,38 @@
 #
 
 normalize_list() {
-  local inputs=() output_var="" extra_sep=""
-  local default_sep=",| "  # Default separators: comma, pipe, space
 
+  # Fail if no arguments provided
+  [[ $# -eq 0 ]] && { echo "❌ ERROR: normalize_list: No arguments provided"; return 2; }
+
+  local inputs=() output_var="" extra_sep="" default_sep=",| "
+
+  # Helper functions
+  check_value() { [[ -z "$1" || "$1" == -* ]] && { echo "❌ ERROR: normalize_list: '$2' requires a value"; return 2; }; }
+
+  # Parse options
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -i|--input)
-        inputs+=("$2")
-        shift 2
-        ;;
-      -o|--output)
-        output_var="$2"
-        shift 2
-        ;;
-      -s|--separator)
-        extra_sep="$2"
-        shift 2
-        ;;
-      *)
-        shift
-        ;;
+      -i|--input)     check_value "$2" "$1" || return 2; inputs+=("$2"); shift 2  ;;
+      -o|--output)    check_value "$2" "$1" || return 2; output_var="$2"; shift 2 ;;
+      -s|--separator) check_value "$2" "$1" || return 2; extra_sep="$2"; shift 2  ;;
+      *) echo "❌ ERROR: normalize_list: Unknown option: $1"; return 2            ;;
     esac
   done
 
-  [[ -z "$output_var" ]] && { echo "normalize_list: --output missing" >&2; return 2; }
+  [[ -z "$output_var" ]] && { echo "❌ ERROR: normalize_list: --output missing" >&2; return 2; }
 
-  # Build separator set
-  local sep="$default_sep$extra_sep"
-  local tmp=()
-
+  local sep="${default_sep}${extra_sep}" tmp=()
   for item in "${inputs[@]}"; do
-    # Replace any separator by space
-    local s="$item"
-    for c in $(echo "$sep" | fold -w1); do
-      s="${s//$c/ }"
-    done
-    # Read words into array
-    for word in $s; do
-      [[ -n "$word" ]] && tmp+=("$word")
-    done
+    # Replace separators with space and split into array
+    IFS=' ' read -r -a words <<< "${item//[$sep]/ }"
+    tmp+=("${words[@]}")
   done
 
   # Assign to output array
   local -n out="$output_var"
   out=("${tmp[@]}")
+
+  return 0
+
 }
