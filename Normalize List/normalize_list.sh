@@ -5,7 +5,7 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 1.1.0
+# @version     : 1.1.1
 # @date        : 2025-08-20
 #
 # @requires    : Bash 4.0+
@@ -49,7 +49,12 @@ normalize_list() {
   local inputs=() output_var="" extra_sep="" default_sep=",| "
 
   # Helper functions
-  check_value() { [[ -z "$1" || "$1" == -* ]] && { echo "❌ ERROR: normalize_list: '$2' requires a value"; return 2; }; }
+    check_value() {
+    if [[ -z "$1" || "$1" == -* ]]; then
+      log_msg ERROR resolve_paths: "$2 requires a value"
+      return 2
+    fi
+   }
 
   # Parse options
   while [[ $# -gt 0 ]]; do
