@@ -5,7 +5,7 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 2.0.0
+# @version     : 3.0.0
 # @date        : 2025-08-21
 #
 # @requires    : Bash 4.0+
@@ -19,8 +19,7 @@
 # @license     : MIT License
 # ========================================================================================
 
-# Function -> Normaliz List
-source <(wget -qO- "https://raw.githubusercontent.com/Marcel-Graefen/Bash-Function-Collection/refs/heads/main/Normalize_List/normalize_list.sh")
+
 
 #---------------------- FUNCTION: resolve_paths --------------------------------
 # Resolves and classifies given filesystem paths.
