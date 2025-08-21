@@ -5,7 +5,7 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 1.0.0
+# @version     : 1.0.1
 # @date        : 2025-08-20
 #
 # @requires    : Bash 4.0+
@@ -50,7 +50,7 @@
 check_requirements() {
 
   # Fail if no arguments provided
-  [[ $# -eq 0 ]] && { echo "❌ ERROR: check_requirements: No arguments provided"; return 2; }
+  [[ $# -eq 0 ]] && { echo "❌ ERROR: ${FUNCNAME[0]}: No arguments provided"; return 2; }
 
   local major_version="" minor_version=""
   local funcs_raw="" progs_raw="" alt_raw=()
@@ -63,10 +63,10 @@ check_requirements() {
 
   # Helper functions
   check_value() {
-    [[ -z "$1" || "$1" == -* ]] && { echo "❌ ERROR: check_requirements: '$2' requires a value"; (( error_count++ )); return 2; }
+    [[ -z "$1" || "$1" == -* ]] && { echo "❌ ERROR: ${FUNCNAME[1]}: '$2' requires a value"; (( error_count++ )); return 2; }
   }
   is_number() {
-    [[ "$1" =~ ^[0-9]+$ ]] || { echo "❌ ERROR: check_requirements: '$2' must be a number"; (( error_count++ )); return 2; }
+    [[ "$1" =~ ^[0-9]+$ ]] || { echo "❌ ERROR: ${FUNCNAME[1]}: '$2' must be a number"; (( error_count++ )); return 2; }
   }
 
 
@@ -74,24 +74,24 @@ check_requirements() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --major|-M)
-        ((major_set)) && { echo "❌ ERROR: check_requirements: --major/-M can only be specified once"; (( error_count++ )); }
+        ((major_set)) && { echo "❌ ERROR: ${FUNCNAME[0]}: --major/-M can only be specified once"; (( error_count++ )); }
         check_value "$2" "$1"
         is_number "$2" "$1"
         major_version="$2"; major_set=1; shift 2
         ;;
       --minor|-m)
-        ((minor_set)) && { echo "❌ ERROR: check_requirements: --minor/-m can only be specified once"; (( error_count++ )); }
+        ((minor_set)) && { echo "❌ ERROR: ${FUNCNAME[0]}: --minor/-m can only be specified once"; (( error_count++ )); }
         check_value "$2" "$1"
         is_number "$2" "$1"
         minor_version="$2"; minor_set=1; shift 2
         ;;
       --funcs|-f)
-        ((funcs_set)) && { echo "❌ ERROR: check_requirements: --funcs/-f can only be specified once"; (( error_count++ )); }
+        ((funcs_set)) && { echo "❌ ERROR: ${FUNCNAME[0]}: --funcs/-f can only be specified once"; (( error_count++ )); }
         check_value "$2" "$1"
         funcs_raw="$2"; funcs_set=1; shift 2
         ;;
       --programs|-p)
-        ((progs_set)) && { echo "❌ ERROR: check_requirements: --programs/-p can only be specified once"; (( error_count++ )); }
+        ((progs_set)) && { echo "❌ ERROR: ${FUNCNAME[0]}: --programs/-p can only be specified once"; (( error_count++ )); }
         check_value "$2" "$1"
         progs_raw="$2"; progs_set=1; shift 2
         ;;
@@ -106,7 +106,7 @@ check_requirements() {
         exit_on_error=1; shift
         ;;
       *)
-        echo "❌ ERROR: check_requirements: Unknown option: $1"
+        echo "❌ ERROR: ${FUNCNAME[0]}: Unknown option: $1"
         (( error_count++ )); shift
         ;;
     esac
@@ -116,7 +116,7 @@ check_requirements() {
 
   # Ensure --minor is only used with --major
   if (( minor_set && ! major_set )); then
-    echo "❌ ERROR: check_requirements: --minor/-m requires --major/-M to be specified first"
+    echo "❌ ERROR: ${FUNCNAME[0]}: --minor/-m requires --major/-M to be specified first"
     (( error_count++ ));
   fi
 
@@ -124,7 +124,7 @@ check_requirements() {
   # Check root privileges if requested
   if (( require_root )); then
     local uid="${EUID:-$(id -u 2>/dev/null || 1)}"
-    (( uid == 0 )) || { echo "❌ ERROR: check_requirements: This script must be run as root"; (( error_count++ )); }
+    (( uid == 0 )) || { echo "❌ ERROR: ${FUNCNAME[0]}: This script must be run as root"; (( error_count++ )); }
   fi
 
 
@@ -146,7 +146,7 @@ check_requirements() {
     local minor="${minor_version:-0}"
     if (( BASH_VERSINFO[0] < major )) ||
       (( BASH_VERSINFO[0] == major && BASH_VERSINFO[1] < minor )); then
-        echo "❌ ERROR: check_requirements: This script requires Bash ${major}.${minor} or newer"
+        echo "❌ ERROR: ${FUNCNAME[0]}: This script requires Bash ${major}.${minor} or newer"
         (( error_count++ ))
     fi
   fi
@@ -154,13 +154,13 @@ check_requirements() {
 
   # Check required functions
   for func in "${funcs_list[@]}"; do
-    declare -F "$func" >/dev/null 2>&1 || { echo "❌ ERROR: check_requirements: Required function '$func' not found"; (( error_count++ )); }
+    declare -F "$func" >/dev/null 2>&1 || { echo "❌ ERROR: ${FUNCNAME[0]}: Required function '$func' not found"; (( error_count++ )); }
   done
 
 
   # Check required programs
   for prog in "${progs_list[@]}"; do
-    ! command -v "$prog" >/dev/null 2>&1 && { echo "❌ ERROR: check_requirements: Missing required program '$prog'"; (( error_count++ )); }
+    ! command -v "$prog" >/dev/null 2>&1 && { echo "❌ ERROR: ${FUNCNAME[0]}: Missing required program '$prog'"; (( error_count++ )); }
   done
 
 
@@ -170,7 +170,7 @@ check_requirements() {
     for prog in $group; do
       command -v "$prog" >/dev/null 2>&1 && { ok=true; break; }
     done
-    ! $ok && { echo "❌ ERROR: check_requirements: Need at least one of [$group], none found"; (( error_count++ )); }
+    ! $ok && { echo "❌ ERROR: ${FUNCNAME[0]}: Need at least one of [$group], none found"; (( error_count++ )); }
   done
 
 

@@ -5,13 +5,13 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 1.0.0
+# @version     : 1.0.1
 # @date        : 2025-08-20
 #
 # @requires    : Bash 4.0+
 # @requires    : realpath
-# @requires    : Function   =>  Normalize List v1.0.0
-# @requires    : Function   =>  check_requirements v1.0.0
+# @requires    : Function   =>  Normalize List v1.X.X
+# @requires    : Function   =>  check_requirements v1.X.X
 #
 # @see         : https://github.com/Marcel-Graefen/Bash-Function-Collection/Resolve%20Paths
 #
@@ -65,7 +65,7 @@ resolve_paths() {
 
   # No parameters provided?
   if [[ $# -eq 0 ]]; then
-    log_msg ERROR "No parameters provided"
+    log_msg ERROR "${FUNCNAME[0]}: No parameters provided"
     return 2
   fi
 
@@ -79,7 +79,7 @@ resolve_paths() {
     local val="$1"
     local name="$2"
     if [[ -z "$val" || "$val" == -* ]]; then
-      log_msg ERROR resolve_paths: "$name requires a value"
+      log_msg ERROR "${FUNCNAME[1]}: $name requires a value"
       return 2
     fi
   }
@@ -96,7 +96,7 @@ resolve_paths() {
       -o-not-read)     check_value "$2" "$1" || return 2; output_not_read_var="$2"  ;;
       -o-write)        check_value "$2" "$1" || return 2; output_write_var="$2"     ;;
       -o-not-write)    check_value "$2" "$1" || return 2; output_not_write_var="$2" ;;
-      *)               log_msg ERROR "Unknown option: $1"; return 1                  ;;
+      *)               log_msg ERROR "${FUNCNAME[0]}: Unknown option: $1"; return 1 ;;
     esac
 
     shift 2
@@ -107,7 +107,7 @@ resolve_paths() {
         -z "$output_missing_var"&& -z "$output_read_var"   && \
         -z "$output_not_read_var"&& -z "$output_write_var"  && \
         -z "$output_not_writable_var" ]]; then
-    log_msg ERROR "resolve_paths: At least one of \"-o-all, -o-exist, -o-missing, -o-read, -o-not-read, -o-write or -o-not-write\" is required"
+    log_msg ERROR "${FUNCNAME[0]}: At least one of \"-o-all, -o-exist, -o-missing, -o-read, -o-not-read, -o-write or -o-not-write\" is required"
     return 2
   fi
 

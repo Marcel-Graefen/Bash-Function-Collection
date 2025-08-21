@@ -5,7 +5,7 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 1.1.1
+# @version     : 1.1.2
 # @date        : 2025-08-20
 #
 # @requires    : Bash 4.0+
@@ -44,14 +44,14 @@
 normalize_list() {
 
   # Fail if no arguments provided
-  [[ $# -eq 0 ]] && { echo "❌ ERROR: normalize_list: No arguments provided"; return 2; }
+  [[ $# -eq 0 ]] && { echo "❌ ERROR: ${FUNCNAME[0]}: No arguments provided"; return 2; }
 
   local inputs=() output_var="" extra_sep="" default_sep=",| "
 
   # Helper functions
     check_value() {
     if [[ -z "$1" || "$1" == -* ]]; then
-      log_msg ERROR resolve_paths: "$2 requires a value"
+      log_msg ERROR ${FUNCNAME[1]}: "$2 requires a value"
       return 2
     fi
    }
@@ -62,11 +62,11 @@ normalize_list() {
       -i|--input)     check_value "$2" "$1" || return 2; inputs+=("$2"); shift 2  ;;
       -o|--output)    check_value "$2" "$1" || return 2; output_var="$2"; shift 2 ;;
       -s|--separator) check_value "$2" "$1" || return 2; extra_sep="$2"; shift 2  ;;
-      *) echo "❌ ERROR: normalize_list: Unknown option: $1"; return 2            ;;
+      *) echo "❌ ERROR: ${FUNCNAME[0]}: Unknown option: $1"; return 2            ;;
     esac
   done
 
-  [[ -z "$output_var" ]] && { echo "❌ ERROR: normalize_list: --output missing" >&2; return 2; }
+  [[ -z "$output_var" ]] && { echo "❌ ERROR: ${FUNCNAME[0]}: --output missing" >&2; return 2; }
 
   local sep="${default_sep}${extra_sep}" tmp=()
   for item in "${inputs[@]}"; do

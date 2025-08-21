@@ -5,11 +5,11 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 1.0.0
+# @version     : 1.0.1
 # @date        : 2025-08-18
 #
 # @requires    : Bash 4.0+
-# @requires    : Function   =>  Normalize List v1.0.0
+# @requires    : Function   =>  Normalize List v1.X.X
 #
 # @see         : https://github.com/Marcel-Graefen/Bash-Function-Collection/Display%20Table
 #
@@ -25,7 +25,7 @@
 #   None
 #
 # Uses Functions:
-#   normalize_list v1.0.0
+#   normalize_list v1.X.X
 #
 # Arguments:
 #   --header | -H    Optional: Table header
@@ -47,7 +47,7 @@ display_table() {
   # Required functions
   local required_funcs=(normalize_list)
   for f in "${required_funcs[@]}"; do
-    declare -F "$f" >/dev/null 2>&1 || { echo "ERROR: Required function '$f' not found. Aborting."; return 2; }
+    declare -F "$f" >/dev/null 2>&1 || { echo "❌ ERROR: ${FUNCNAME[0]}: '$f' not found. Aborting."; return 2; }
   done
 
   local header="" separator="" args=() rows=()
