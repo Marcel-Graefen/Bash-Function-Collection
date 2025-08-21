@@ -117,14 +117,15 @@ check_requirements --major 4 --funcs "normalize_list" --programs "awk" --program
 
 ## 📂 Resolve Paths
 
-### A Bash function to normalize and resolve file paths, classify them by existence, readability, and writability, and optionally map the results into named arrays.
+### A Bash function to normalize and resolve file paths, automatically expand wildcards (*, ?), classify paths by existence and individual or combined permissions (r/w/x, rw, rx, wx, rwx), and optionally map the results into named arrays.
 
-* 🟢 **Normalize Input:** Supports multiple paths and custom separators.
-* 🔹 **Absolute Paths:** Converts relative paths to absolute (`realpath`).
+* 🗂️ **Normalize Inputs:** Automatically splits one or multiple paths by spaces or custom separators.
+* 🔹 **Absolute Paths:** Converts relative paths to absolute paths (`realpath`).
+* ✨ **Automatic Wildcard Expansion:** Paths containing `*` or `?` are automatically resolved.
 * 🟣 **Existence Check:** Separates existing from missing paths.
-* 🔒 **Read/Write Check:** Separates readable/writable and non-readable/non-writable paths.
-* ⚡ **Flexible Output:** Results can be written to one or more named arrays.
-* 💡 **Return Values:** 0 on success, 2 on error (e.g., missing input, unknown option).
+* 🔒 **Permission Check:** Checks readability (`r`), writability (`w`), executability (`x`) and combinations (`rw`, `rx`, `wx`, `rwx`).
+* ⚡ **Flexible Output:** Results can be written into one or more named arrays.
+* 💡 **Return Codes:** `0` for success, `2` for errors (e.g., missing input, unknown option).
 
 **Quick Example:**
 

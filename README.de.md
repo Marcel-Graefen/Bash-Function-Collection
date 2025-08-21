@@ -116,13 +116,13 @@ check_requirements --major 4 --funcs "normalize_list" --programs "awk" --program
 ---
 ## 📂 Resolve Paths
 
-### Eine Bash-Funktion zum Normalisieren und Auflösen von Dateipfaden, Klassifizieren nach Existenz, Lesbarkeit und Schreibbarkeit sowie optionales Mapping der Ergebnisse in benannte Arrays.
+### Eine Bash-Funktion zum Normalisieren und Auflösen von Dateipfaden, automatische Wildcard-Erweiterung (*?), Klassifizierung nach Existenz und einzelnen sowie kombinierten Berechtigungen (r/w/x, rw, rx, wx, rwx) sowie optionales Mapping der Ergebnisse in benannte Arrays.
 
-* 🟢 **Eingaben normalisieren:** Unterstützt mehrere Pfade und benutzerdefinierte Trennzeichen.
+* 🗂️ **Eingaben normalisieren:** Trennt eine oder mehrere Pfade automatisch nach Leerzeichen oder benutzerdefinierten Zeichen.
 * 🔹 **Absolute Pfade:** Wandelt relative Pfade in absolute Pfade um (`realpath`).
-* 🟣 **Automatische Wildcard-Erweiterung:** Pfade mit `*` oder `?` werden automatisch aufgelöst.
+* ✨ **Automatische Wildcard-Erweiterung:** Pfade mit `*` oder `?` werden automatisch aufgelöst.
 * 🟣 **Existenzprüfung:** Trennt vorhandene von fehlenden Pfaden.
-* 🔒 **Lesbar/Schreibbar prüfen:** Trennt lesbare/schreibbare und nicht-lesbare/nicht-schreibbare Pfade.
+* 🔒 **Berechtigungsprüfung:** Prüft Lesbarkeit (`r`), Schreibbarkeit (`w`) und Ausführbarkeit (`x`) sowie Kombinationen (`rw`, `rx`, `wx`, `rwx`).
 * ⚡ **Flexible Ausgabe:** Ergebnisse können in ein oder mehrere benannte Arrays geschrieben werden.
 * 💡 **Rückgabewerte:** `0` bei Erfolg, `2` bei Fehler (z. B. fehlende Eingabe, unbekannte Option).
 

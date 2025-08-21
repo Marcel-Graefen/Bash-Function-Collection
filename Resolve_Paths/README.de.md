@@ -1,41 +1,53 @@
 # 📋 Bash Funktion: resolve_paths
 
 [![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat&logo=github)](../README.de.md)
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](#)
 [![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
-Eine Bash-Funktion zum Normalisieren und Auflösen von Dateipfaden, automatische Wildcard-Erweiterung (`*?`), Klassifizierung nach Existenz, Lesbarkeit und Schreibbarkeit sowie optionales Mapping der Ergebnisse in benannte Arrays.
+Eine Bash-Funktion zum Normalisieren und Auflösen von Dateipfaden, automatische Wildcard-Erweiterung (*?), Klassifizierung nach Existenz und einzelnen sowie kombinierten Berechtigungen (r/w/x, rw, rx, wx, rwx) sowie optionales Mapping der Ergebnisse in benannte Arrays.
 
 ---
 
 ## 🚀 Inhaltsverzeichnis
 
-* [📌 Wichtige Hinweise](#-wichtige-hinweise)
-* [🛠️ Funktionen & Features](#-funktionen--features)
-* [⚙️ Voraussetzungen](#-voraussetzungen)
-* [📦 Installation](#-installation)
-* [📝 Nutzung](#-nutzung)
-  * [1️⃣ Pfade normalisieren und auflösen](#1️⃣-pfade-normalisieren-und-auflösen)
-  * [2️⃣ Benutzerdefinierte Trennzeichen](#2️⃣-benutzerdefinierte-trennzeichen)
-  * [3️⃣ Ausgabe in benannte Arrays](#3️⃣-ausgabe-in-benannte-arrays)
-  * [4️⃣ Pfade klassifizieren](#4️⃣-pfade-klassifizieren)
-  * [5️⃣ Wildcards verwenden](#5️⃣-wildcards-verwenden)
-* [📌 API-Referenz](#-api-referenz)
-* [🗂️ Changelog](#-changelog)
-* [👤 Autor & Kontakt](#-autor--kontakt)
-* [🤖 Generierungshinweis](#-generierungshinweis)
-* [📜 Lizenz](#-lizenz)
+* [📌 Wichtige Hinweise](#📌-wichtige-hinweise)
+* [🛠️ Funktionen & Features](#🛠️-funktionen--features)
+* [⚙️ Voraussetzungen](#⚙️-voraussetzungen)
+* [📦 Installation](#📦-installation)
+* [📝 Nutzung](#📝-nutzung)
+  * <details>
+    <summary>▶️ Beispiele</summary>
+
+      * [🗂️ Pfade normalisieren und auflösen](#🗂️-pfade-normalisieren-und-auflösen)
+      * [⚙️ Benutzerdefinierte Trennzeichen](#⚙️-benutzerdefinierte-trennzeichen)
+      * [🔍 Pfade klassifizieren](#🔍-pfade-klassifizieren)
+      * [📝 Ausgabe in benannte Arrays](#📝-ausgabe-in-benannte-arrays)
+      * [✨ Wildcards verwenden](#✨-wildcards-verwenden)
+      * [🔄 Kombination mehrerer Eingaben](#🔄-kombination-von-mehreren-eingaben)
+      * [🔑 Nur Schreibbarkeit prüfen](#🔑-prüfen-nur-nach-schreibbarkeit)
+      * [📛 Fehlende Dateien ermitteln](#📛-fehlende-dateien-ermitteln)
+      * [▶️ Prüfen auf ausführbare Skripte](#▶️-prüfen-auf-ausführbare-skripte)
+      * [🔒 Alle Berechtigungen prüfen](#🔒-alle-berechtigungen-prüfen)
+
+    </details>
+* [📌 API-Referenz](#📌-api-referenz)
+* [🗂️ Changelog](#🗂️-changelog)
+* [👤 Autor & Kontakt](#👤-autor--kontakt)
+* [🤖 Generierungshinweis](#🤖-generierungshinweis)
+* [📜 Lizenz](#📜-lizenz)
+
+
 
 ---
 
 ## 🛠️ Funktionen & Features
 
-* 🟢 **Eingaben normalisieren:** Unterstützt mehrere Pfade und benutzerdefinierte Trennzeichen.
+* 🗂️ **Eingaben normalisieren:** Trennt eine oder mehrere Pfade automatisch nach Leerzeichen oder benutzerdefinierten Zeichen.
 * 🔹 **Absolute Pfade:** Wandelt relative Pfade in absolute Pfade um (`realpath`).
-* 🟣 **Automatische Wildcard-Erweiterung:** Pfade mit `*` oder `?` werden automatisch aufgelöst.
+* ✨ **Automatische Wildcard-Erweiterung:** Pfade mit `*` oder `?` werden automatisch aufgelöst.
 * 🟣 **Existenzprüfung:** Trennt vorhandene von fehlenden Pfaden.
-* 🔒 **Lesbar/Schreibbar prüfen:** Trennt lesbare/schreibbare und nicht-lesbare/nicht-schreibbare Pfade.
+* 🔒 **Berechtigungsprüfung:** Prüft Lesbarkeit (`r`), Schreibbarkeit (`w`) und Ausführbarkeit (`x`) sowie Kombinationen (`rw`, `rx`, `wx`, `rwx`).
 * ⚡ **Flexible Ausgabe:** Ergebnisse können in ein oder mehrere benannte Arrays geschrieben werden.
 * 💡 **Rückgabewerte:** `0` bei Erfolg, `2` bei Fehler (z. B. fehlende Eingabe, unbekannte Option).
 
@@ -61,167 +73,208 @@ source "/pfad/zu/resolve_paths.sh"
 
 ## 📝 Nutzung
 
-### 1️⃣ Pfade normalisieren und auflösen
+### 🗂️ Pfade normalisieren und auflösen
 
-Normalisiert die Eingabepfade, teilt sie korrekt auf und wandelt sie in absolute Pfade um.
+Normalisiert Eingabepfade, teilt sie auf und wandelt sie in absolute Pfade um.
 
 ```bash
 declare -a alle_pfade
 
-# Beispiel 1: Alle Pfade in einer Eingabe
+# Beispiel: Eine Eingabe mit mehreren Pfaden
 resolve_paths -i "file1.txt file2.txt,/tmp/file3" -o-all alle_pfade
 
-# Beispiel 2: Mehrere Eingaben
-resolve_paths -i "file1.txt file2.txt" -i "/tmp/file3" -o-all alle_pfade
-
 # Ausgabe prüfen
 printf "%s\n" "${alle_pfade[@]}"
 ```
 
-**Erklärung:**
-
-* Trennzeichen wie Leerzeichen, Komma oder Pipe werden automatisch erkannt.
-* Alle Pfade werden in absolute Pfade umgewandelt.
-* Ergebnis wird in das Array `alle_pfade` geschrieben.
+**Erklärung:** Alle Pfade werden absolut und getrennt in das Array `alle_pfade` geschrieben.
 
 ---
 
-### 2️⃣ Benutzerdefinierte Trennzeichen
-
-Mit `-s` / `--separator` können eigene Zeichen als Trenner für die Eingaben angegeben werden.
-Im Beispiel werden Komma, Semikolon und Pipe als Trennzeichen verwendet:
-
-Standardmäßige Separatorn sind `Leerzeichen, Pipe | und Komma ,`.
-
-> Somit ist bei nutztung dieser `Separatorn` KEINE angabe von `-s |--seperator` nötig!
+### ⚙️ Benutzerdefinierte Trennzeichen
 
 ```bash
 declare -a alle_pfade
 
+# Beispiel: Komma, Semikolon oder Pipe als Trenner
 resolve_paths \
   -i "file1.txt,file2.txt;/tmp/file3|/var/log/syslog" \
-  -s ";" \
+  -s ",;|" \
   -o-all alle_pfade
 
-# Ausgabe prüfen
 printf "%s\n" "${alle_pfade[@]}"
-````
-
-**Beispiel-Ausgabe:**
-
-```
-file1.txt
-file2.txt
-/tmp/file3
-/var/log/syslog
 ```
 
-**Erklärung:**
+**Erklärung:** Trennzeichen können beliebig angegeben werden; hier werden mehrere Separatoren gleichzeitig genutzt.
 
-* Die Eingabe enthält Pfade, die durch Komma `,`, Semikolon `;` oder Pipe `|` getrennt sind.
-* `-s ",;|"` teilt die Eingabe an allen angegebenen Zeichen auf.
-* Das Ergebnis wird in das Array `alle_pfade` geschrieben.
+>  Standardmäßig trennt die Funktion `normalize_list` Pfade anhand von Leerzeichen (` `), Komma (`,`) und Pipe (`|`). Daher ist die Angabe von -s|--separator meist nicht erforderlich.
 
 ---
 
-### 3️⃣ Pfade klassifizieren
-
-Klassifiziert die aufgelösten Pfade nach Existenz, Lesbarkeit und Schreibbarkeit:
+### 🔍 Pfade klassifizieren
 
 ```bash
-declare -a exist missing readable not_readable writable not_writable
+declare -a exist missing r not_r w not_w x not_x rw not_rw rx not_rx wx not_wx rwx not_rwx
 
+# Beispiel: Prüfen von Existenz und Berechtigungen
 resolve_paths \
   -i "file1.txt file2.txt /tmp/file3" \
-  -o-exist exist \
-  -o-missing missing \
-  -o-read readable \
-  -o-not-read not_readable \
-  -o-write writable \
-  -o-not-write not_writable
+  -o-exist exist -o-missing missing \
+  -o-r r -o-not-r not_r \
+  -o-w w -o-not-w not_w \
+  -o-x x -o-not-x not_x \
+  -o-rw rw -o-not-rw not_rw \
+  -o-rx rx -o-not-rx not_rx \
+  -o-wx wx -o-not-wx not_wx \
+  -o-rwx rwx -o-not-rwx not_rwx
 ```
+
+**Erklärung:** Trennt vorhandene/fehlende Pfade sowie lesbare, schreibbare, ausführbare Pfade und alle Kombis (`rw`, `rx`, `wx`, `rwx`).
 
 ---
 
-### 4️⃣ Ausgabe in benannte Arrays
-
-Beliebige Kombination interner Arrays kann in eigene benannte Arrays geschrieben werden:
+### 📝 Ausgabe in benannte Arrays
 
 ```bash
-declare -a ALL EXIST MISSING READABLE NOT_READABLE
+declare -a ALL EXIST MISSING RW NOT_RW
 
+# Beispiel: Ergebnisse in eigene Arrays mappen
 resolve_paths \
   -i "file1.txt,file2.txt,/tmp/file3" \
   -o-all ALL \
   -o-exist EXIST \
   -o-missing MISSING \
-  -o-read READABLE \
-  -o-not-read NOT_READABLE
+  -o-rw RW \
+  -o-not-rw NOT_RW
 
-  echo "ALL:        ${ALL[*]}"
-  echo "EXIST:      ${EXIST[*]}"
-  echo "MISSING:    ${MISSING[*]}"
-  echo "READABLE:   ${READABLE[*]}"
-  echo "NOT_READ:   ${NOT_READABLE[*]}"
+echo "ALL:     ${ALL[*]}"
+echo "EXIST:   ${EXIST[*]}"
+echo "MISSING: ${MISSING[*]}"
+echo "RW:      ${RW[*]}"
+echo "NOT_RW:  ${NOT_RW[*]}"
 ```
 
-**Ausgabe:**
-
-```
-ALL:        /home/user/project/test.sh /home/user/project/build.sh /home/user/project/old.sh
-EXIST:      /home/user/project/test.sh /home/user/project/build.sh
-MISSING:    /home/user/project/old.sh
-READABLE:   /home/user/project/test.sh /home/user/project/build.sh
-NOT_READ:   /home/user/project/old.sh
-```
+**Erklärung:** Beliebige interne Arrays können in eigene benannte Arrays geschrieben werden.
 
 ---
 
-### 5️⃣ Wildcards verwenden
-
-Eingaben dürfen **Wildcard-Zeichen** enthalten:
-
-* `*` steht für **beliebig viele Zeichen**
-* `?` steht für **genau ein Zeichen**
-
-Damit lassen sich zum Beispiel alle `.sh`-Dateien in einem Verzeichnis auflösen:
+### ✨ Wildcards verwenden
 
 ```bash
-declare -a ALL EXIST
+declare -a ALL EXIST RX NOT_RX
 
+# Beispiel: Alle .sh-Dateien im aktuellen Verzeichnis
 resolve_paths \
   -i "./*.sh" \
   -o-all ALL \
   -o-exist EXIST \
+  -o-rx RX \
+  -o-not-rx NOT_RX
 
-
-echo "ALL:        ${ALL[*]}"
-echo "EXIST:      ${EXIST[*]}"
+echo "ALL:    ${ALL[*]}"
+echo "EXIST:  ${EXIST[*]}"
+echo "RX:     ${RX[*]}"
+echo "NOT_RX: ${NOT_RX[*]}"
 ```
 
-**Ausgabe:**
-
-```
-ALL:        /home/user/project/test.sh /home/user/project/build.sh /home/user/project/old.sh
-EXIST:      /home/user/project/test.sh /home/user/project/build.sh
-```
+**Erklärung:** Wildcards `*` und `?` werden automatisch aufgelöst; Kombinationen von Berechtigungen können direkt geprüft werden.
 
 ---
 
+### 🔄 Kombination von mehreren Eingaben
+
+```bash
+declare -a ALL
+
+# Mehrere -i Parameter gleichzeitig
+resolve_paths -i "file1.txt file2.txt" -i "/tmp/file3 /var/log/syslog" -o-all ALL
+echo "${ALL[*]}"
+```
+
+**Erklärung:** Mehrere Eingabearrays werden zusammen normalisiert und in ein Array geschrieben.
+
+---
+
+### 🔑 Prüfen nur nach Schreibbarkeit
+
+```bash
+declare -a W WRITEABLE_NOT
+
+resolve_paths -i "/tmp/*" -o-w W -o-not-w WRITEABLE_NOT
+echo "Writable: ${W[*]}"
+echo "Not writable: ${WRITEABLE_NOT[*]}"
+```
+
+**Erklärung:** Nur Schreibrechte prüfen, alle anderen Permissions ignorieren.
+
+---
+
+### 📛 Fehlende Dateien ermitteln
+
+```bash
+declare -a MISSING
+
+resolve_paths -i "file1.txt file2.txt /nonexistent/file" -o-missing MISSING
+echo "Missing files: ${MISSING[*]}"
+```
+
+**Erklärung:** Schnell ermitteln, welche Pfade noch erstellt werden müssen.
+
+---
+
+### ▶️ Prüfen auf ausführbare Skripte
+
+```bash
+declare -a RX RX_NOT
+
+resolve_paths -i "/usr/bin/*" -o-rx RX -o-not-rx RX_NOT
+echo "Executable: ${RX[*]}"
+echo "Not executable: ${RX_NOT[*]}"
+```
+
+**Erklärung:** Kombination aus lesbar + ausführbar filtern (z.B. Skripte).
+
+---
+
+### 🔒 Alle Berechtigungen prüfen
+
+```bash
+declare -a ALL RWX NOT_RWX
+
+resolve_paths -i "./*" -o-rwx RWX -o-not-rwx NOT_RWX
+echo "All rwx: ${RWX[*]}"
+echo "Not rwx: ${NOT_RWX[*]}"
+```
+
+**Erklärung:** Prüft in einem Schritt, welche Dateien **vollständige Lese-/Schreib-/Ausführrechte** haben.
+
+---
 
 ## 📌 API-Referenz
 
-| Beschreibung                          | Argument / Option    | Optional | Mehrfach möglich   | Typ                                 |
-| ------------------------------------- | -------------------- | -------- | ------------------ | ----------------------------------- |
-| 🟢 Eingabepfade                       | `--input` / `-i`     | ❌      | ✅                | String (Leerzeichen/Komma/Pipe/-s)  |
-| 🔹 Trennzeichen                       | `--separator` / `-s` | ✅      | ❌                | String (Zeichen)                    |
-| 🟣 Alle normalisierten Pfade ausgeben | `-o-all VAR`         | ✅      | ❌                | Array-Name                          |
-| 🟣 Existierende Pfade ausgeben        | `-o-exist VAR`       | ✅      | ❌                | Array-Name                          |
-| 🟣 Fehlende Pfade ausgeben            | `-o-missing VAR`     | ✅      | ❌                | Array-Name                          |
-| 🟣 Lesbare Pfade ausgeben             | `-o-read VAR`        | ✅      | ❌                | Array-Name                          |
-| 🟣 Nicht-lesbare Pfade ausgeben       | `-o-not-read VAR`    | ✅      | ❌                | Array-Name                          |
-| 🟣 Schreibbare Pfade ausgeben         | `-o-write VAR`       | ✅      | ❌                | Array-Name                          |
-| 🟣 Nicht-schreibbare Pfade ausgeben   | `-o-not-write VAR`   | ✅      | ❌                | Array-Name                          |
+| Beschreibung                                         | Argument / Alias                            | Optional | Mehrfach | Typ       |
+| ---------------------------------------------------- | ------------------------------------------- | ------- | -------- | ---------- |
+| 🟢📂 Eingabepfade                                   | `-i` / `--input`                            | ❌      | ✅      | String     |
+| 🔹📂 Trennzeichen                                   | `-s` / `--separator`                        | ✅      | ❌      | String     |
+| 🟣📂 Alle normalisierten Pfade                      | `-o-all`                                    | ✅      | ❌      | Array-Name |
+| 🟣✅ Existierende Pfade                             | `-o-exist`                                  | ✅      | ❌      | Array-Name |
+| 🟣❌ Fehlende Pfade                                 | `-o-missing`                                | ✅      | ❌      | Array-Name |
+| 🔒👀 Lesbar                                         | `-o-r`                                      | ✅      | ❌      | Array-Name |
+| 🔒🚫 Nicht-lesbar                                   | `-o-not-r`                                  | ✅      | ❌      | Array-Name |
+| 🔒✍️ Schreibbar                                     | `-o-w`                                      | ✅      | ❌      | Array-Name |
+| 🔒🚫 Nicht-schreibbar                               | `-o-not-w`                                  | ✅      | ❌      | Array-Name |
+| 🔒▶️ Ausführbar                                     | `-o-x`                                      | ✅      | ❌      | Array-Name |
+| 🔒🚫 Nicht-ausführbar                               | `-o-not-x`                                  | ✅      | ❌      | Array-Name |
+| 🔒⚡ Kombinierte Berechtigungen (rw)                | `-o-rw` / `-o-wr`                           | ✅      | ❌      | Array-Name |
+| 🔒❌ Negation kombinierter Berechtigungen (rw)      | `-o-not-rw` / `-o-not-wr`                   | ✅      | ❌      | Array-Name |
+| 🔒⚡ Kombinierte Berechtigungen (rx)                | `-o-rx` / `-o-xr`                           | ✅      | ❌      | Array-Name |
+| 🔒❌ Negation kombinierter Berechtigungen (rx)      | `-o-not-rx` / `-o-not-xr`                   | ✅      | ❌      | Array-Name |
+| 🔒⚡ Kombinierte Berechtigungen (wx)                | `-o-wx` / `-o-xw`                           | ✅      | ❌      | Array-Name |
+| 🔒❌ Negation kombinierter Berechtigungen (wx)      | `-o-not-wx` / `-o-not-xw`                   | ✅      | ❌      | Array-Name |
+| 1️⃣🔒⚡💡 Kombinierte Berechtigungen (rwx)          | `-o-rwx` / `-o-rxw` / `-o-wrx`              | ✅      | ❌      | Array-Name |
+| 2️⃣🔒⚡💡 Kombinierte Berechtigungen (rwx)          |  `-o-wxr` / `-o-xrw` / `-o-xwr`             | ✅      | ❌      | Array-Name |
+| 1️⃣🔒❌💡 Negation kombinierter Berechtigungen (rwx)| `-o-not-rwx` / `-o-not-rxw` / `-o-not-wrx`  | ✅      | ❌      | Array-Name |
+| 2️⃣🔒⚡💡 Negation kombinierter Berechtigungen (rwx)| `-o-not-wxr` / `-o-not-xrw` / `-o-not-xwr`  | ✅      | ❌      | Array-Name |
 
 **Rückgabewerte:**
 
@@ -232,26 +285,21 @@ EXIST:      /home/user/project/test.sh /home/user/project/build.sh
 
 ## 🗂️ Changelog
 
-**Version 2.0.0 – Verbesserungen gegenüber 1.0.1**
+**Version 3.0.0 – Verbesserungen gegenüber 2.0.0**
 
-* ❌ **Consistent error output:** Alle Fehlermeldungen verwenden nun das gleiche Icon-Format `❌ ERROR: ...`
-* ⚡ **Compact argument parsing:** `case`-Blöcke wurden kompakter geschrieben und Parameter direkt geprüft
-* 🟢 **Optimized separator handling:** Separatoren werden jetzt mit `IFS + read -r -a` gesplittet
-* 🟣 **Wildcard expansion:** Automatische Expansion von `*` und `?` Pfaden
-* ⚡ **-o-all Mapping vor Duplikaten:** Array wird vor Entfernen von Duplikaten geschrieben
-* 💡 **Defined return values 0/2:** Erfolg gibt `0` zurück, Fehler immer `2`
-* 📝 **Improved readability & structure:** Klarere Kommentare und kompakte Funktionsstruktur, Helper-Funktion `check_value` eingeführt
+* 🆕 **Berechtigungsprüfung erweitert:** Prüft jetzt zusätzlich `r`, `w`, `x` und alle Kombinationen (`rw`, `rx`, `wx`, `rwx`) mit Negationen
+* ⚡ **Klassifizierung optimiert:** Nur Berechtigungen, die als Output angefragt werden, werden geprüft
+* 🟢 **API erweitert:** Neue Optionen `-o-r`, `-o-w`, `-o-x`, `-o-rw`, `-o-rx`, `-o-wx`, `-o-rwx` sowie ihre `-o-not-*` Varianten
+* 📝 **Dokumentation aktualisiert:** README an neue Optionen angepasst
 
-### Unterschiede zur Version 1.0.1
+### Unterschiede zur Version 2.0.0
 
-| Feature / Änderung                    | 2.0.0 | 1.0.1 |
-| ------------------------------------- | ----- | ----- |
-| ❌ Konsistente Fehlerausgabe mit Icon |  ✅  |  ❌  |
-| ⚡ Kompaktes Argumenten-Parsing       |  ✅  |  ❌  |
-| 🟢 Separator-Verarbeitung optimiert   |  ✅  |  ❌  |
-| 🟣 Automatische Wildcard-Erweiterung  |  ✅  |  ❌  |
-| ⚡ -o-all Mapping vor Duplikaten      |  ✅  |  ❌  |
-
+| Feature / Änderung                                     | 3.0.0 | 2.0.0 |
+| ------------------------------------------------------ | ----- | ----- |
+| 🔒 Berechtigungsprüfung (r/w/x)                       | ✅    | ❌   |
+| 🔒 Kombinierte Berechtigungen rw/rx/wx/rwx            | ✅    | ❌   |
+| ⚡ Klassifizierung nur bei angefragten Berechtigungen | ✅    | ❌   |
+| 📝 API Referenz aktualisiert                          | ✅    | ❌   |
 
 ---
 
