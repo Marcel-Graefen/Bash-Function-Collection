@@ -12,10 +12,10 @@ Dieses Repository enthält eine Sammlung nützlicher Bash-Funktionen, die modula
 
 Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte eingebunden werden können.
 
-* [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Zerlegt Eingabe-Strings anhand von Leerzeichen, Kommas, Pipes oder eigenen Trennzeichen und gibt ein sauberes Array zurück. [🔗 Vollständige Dokumentation](Normalize%20List/README.de.md)
-* [📋 Display Table](#-display-table) – Zeigt formatierte Tabellen im Terminal an, berechnet Spaltenbreiten automatisch und zentriert den Header. Unterstützt mehrere Zeilen und benutzerdefinierte Separatoren. [🔗 Vollständige Dokumentation](Display%20Table/README.de.md)
-* [✅ Check Requirements](#-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [🔗 Vollständige Dokumentation](Check%20Requirements/README.de.md)
-* [📂 Resolve Paths](#-resolve-paths) - Normalisiert Eingabepfade, wandelt sie in absolute Pfade um und klassifiziert sie anschließend nach Existenz, Lesbarkeit und Schreibberechtigung.[🔗 Vollständige Dokumentation](Resolve%20Paths/README.de.md)
+* [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Zerlegt Eingabe-Strings anhand von Leerzeichen, Kommas, Pipes oder eigenen Trennzeichen und gibt ein sauberes Array zurück. [🔗 Vollständige Dokumentation](Normalize_List/README.de.md)
+* [📋 Display Table](#-display-table) – Zeigt formatierte Tabellen im Terminal an, berechnet Spaltenbreiten automatisch und zentriert den Header. Unterstützt mehrere Zeilen und benutzerdefinierte Separatoren. [🔗 Vollständige Dokumentation](Display_Table/README.de.md)
+* [✅ Check Requirements](#-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [🔗 Vollständige Dokumentation](Check_Requirements/README.de.md)
+* [📂 Resolve Paths](#-resolve-paths) - Normalisiert Eingabepfade, wandelt sie in absolute Pfade um und klassifiziert sie anschließend nach Existenz, Lesbarkeit und Schreibberechtigung.[🔗 Vollständige Dokumentation](Resolve_Paths/README.de.md)
 * [👤 Autor & Kontakt](#-autor--kontakt)
 * [🤖 Generierungshinweis](#-generierungshinweis)
 * [📜 Lizenz](#-lizenz)
@@ -53,7 +53,7 @@ banana
 kiwi
 ```
 
-[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Normalize%20List/README.de.md).
+[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Normalize_List/README.de.md).
 
 ---
 
@@ -88,7 +88,7 @@ display_table -H "My Table" \
 +--------+--------+--------+
 ```
 
-[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Display%20Table/README.de.md).
+[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Display_Table/README.de.md).
 
 ---
 
@@ -111,7 +111,7 @@ display_table -H "My Table" \
 check_requirements --major 4 --funcs "normalize_list" --programs "awk" --programs-alternative "git svn" --root
 ```
 
-[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Check%20Requirements/README.de.md).
+[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Check_Requirements/README.de.md).
 
 ---
 ## 📂 Resolve Paths
@@ -120,6 +120,7 @@ check_requirements --major 4 --funcs "normalize_list" --programs "awk" --program
 
 * 🟢 **Eingaben normalisieren:** Unterstützt mehrere Pfade und benutzerdefinierte Trennzeichen.
 * 🔹 **Absolute Pfade:** Wandelt relative Pfade in absolute Pfade um (`realpath`).
+* 🟣 **Automatische Wildcard-Erweiterung:** Pfade mit `*` oder `?` werden automatisch aufgelöst.
 * 🟣 **Existenzprüfung:** Trennt vorhandene von fehlenden Pfaden.
 * 🔒 **Lesbar/Schreibbar prüfen:** Trennt lesbare/schreibbare und nicht-lesbare/nicht-schreibbare Pfade.
 * ⚡ **Flexible Ausgabe:** Ergebnisse können in ein oder mehrere benannte Arrays geschrieben werden.
@@ -144,7 +145,7 @@ All: file1.txt file2.txt /tmp/file3
 Exist: /tmp/file3
 ```
 
-[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Resolve%20Paths/README.de.md)
+[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Resolve_Paths/README.de.md)
 
 ---
 
