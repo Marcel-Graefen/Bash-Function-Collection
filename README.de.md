@@ -28,7 +28,7 @@ Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte einge
 
 * 🟢 **Flexible Eingabe:** Akzeptiert einen oder mehrere Strings gleichzeitig.
 * 🔹 **Benutzerdefinierte Trennzeichen:** Regex-ähnlich, z. B. Leerzeichen, Komma, Pipe oder eigene Zeichen.
-* 🟣 **Array-Ausgabe:** Befüllt ein Bash-Array über Nameref (`-o|--output`).
+* 🟣 **Array-Ausgabe:** Befüllt ein Bash-Array über Nameref (`--out|---oututput`).
 * 🔒 **Robustes Fehlerhandling:** Fehlende Parameter werden erkannt und gemeldet.
 * ⚡ **Einfache Integration:** Kann direkt in Skripte eingebunden werden, keine externen Abhängigkeiten.
 * 💡 **Return-Wert:** 0 bei Erfolg, 2 bei Fehlern.
@@ -38,7 +38,7 @@ Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte einge
 ```bash
 declare -a my_array
 
-normalize_list -i "apple orange,banana|kiwi" -o my_array
+normalize_list -i "apple orange,banana|kiwi" --out my_array
 
 # Ausgabe prüfen
 printf "%s\n" "${my_array[@]}"
@@ -118,20 +118,22 @@ check_requirements --major 4 --funcs "normalize_list" --programs "awk" --program
 
 ### Eine Bash-Funktion zum Normalisieren und Auflösen von Dateipfaden, automatische Wildcard-Erweiterung (*?), Klassifizierung nach Existenz und einzelnen sowie kombinierten Berechtigungen (r/w/x, rw, rx, wx, rwx) sowie optionales Mapping der Ergebnisse in benannte Arrays.
 
-* 🗂️ **Eingaben normalisieren:** Trennt eine oder mehrere Pfade automatisch nach Leerzeichen oder benutzerdefinierten Zeichen.
+* 🗂️ **Eingaben normalisieren:** Trennt Pfade automatisch nach Leerzeichen oder benutzerdefinierten Zeichen.
 * 🔹 **Absolute Pfade:** Wandelt relative Pfade in absolute Pfade um (`realpath`).
-* ✨ **Automatische Wildcard-Erweiterung:** Pfade mit `*` oder `?` werden automatisch aufgelöst.
+* ✨ **Automatische Wildcard-Erweiterung:** Unterstützt `*` und `**` (Globstar).
 * 🟣 **Existenzprüfung:** Trennt vorhandene von fehlenden Pfaden.
-* 🔒 **Berechtigungsprüfung:** Prüft Lesbarkeit (`r`), Schreibbarkeit (`w`) und Ausführbarkeit (`x`) sowie Kombinationen (`rw`, `rx`, `wx`, `rwx`).
-* ⚡ **Flexible Ausgabe:** Ergebnisse können in ein oder mehrere benannte Arrays geschrieben werden.
-* 💡 **Rückgabewerte:** `0` bei Erfolg, `2` bei Fehler (z. B. fehlende Eingabe, unbekannte Option).
+* 🔒 **Berechtigungsprüfung:** Prüft Lesbarkeit (`r`), Schreibbarkeit (`w`) und Ausführbarkeit (`x`) sowie Kombinationen (`rw`, `rx`, `wx`, `rwx`) inklusive Negationen.
+* ⚡ **Flexible Ausgabe:** Ergebnisse können in benannte Arrays geschrieben werden.
+* ❌ **Eingabeschutz:** `/ **/` als führender Pfad wird abgelehnt.
+* ❌ **Separator-Prüfung:** Trennzeichen dürfen `/`, `*` oder `.` nicht enthalten.
+* 💡 **Rückgabewerte:** `0` bei Erfolg, `2` bei Fehler.
 
 **Kurzes Beispiel:**
 
 ```bash
 declare -a all exist
 
-resolve_paths -i "file1.txt,file2.txt,/tmp/file3" -o-all all -o-exist exist
+resolve_paths -i "file1.txt,file2.txt,/tmp/file3" --out-all all --out-exist exist
 
 printf "All: %s\nExist: %s\n" "${all[*]}" "${exist[*]}"
 ```

@@ -1,7 +1,7 @@
 # 📋 Bash Function: resolve\_paths
 
 [![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](../../../README.md)
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-1.0.0_beta.02-blue.svg)](#)
 [![Language](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
@@ -231,7 +231,7 @@ EXIST:      /home/user/project/test.sh /home/user/project/build.sh
 
 ## 🗂️ Changelog
 
-**Version 2.0.0 – Improvements over 1.0.1**
+**Version 1.0.0-Beta.02  – Improvements over 1.0.0-Beta.01**
 
 * ❌ **Consistent error output:** All error messages now use the same icon format `❌ ERROR: ...`
 * ⚡ **Compact argument parsing:** `case` blocks rewritten in a more compact form with direct parameter checking
@@ -241,15 +241,15 @@ EXIST:      /home/user/project/test.sh /home/user/project/build.sh
 * 💡 **Defined return values 0/2:** Success returns `0`, errors always return `2`
 * 📝 **Improved readability & structure:** Clearer comments and compact function layout, helper function `check_value` introduced
 
-### Differences compared to version 1.0.1
+### Differences compared to Beta.01
 
-| Feature / Change                      | 2.0.0 | 1.0.1 |
-| ------------------------------------- | ----- | ----- |
-| ❌ Consistent error output with icon   | ✅     | ❌     |
-| ⚡ Compact argument parsing            | ✅     | ❌     |
-| 🟢 Optimized separator handling       | ✅     | ❌     |
-| 🟣 Automatic wildcard expansion       | ✅     | ❌     |
-| ⚡ -o-all mapping before deduplication | ✅     | ❌     |
+| Feature / Change                      | 02 | 01 |
+| ------------------------------------- | -- | -- |
+| ❌ Consistent error output with icon  |✅ |❌  |
+| ⚡ Compact argument parsing           | ✅|❌  |
+| 🟢 Optimized separator handling       | ✅|❌  |
+| 🟣 Automatic wildcard expansion       | ✅|❌  |
+| ⚡ -o-all mapping before deduplication| ✅|❌  |
 
 ---
 

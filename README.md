@@ -119,13 +119,15 @@ check_requirements --major 4 --funcs "normalize_list" --programs "awk" --program
 
 ### A Bash function to normalize and resolve file paths, automatically expand wildcards (*, ?), classify paths by existence and individual or combined permissions (r/w/x, rw, rx, wx, rwx), and optionally map the results into named arrays.
 
-* 🗂️ **Normalize Inputs:** Automatically splits one or multiple paths by spaces or custom separators.
-* 🔹 **Absolute Paths:** Converts relative paths to absolute paths (`realpath`).
-* ✨ **Automatic Wildcard Expansion:** Paths containing `*` or `?` are automatically resolved.
-* 🟣 **Existence Check:** Separates existing from missing paths.
-* 🔒 **Permission Check:** Checks readability (`r`), writability (`w`), executability (`x`) and combinations (`rw`, `rx`, `wx`, `rwx`).
-* ⚡ **Flexible Output:** Results can be written into one or more named arrays.
-* 💡 **Return Codes:** `0` for success, `2` for errors (e.g., missing input, unknown option).
+* 🗂️ **Normalize inputs:** Automatically split paths by spaces or custom characters.
+* 🔹 **Absolute paths:** Converts relative paths to absolute paths (`realpath`).
+* ✨ **Automatic wildcard expansion:** Supports `*` and `**` (Globstar).
+* 🟣 **Existence check:** Separates existing from missing paths.
+* 🔒 **Permission check:** Checks readability (`r`), writeability (`w`), executability (`x`) and combinations (`rw`, `rx`, `wx`, `rwx`) including negations.
+* ⚡ **Flexible output:** Results can be written into named arrays.
+* ❌ **Input protection:** Leading `/ **/` paths are rejected.
+* ❌ **Separator check:** Separators cannot contain `/`, `*`, or `.`.
+* 💡 **Return values:** `0` for success, `2` for error.
 
 **Quick Example:**
 

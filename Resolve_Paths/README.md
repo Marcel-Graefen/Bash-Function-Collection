@@ -1,34 +1,35 @@
 # 📋 Bash Function: Resolve Paths
 
-[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat&logo=github)](../README.md)
-[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](#)
-[![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
+[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](../README.de.md)
+[![Version](https://img.shields.io/badge/version-1.0.0_beta.04-blue.svg)](#)
+[![English](https://img.shields.io/badge/Language-English-blue)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
-A Bash function to normalize and resolve file paths, automatically expand wildcards (*, ?), classify paths by existence and individual or combined permissions (r/w/x, rw, rx, wx, rwx), and optionally map the results into named arrays.
+A Bash function for normalizing and resolving file paths, automatic wildcard expansion (`*`, `?`, `**`) with **Globstar support**, classification by existence and permissions (r/w/x, rw, rx, wx, rwx), and optional mapping of results into named arrays.
 
 ---
 
 ## 🚀 Table of Contents
 
-* [📌 Important Notes](#📌-important-notes)
+* [📌 Notes](#📌-notes)
 * [🛠️ Functions & Features](#🛠️-functions--features)
 * [⚙️ Requirements](#⚙️-requirements)
 * [📦 Installation](#📦-installation)
 * [📝 Usage](#📝-usage)
+
   * <details>
     <summary>▶️ Examples</summary>
 
-      * [🗂️ Normalize and Resolve Paths](#🗂️-normalize-and-resolve-paths)
-      * [⚙️ Custom Separators](#⚙️-custom-separators)
-      * [🔍 Classify Paths](#🔍-classify-paths)
-      * [📝 Output to Named Arrays](#📝-output-to-named-arrays)
-      * [✨ Use Wildcards](#✨-use-wildcards)
-      * [🔄 Combine Multiple Inputs](#🔄-combine-multiple-inputs)
-      * [🔑 Check Writable Only](#🔑-check-writable-only)
-      * [📛 Identify Missing Files](#📛-identify-missing-files)
-      * [▶️ Check Executable Scripts](#▶️-check-executable-scripts)
-      * [🔒 Check All Permissions](#🔒-check-all-permissions)
+    * [🗂️ Normalize and resolve paths](#🗂️-normalize-and-resolve-paths)
+    * [⚙️ Custom separators](#⚙️-custom-separators)
+    * [🔍 Classify paths](#🔍-classify-paths)
+    * [📝 Output to named arrays](#📝-output-to-named-arrays)
+    * [✨ Use wildcards](#✨-use-wildcards)
+    * [🔄 Combine multiple inputs](#🔄-combine-multiple-inputs)
+    * [🔑 Check write-only permission](#🔑-check-write-only-permission)
+    * [📛 Detect missing files](#📛-detect-missing-files)
+    * [▶️ Check executable scripts](#▶️-check-executable-scripts)
+    * [🔒 Check all permissions](#🔒-check-all-permissions)
 
     </details>
 * [📌 API Reference](#📌-api-reference)
@@ -41,19 +42,21 @@ A Bash function to normalize and resolve file paths, automatically expand wildca
 
 ## 🛠️ Functions & Features
 
-* 🗂️ **Normalize Inputs:** Automatically splits one or multiple paths by spaces or custom separators.
-* 🔹 **Absolute Paths:** Converts relative paths to absolute paths (`realpath`).
-* ✨ **Automatic Wildcard Expansion:** Paths containing `*` or `?` are automatically resolved.
-* 🟣 **Existence Check:** Separates existing from missing paths.
-* 🔒 **Permission Check:** Checks readability (`r`), writability (`w`), executability (`x`) and combinations (`rw`, `rx`, `wx`, `rwx`).
-* ⚡ **Flexible Output:** Results can be written into one or more named arrays.
-* 💡 **Return Codes:** `0` for success, `2` for errors (e.g., missing input, unknown option).
+* 🗂️ **Normalize inputs:** Automatically split paths by spaces or custom characters.
+* 🔹 **Absolute paths:** Converts relative paths to absolute paths (`realpath`).
+* ✨ **Automatic wildcard expansion:** Supports `*` and `**` (Globstar).
+* 🟣 **Existence check:** Separates existing from missing paths.
+* 🔒 **Permission check:** Checks readability (`r`), writeability (`w`), executability (`x`) and combinations (`rw`, `rx`, `wx`, `rwx`) including negations.
+* ⚡ **Flexible output:** Results can be written into named arrays.
+* ❌ **Input protection:** Leading `/ **/` paths are rejected.
+* ❌ **Separator check:** Separators cannot contain `/`, `*`, or `.`.
+* 💡 **Return values:** `0` for success, `2` for error.
 
 ---
 
 ## ⚙️ Requirements
 
-* 🐚 **Bash** version 4.0 or higher
+* 🐚 **Bash** version 4.3 or higher
 * `normalize_list` function available
 * `realpath` command available
 
@@ -65,85 +68,78 @@ A Bash function to normalize and resolve file paths, automatically expand wildca
 #!/usr/bin/env bash
 
 source "/path/to/resolve_paths.sh"
-````
+```
 
 ---
 
 ## 📝 Usage
 
-### 🗂️ Normalize and Resolve Paths
-
-Normalizes input paths, splits them, and converts them to absolute paths.
+### 🗂️ Normalize and resolve paths
 
 ```bash
 declare -a all_paths
 
-# Example: single input with multiple paths
-resolve_paths -i "file1.txt file2.txt,/tmp/file3" -o-all all_paths
-
-# Check output
+resolve_paths -i "file1.txt file2.txt,/tmp/file3" --out-all all_paths
 printf "%s\n" "${all_paths[@]}"
 ```
 
-**Explanation:** All paths are made absolute and stored separately in the `all_paths` array.
+**Explanation:** Resolves all paths to absolute, normalizes multiple inputs, and writes results into `all_paths` array. Useful to process different paths consistently.
 
 ---
 
-### ⚙️ Custom Separators
+### ⚙️ Custom separators
 
 ```bash
 declare -a all_paths
 
-# Example: comma, semicolon, or pipe as separators
 resolve_paths \
   -i "file1.txt,file2.txt;/tmp/file3|/var/log/syslog" \
   -s ",;|" \
-  -o-all all_paths
+  --out-all all_paths
 
 printf "%s\n" "${all_paths[@]}"
 ```
 
-**Explanation:** Separators can be freely specified; multiple separators can be used simultaneously.
+**Explanation:** Custom separators can be defined; multiple separators can be used at once.
 
-> By default, the `normalize_list` function splits paths by spaces (` `), comma (`,`), and pipe (`|`), so `-s|--separator` is usually not required.
+> By default, `normalize_list` splits paths by space (` `), comma (`,`), and pipe (`|`). Using `-s|--separator` is usually not required.
+> Forbidden separators: dot (`.`), slash (`/`), asterisk (`*`).
 
 ---
 
-### 🔍 Classify Paths
+### 🔍 Classify paths
 
 ```bash
 declare -a exist missing r not_r w not_w x not_x rw not_rw rx not_rx wx not_wx rwx not_rwx
 
-# Example: check existence and permissions
 resolve_paths \
   -i "file1.txt file2.txt /tmp/file3" \
-  -o-exist exist -o-missing missing \
-  -o-r r -o-not-r not_r \
-  -o-w w -o-not-w not_w \
-  -o-x x -o-not-x not_x \
-  -o-rw rw -o-not-rw not_rw \
-  -o-rx rx -o-not-rx not_rx \
-  -o-wx wx -o-not-wx not_wx \
-  -o-rwx rwx -o-not-rwx not_rwx
+  --out-exist exist --out-missing missing \
+  --out-r r --out-not-r not_r \
+  --out-w w --out-not-w not_w \
+  --out-x x --out-not-x not_x \
+  --out-rw rw --out-not-rw not_rw \
+  --out-rx rx --out-not-rx not_rx \
+  --out-wx wx --out-not-wx not_wx \
+  --out-rwx rwx --out-not-rwx not_rwx
 ```
 
-**Explanation:** Separates existing/missing paths and checks readable, writable, executable paths and all combinations (`rw`, `rx`, `wx`, `rwx`).
+**Explanation:** Separates paths by existence and permissions. Check which files are readable, writable, executable, or not.
 
 ---
 
-### 📝 Output to Named Arrays
+### 📝 Output to named arrays
 
 ```bash
 declare -a ALL EXIST MISSING RW NOT_RW
 
-# Example: map results to custom arrays
 resolve_paths \
   -i "file1.txt,file2.txt,/tmp/file3" \
-  -o-all ALL \
-  -o-exist EXIST \
-  -o-missing MISSING \
-  -o-rw RW \
-  -o-not-rw NOT_RW
+  --out-all ALL \
+  --out-exist EXIST \
+  --out-missing MISSING \
+  --out-rw RW \
+  --out-not-rw NOT_RW
 
 echo "ALL:     ${ALL[*]}"
 echo "EXIST:   ${EXIST[*]}"
@@ -152,22 +148,21 @@ echo "RW:      ${RW[*]}"
 echo "NOT_RW:  ${NOT_RW[*]}"
 ```
 
-**Explanation:** Any internal arrays can be mapped to your own named arrays.
+**Explanation:** Results are written into any named arrays for further processing or filtering.
 
 ---
 
-### ✨ Use Wildcards
+### ✨ Use wildcards
 
 ```bash
 declare -a ALL EXIST RX NOT_RX
 
-# Example: all .sh files in current directory
 resolve_paths \
-  -i "./*.sh" \
-  -o-all ALL \
-  -o-exist EXIST \
-  -o-rx RX \
-  -o-not-rx NOT_RX
+  -i "./**/*.sh" \
+  --out-all ALL \
+  --out-exist EXIST \
+  --out-rx RX \
+  --out-not-rx NOT_RX
 
 echo "ALL:    ${ALL[*]}"
 echo "EXIST:  ${EXIST[*]}"
@@ -175,106 +170,105 @@ echo "RX:     ${RX[*]}"
 echo "NOT_RX: ${NOT_RX[*]}"
 ```
 
-**Explanation:** Wildcards `*` and `?` are automatically resolved; permission combinations can be checked directly.
+**Explanation:** Supports `*` and `**`. Useful to collect all files of a type recursively and check permissions.
 
 ---
 
-### 🔄 Combine Multiple Inputs
+### 🔄 Combine multiple inputs
 
 ```bash
 declare -a ALL
 
-# Multiple -i parameters
-resolve_paths -i "file1.txt file2.txt" -i "/tmp/file3 /var/log/syslog" -o-all ALL
+resolve_paths -i "file1.txt file2.txt" -i "/tmp/file3 /var/log/syslog" --out-all ALL
 echo "${ALL[*]}"
 ```
 
-**Explanation:** Multiple input arrays are normalized together and written into a single array.
+**Explanation:** Multiple `-i` inputs can be merged, normalized, and written into a single array.
 
 ---
 
-### 🔑 Check Writable Only
+### 🔑 Check write-only permission
 
 ```bash
 declare -a W WRITEABLE_NOT
 
-resolve_paths -i "/tmp/*" -o-w W -o-not-w WRITEABLE_NOT
+resolve_paths -i "/tmp/*" --out-w W --out-not-w WRITEABLE_NOT
 echo "Writable: ${W[*]}"
 echo "Not writable: ${WRITEABLE_NOT[*]}"
 ```
 
-**Explanation:** Only checks write permissions; other permissions are ignored.
+**Explanation:** Useful when only write permission matters. Other permissions are ignored.
 
 ---
 
-### 📛 Identify Missing Files
+### 📛 Detect missing files
 
 ```bash
 declare -a MISSING
 
-resolve_paths -i "file1.txt file2.txt /nonexistent/file" -o-missing MISSING
+resolve_paths -i "file1.txt file2.txt /nonexistent/file" --out-missing MISSING
 echo "Missing files: ${MISSING[*]}"
 ```
 
-**Explanation:** Quickly determine which paths need to be created.
+**Explanation:** Quickly identify missing paths that need creation or checks before file operations.
 
 ---
 
-### ▶️ Check Executable Scripts
+### ▶️ Check executable scripts
 
 ```bash
 declare -a RX RX_NOT
 
-resolve_paths -i "/usr/bin/*" -o-rx RX -o-not-rx RX_NOT
+resolve_paths -i "/usr/bin/*" --out-rx RX --out-not-rx RX_NOT
 echo "Executable: ${RX[*]}"
 echo "Not executable: ${RX_NOT[*]}"
 ```
 
-**Explanation:** Filter for readable + executable (e.g., scripts).
+**Explanation:** Filters combined permissions (readable + executable). Useful to identify scripts or executables.
 
 ---
 
-### 🔒 Check All Permissions
+### 🔒 Check all permissions
 
 ```bash
 declare -a ALL RWX NOT_RWX
 
-resolve_paths -i "./*" -o-rwx RWX -o-not-rwx NOT_RWX
+resolve_paths -i "./*" --out-rwx RWX --out-not-rwx NOT_RWX
 echo "All rwx: ${RWX[*]}"
 echo "Not rwx: ${NOT_RWX[*]}"
 ```
 
-**Explanation:** Checks in one step which files have **full read/write/execute rights**.
+**Explanation:** Checks which files have full permissions and which do not. Helpful for consistent access control.
 
 ---
 
 ## 📌 API Reference
 
-| Description                                  | Argument / Alias                            | Optional  | Multiple   | Type       |
-| -------------------------------------------- | ------------------------------------------- | ---------- | --------- | ---------- |
-| 🟢📂 Input Paths                             | `-i` / `--input`                           | ❌        | ✅        | String     |
-| 🔹📂 Separators                              | `-s` / `--separator`                       | ✅        | ❌        | String     |
-| 🟣📂 All normalized paths                    | `-o-all`                                   | ✅        | ❌        | Array-Name |
-| 🟣✅ Existing paths                          | `-o-exist`                                 | ✅        | ❌        | Array-Name |
-| 🟣❌ Missing paths                           | `-o-missing`                               | ✅        | ❌        | Array-Name |
-| 🔒👀 Readable                                | `-o-r`                                     | ✅        | ❌        | Array-Name |
-| 🔒🚫 Not readable                            | `-o-not-r`                                 | ✅        | ❌        | Array-Name |
-| 🔒✍️ Writable                                | `-o-w`                                     | ✅        | ❌        | Array-Name |
-| 🔒🚫 Not writable                            | `-o-not-w`                                 | ✅        | ❌        | Array-Name |
-| 🔒▶️ Executable                              | `-o-x`                                     | ✅        | ❌        | Array-Name |
-| 🔒🚫 Not executable                          | `-o-not-x`                                 | ✅        | ❌        | Array-Name |
-| 🔒⚡ Combined permissions (rw)               | `-o-rw` / `-o-wr`                          | ✅        | ❌        | Array-Name |
-| 🔒❌ Negated combined permissions (rw)       | `-o-not-rw` / `-o-not-wr`                  | ✅        | ❌        | Array-Name |
-| 🔒⚡ Combined permissions (rx)               | `-o-rx` / `-o-xr`                          | ✅        | ❌        | Array-Name |
-| 🔒❌ Negated combined permissions (rx)       | `-o-not-rx` / `-o-not-xr`                  | ✅        | ❌        | Array-Name |
-| 🔒⚡ Combined permissions (wx)               | `-o-wx` / `-o-xw`                          | ✅        | ❌        | Array-Name |
-| 🔒❌ Negated combined permissions (wx)       | `-o-not-wx` / `-o-not-xw`                  | ✅        | ❌        | Array-Name |
-| 1️⃣🔒⚡💡 Combined permissions (rwx)         | `-o-rwx` / `-o-rxw` / `-o-wrx`             | ✅        | ❌        | Array-Name |
-| 2️⃣🔒⚡💡 Combined permissions (rwx)         | `-o-wxr` / `-o-xrw` / `-o-xwr`             | ✅        | ❌        | Array-Name |
-| 1️⃣🔒❌💡 Negated combined permissions (rwx) | `-o-not-rwx` / `-o-not-rxw` / `-o-not-wrx` | ✅        | ❌        | Array-Name |
-| 2️⃣🔒⚡💡 Negated combined permissions (rwx) | `-o-not-wxr` / `-o-not-xrw` / `-o-not-xwr` | ✅        | ❌        | Array-Name |
+| Description                                  | Argument / Alias                                    | Optional | Multiple | Type       |
+| -------------------------------------------- | --------------------------------------------------- | -------- | -------- | ---------- |
+| 🟢📂 Input paths                             | `-i` / `--input` / `-d` / `--dir` / `-f` / `--file` | ❌        | ✅        | String     |
+| 🔹📂 Separators                              | `-s` / `--separator`                                | ✅        | ❌        | String     |
+| 🟣📂 All normalized paths                    | `--out-all`                                         | ✅        | ❌        | Array-Name |
+| 🟣✅ Existing paths                           | `--out-exist`                                       | ✅        | ❌        | Array-Name |
+| 🟣❌ Missing paths                            | `--out-missing`                                     | ✅        | ❌        | Array-Name |
+| 🔒👀 Readable                                | `--out-r`                                           | ✅        | ❌        | Array-Name |
+| 🔒🚫 Not readable                            | `--out-not-r`                                       | ✅        | ❌        | Array-Name |
+| 🔒✍️ Writable                                | `--out-w`                                           | ✅        | ❌        | Array-Name |
+| 🔒🚫 Not writable                            | `--out-not-w`                                       | ✅        | ❌        | Array-Name |
+| 🔒▶️ Executable                              | `--out-x`                                           | ✅        | ❌        | Array-Name |
+| 🔒🚫 Not executable                          | `--out-not-x`                                       | ✅        | ❌        | Array-Name |
+| 🔒⚡ Combined permissions (rw)                | `--out-rw` / `--out-wr`                             | ✅        | ❌        | Array-Name |
+| 🔒❌ Negation combined permissions (rw)       | `--out-not-rw` / `--out-not-wr`                     | ✅        | ❌        | Array-Name |
+| 🔒⚡ Combined permissions (rx)                | `--out-rx` / `--out-xr`                             | ✅        | ❌        | Array-Name |
+| 🔒❌ Negation combined permissions (rx)       | `--out-not-rx` / `--out-not-xr`                     | ✅        | ❌        | Array-Name |
+| 🔒⚡ Combined permissions (wx)                | `--out-wx` / `--out-xw`                             | ✅        | ❌        | Array-Name |
+| 🔒❌ Negation combined permissions (wx)       | `--out-not-wx` / `--out-not-xw`                     | ✅        | ❌        | Array-Name |
+| 1️⃣🔒⚡💡 Combined permissions (rwx)          | `--out-rwx` / `--out-rxw` / `--out-wrx`             | ✅        | ❌        | Array-Name |
+| 2️⃣🔒⚡💡 Combined permissions (rwx)          | `--out-wxr` / `--out-xrw` / `--out-xwr`             | ✅        | ❌        | Array-Name |
+| 1️⃣🔒❌💡 Negation combined permissions (rwx) | `--out-not-rwx` / `--out-not-rxw` / `--out-not-wrx` | ✅        | ❌        | Array-Name |
+| 2️⃣🔒⚡💡 Negation combined permissions (rwx) | `--out-not-wxr` / `--out-not-xrw` / `--out-not-xwr` | ✅        | ❌        | Array-Name |
 
-**Return codes:**
+**Return values:**
 
 * `0` on success
 * `2` on error
@@ -283,21 +277,13 @@ echo "Not rwx: ${NOT_RWX[*]}"
 
 ## 🗂️ Changelog
 
-**Version 3.0.0 – Improvements over 2.0.0**
+**Version 1.0.0-Beta.04 – Improvements over 1.0.0-Beta.03**
 
-* 🆕 **Permission checking extended:** Now checks `r`, `w`, `x` and all combinations (`rw`, `rx`, `wx`, `rwx`) with negations
-* ⚡ **Classification optimized:** Only requested permissions are checked
-* 🟢 **API extended:** New options `-o-r`, `-o-w`, `-o-x`, `-o-rw`, `-o-rx`, `-o-wx`, `-o-rwx` and their `-o-not-*` variants
-* 📝 **Documentation updated:** README adapted to new options
-
-### Differences from Version 2.0.0
-
-| Feature / Change                                 | 3.0.0 | 2.0.0 |
-| ------------------------------------------------ | ----- | ----- |
-| 🔒 Permission check (r/w/x)                      | ✅   | ❌    |
-| 🔒 Combined permissions rw/rx/wx/rwx             | ✅   | ❌    |
-| ⚡ Classification only for requested permissions | ✅   | ❌    |
-| 📝 API reference updated                         | ✅   | ❌    |
+* 🆕 **Globstar support:** `**` wildcards supported
+* ❌ **Input security:** Leading `/ **/` forbidden (may take too long)
+* ❌ **Separator check:** `/`, `.` or `*` not allowed
+* 📂 **Input paths:** New aliases added: `-d` / `--dir` / `-f` / `--file`
+* ⚠️ **Argument change:** All output arguments use `--out-` prefix instead of `-o-`
 
 ---
 
@@ -310,7 +296,7 @@ echo "Not rwx: ${NOT_RWX[*]}"
 
 ## 🤖 Generation Note
 
-This project was developed with the assistance of Artificial Intelligence (AI). The AI helped generate the script, comments, and documentation (README.md). The final result was reviewed and adjusted by me.
+This project was developed with AI assistance. Scripts, comments, and documentation were finalized and reviewed manually.
 
 ---
 

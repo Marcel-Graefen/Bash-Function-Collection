@@ -1,7 +1,7 @@
 # 📋 Bash Funktion: resolve_paths
 
 [![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat&logo=github)](../../../README.de.md)
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-1.0.0_beta.02-blue.svg)](#)
 [![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
@@ -232,7 +232,7 @@ EXIST:      /home/user/project/test.sh /home/user/project/build.sh
 
 ## 🗂️ Changelog
 
-**Version 2.0.0 – Verbesserungen gegenüber 1.0.1**
+**Version 1.0.0-Beta.02 – Verbesserungen gegenüber 1.0.0-Beta.01**
 
 * ❌ **Consistent error output:** Alle Fehlermeldungen verwenden nun das gleiche Icon-Format `❌ ERROR: ...`
 * ⚡ **Compact argument parsing:** `case`-Blöcke wurden kompakter geschrieben und Parameter direkt geprüft
@@ -242,15 +242,15 @@ EXIST:      /home/user/project/test.sh /home/user/project/build.sh
 * 💡 **Defined return values 0/2:** Erfolg gibt `0` zurück, Fehler immer `2`
 * 📝 **Improved readability & structure:** Klarere Kommentare und kompakte Funktionsstruktur, Helper-Funktion `check_value` eingeführt
 
-### Unterschiede zur Version 1.0.1
+### Unterschiede zur Beta.01
 
-| Feature / Änderung                    | 2.0.0 | 1.0.1 |
-| ------------------------------------- | ----- | ----- |
-| ❌ Konsistente Fehlerausgabe mit Icon |  ✅  |  ❌  |
-| ⚡ Kompaktes Argumenten-Parsing       |  ✅  |  ❌  |
-| 🟢 Separator-Verarbeitung optimiert   |  ✅  |  ❌  |
-| 🟣 Automatische Wildcard-Erweiterung  |  ✅  |  ❌  |
-| ⚡ -o-all Mapping vor Duplikaten      |  ✅  |  ❌  |
+| Feature / Änderung                    | 01 | 01 |
+| ------------------------------------- | -- | -- |
+| ❌ Konsistente Fehlerausgabe mit Icon | ✅ |❌ |
+| ⚡ Kompaktes Argumenten-Parsing       | ✅ |❌ |
+| 🟢 Separator-Verarbeitung optimiert   | ✅ |❌ |
+| 🟣 Automatische Wildcard-Erweiterung  | ✅ |❌ |
+| ⚡ -o-all Mapping vor Duplikaten      | ✅ |❌ |
 
 
 ---

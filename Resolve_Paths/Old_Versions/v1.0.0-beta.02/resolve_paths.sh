@@ -5,7 +5,7 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 2.0.0
+# @version     : 1.0.0-Beta.02
 # @date        : 2025-08-21
 #
 # @requires    : Bash 4.0+

@@ -5,10 +5,10 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 1.0.0-beta.04
+# @version     : 3.0.0
 # @date        : 2025-08-21
 #
-# @requires    : Bash 4.3+
+# @requires    : Bash 4.0+
 # @requires    : realpath
 # @requires    : Function   =>  Normalize List v1.X.X
 # @requires    : Function   =>  check_requirements v1.X.X
@@ -18,14 +18,7 @@
 # @copyright   : Copyright (c) 2025 Marcel Gräfen
 # @license     : MIT License
 # ========================================================================================
-log_msg() {
-  local level="$1"; shift
-  local msg="$*"
-  echo "[$level] $msg"
-}
 
-# Function -> Normaliz List
-source <(wget -qO- "https://raw.githubusercontent.com/Marcel-Graefen/Bash-Function-Collection/refs/heads/main/Normalize_List/normalize_list.sh")
 
 
 #---------------------- FUNCTION: resolve_paths --------------------------------
@@ -35,7 +28,7 @@ source <(wget -qO- "https://raw.githubusercontent.com/Marcel-Graefen/Bash-Functi
 #   - Normalizes input (via normalize_list)
 #   - Expands wildcards (*, ?) automatically
 #   - Resolves absolute paths (via realpath -m)
-#   - Removes duplicates (except for --out-all, which preserves all before dedup)
+#   - Removes duplicates (except for -o-all, which preserves all before dedup)
 #   - Classifies paths by:
 #       • Existence (exist / missing)
 #       • Read (r / not-r)
@@ -58,34 +51,34 @@ source <(wget -qO- "https://raw.githubusercontent.com/Marcel-Graefen/Bash-Functi
 #   log_msg
 #
 # Arguments:
-#   -i, --input, -dir, --dir, -f, --file    Space-separated list of input paths
-#   -s, --separator                         Separator characters for splitting input
-#   --out-all                               Output array with all normalized paths (before dedup)
-#   --out-exist                             Output array: existing paths
-#   --out-missing                           Output array: missing paths
-#   --out-r                                 Output array: readable paths
-#   --out-not-r                             Output array: not-readable paths
-#   --out-w                                 Output array: writable paths
-#   --out-not-w                             Output array: not-writable paths
-#   --out-x                                 Output array: executable paths
-#   --out-not-x                             Output array: not-executable paths
-#   --out-rw, --out-wr                      Output array: read+write paths
-#   --out-not-rw, --out-not-wr              Output array: not-read+write paths
-#   --out-rx, --out-xr                      Output array: read+execute paths
-#   --out-not-rx, --out-not-xr              Output array: not-read+execute paths
-#   --out-wx, --out-xw                      Output array: write+execute paths
-#   --out-not-wx, --out-not-xw              Output array: not-write+execute paths
-#   --out-rwx, --out-rxw, --out-wrx, --out-wxr, --out-xrw, --out-xwr
-#                                           Output array: read+write+execute paths
-#   --out-not-rwx, --out-not-rxw, --out-not-wrx, --out-not-wxr, --out-not-xrw, --out-not-xwr
-#                                           Output array: not-read+write+execute paths
+#   -i, --input          Space-separated list of input paths
+#   -s, --separator      Separator characters for splitting input
+#   -o-all               Output array with all normalized paths (before dedup)
+#   -o-exist             Output array: existing paths
+#   -o-missing           Output array: missing paths
+#   -o-r                 Output array: readable paths
+#   -o-not-r             Output array: not-readable paths
+#   -o-w                 Output array: writable paths
+#   -o-not-w             Output array: not-writable paths
+#   -o-x                 Output array: executable paths
+#   -o-not-x             Output array: not-executable paths
+#   -o-rw, -o-wr         Output array: read+write paths
+#   -o-not-rw, -o-not-wr Output array: not-read+write paths
+#   -o-rx, -o-xr         Output array: read+execute paths
+#   -o-not-rx, -o-not-xr Output array: not-read+execute paths
+#   -o-wx, -o-xw         Output array: write+execute paths
+#   -o-not-wx, -o-not-xw Output array: not-write+execute paths
+#   -o-rwx, -o-rxw, -o-wrx, -o-wxr, -o-xrw, -o-xwr
+#                        Output array: read+write+execute paths
+#   -o-not-rwx, -o-not-rxw, -o-not-wrx, -o-not-wxr, -o-not-xrw, -o-not-xwr
+#                        Output array: not-read+write+execute paths
 #
 # Returns:
 #   0  on success
-#   2  on error (e.g., missing input, unknown option, or missing --out-* output array)
+#   2  on error (e.g., missing input, unknown option, or missing -o-* output array)
 #
 # Notes:
-#   - Requires at least one --out-* output option
+#   - Requires at least one -o-* output option
 #   - Errors are printed with ❌ prefix via log_msg
 
 resolve_paths() {
@@ -98,9 +91,10 @@ resolve_paths() {
     return 2
   fi
 
-  # --------- Defaults -----------------
-  local inputs=() sep=" "
+  # Defaults
+  local inputs=() sep=" " wildcard_chars="*?"
   local output_all_var="" output_exist_var="" output_missing_var=""
+
   local output_r_var="" output_not_r_var=""
   local output_w_var="" output_not_w_var=""
   local output_x_var="" output_not_x_var=""
@@ -120,50 +114,34 @@ resolve_paths() {
   # --------- Parse arguments ---------
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -i|--input|-d|--dir|-f|--file)  check_value "$2" "$1" || return 2; inputs+=("$2") ;;
+      -i|--input)     check_value "$2" "$1" || return 2; inputs+=("$2")           ;;
+      -s|--separator) check_value "$2" "$1" || return 2; sep="$2"                 ;;
+      -o-all)         check_value "$2" "$1" || return 2; output_all_var="$2"      ;;
+      -o-exist)       check_value "$2" "$1" || return 2; output_exist_var="$2"    ;;
+      -o-missing)     check_value "$2" "$1" || return 2; output_missing_var="$2"  ;;
 
-      -s|--separator)    check_value "$2" "$1" || return 2; sep="$2"  ;;
+      -o-r)           check_value "$2" "$1" || return 2; output_r_var="$2"        ;;
+      -o-not-r)       check_value "$2" "$1" || return 2; output_not_r_var="$2"    ;;
+      -o-w)           check_value "$2" "$1" || return 2; output_w_var="$2"        ;;
+      -o-not-w)       check_value "$2" "$1" || return 2; output_not_w_var="$2"    ;;
+      -o-x)           check_value "$2" "$1" || return 2; output_x_var="$2"        ;;
+      -o-not-x)       check_value "$2" "$1" || return 2; output_not_x_var="$2"    ;;
 
-      --out-all)         check_value "$2" "$1" || return 2; output_all_var="$2"      ;;
-      --out-exist)       check_value "$2" "$1" || return 2; output_exist_var="$2"    ;;
-      --out-missing)     check_value "$2" "$1" || return 2; output_missing_var="$2"  ;;
-
-      --out-r)           check_value "$2" "$1" || return 2; output_r_var="$2"     ;;
-      --out-not-r)       check_value "$2" "$1" || return 2; output_not_r_var="$2" ;;
-      --out-w)           check_value "$2" "$1" || return 2; output_w_var="$2"     ;;
-      --out-not-w)       check_value "$2" "$1" || return 2; output_not_w_var="$2" ;;
-      --out-x)           check_value "$2" "$1" || return 2; output_x_var="$2"     ;;
-      --out-not-x)       check_value "$2" "$1" || return 2; output_not_x_var="$2" ;;
-
-      --out-rw|--out-wr)         check_value "$2" "$1" || return 2; output_rw_var="$2"      ;;
-      --out-not-rw|--out-not-wr) check_value "$2" "$1" || return 2; output_not_rw_var="$2"  ;;
-      --out-rx|--out-xr)         check_value "$2" "$1" || return 2; output_rx_var="$2"      ;;
-      --out-not-rx|--out-not-xr) check_value "$2" "$1" || return 2; output_not_rx_var="$2"  ;;
-      --out-wx|--out-xw)         check_value "$2" "$1" || return 2; output_wx_var="$2"      ;;
-      --out-not-wx|--out-not-xw) check_value "$2" "$1" || return 2; output_not_wx_var="$2"  ;;
-
-      --out-rwx|--out-rxw|--out-wrx|--out-wxr|--out-xrw|--out-xwr)  check_value "$2" "$1" || return 2; output_rwx_var="$2"  ;;
-
-      --out-not-rwx|--out-not-rxw|--out-not-wrx|--out-not-wxr|--out-not-xrw|--out-not-xwr)   check_value "$2" "$1" || return 2; output_not_rwx_var="$2"  ;;
+      -o-rw|-o-wr)                    check_value "$2" "$1" || return 2; output_rw_var="$2"       ;;
+      -o-not-rw|-o-not-wr)            check_value "$2" "$1" || return 2; output_not_rw_var="$2"   ;;
+      -o-rx|-o-xr)                    check_value "$2" "$1" || return 2; output_rx_var="$2"       ;;
+      -o-not-rx|-o-not-xr)            check_value "$2" "$1" || return 2; output_not_rx_var="$2"   ;;
+      -o-wx|-o-xw)                    check_value "$2" "$1" || return 2; output_wx_var="$2"       ;;
+      -o-not-wx|-o-not-xw)            check_value "$2" "$1" || return 2; output_not_wx_var="$2"   ;;
+      -o-rwx|-o-rxw|-o-wrx|-o-wxr|-o-xrw|-o-xwr)
+                                     check_value "$2" "$1" || return 2; output_rwx_var="$2"      ;;
+      -o-not-rwx|-o-not-rxw|-o-not-wrx|-o-not-wxr|-o-not-xrw|-o-not-xwr)
+                                     check_value "$2" "$1" || return 2; output_not_rwx_var="$2"  ;;
 
       *) log_msg ERROR "${FUNCNAME[0]}: Unknown option: $1"; return 1 ;;
     esac
     shift 2
   done
-
-  # --------- Check for leading /**/ in any input ---------
-  for p in "${inputs[@]}"; do
-    if [[ "$p" == "/**/"* ]]; then
-      log_msg ERROR "${FUNCNAME[0]}: Leading '/**/' is not allowed."
-      return 2
-    fi
-  done
-
-  # --------- Check Separator ---------
-  if [[ "$sep" == *"/"* || "$sep" == *"*"* || "$sep" == *"."* ]]; then
-    log_msg ERROR "${FUNCNAME[0]}: Separator cannot contain /, * or ."
-    return 2
-  fi
 
   # --------- Check for at least one output variable ---------
   [[ -z "$output_all_var" && -z "$output_exist_var" && -z "$output_missing_var" && \
@@ -182,9 +160,9 @@ resolve_paths() {
   local normalized=()
   normalize_list -i "${inputs[*]}" -o normalized -s "$sep"
 
-  # --------- Wildcard resolution (globbing for * , ? and **) ---------
+  # --------- Wildcard resolution (globbing for * and ?) ---------
   local processed=()
-  shopt -s nullglob dotglob globstar  # enable ** support
+  shopt -s nullglob dotglob
   for p in "${normalized[@]}"; do
     if [[ "$p" == *"*"* || "$p" == *"?"* ]]; then
       for f in $p; do
@@ -194,9 +172,9 @@ resolve_paths() {
       processed+=("$(realpath -m "$p")")
     fi
   done
-  shopt -u nullglob dotglob globstar  # restore
+  shopt -u nullglob dotglob
 
-  # --------- Map --out-all BEFORE removing duplicates ---------
+  # --------- Map -o-all BEFORE removing duplicates ---------
   if [[ -n "$output_all_var" ]]; then
     local -n _dest_all="$output_all_var"
     _dest_all=( "${processed[@]}" )
@@ -223,7 +201,7 @@ resolve_paths() {
       [[ -n "$output_rw_var"  || -n "$output_not_rw_var" ]] && { [[ -r "$p" && -w "$p"  ]] && _rw+=("$p")  || _not_rw+=("$p"); }
       [[ -n "$output_rx_var"  || -n "$output_not_rx_var" ]] && { [[ -r "$p" && -x "$p"  ]] && _rx+=("$p")  || _not_rx+=("$p"); }
       [[ -n "$output_wx_var"  || -n "$output_not_wx_var" ]] && { [[ -w "$p" && -x "$p"  ]] && _wx+=("$p")  || _not_wx+=("$p"); }
-      [[ -n "$output_rwx_var" || -n "$output_not_rwx_var" ]] && { [[ -r "$p" && -w "$p" && -x "$p" ]] && _rwx+=("$p") || _not_rwx+=("$p"); }
+  [[ -n "$output_rwx_var" || -n "$output_not_rwx_var" ]] && { [[ -r "$p" && -w "$p" && -x "$p" ]] && _rwx+=("$p") || _not_rwx+=("$p"); }
     else
       _missing+=("$p")
     fi
@@ -249,10 +227,3 @@ resolve_paths() {
 
   return 0
 }
-
-
-declare -a all
-
-resolve_paths -i "/*/*/Git*/*/file_sys*.sh" --out-all all
-
-echo "${all[@]}"
