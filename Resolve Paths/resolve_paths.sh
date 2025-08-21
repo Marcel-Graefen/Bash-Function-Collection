@@ -19,6 +19,13 @@
 # @license     : MIT License
 # ========================================================================================
 
+source /home/marcel/Git_Public/Bash-Function-Collection/Normalize_List/normalize_list.sh
+
+log_msg() {
+  local level="$1"; shift
+  local msg="$*"
+  echo "[$level] $msg"
+}
 
 #---------------------- FUNCTION: resolve_paths --------------------------------
 # Resolves given paths, classifies them by existence, readability, and writability,
@@ -69,7 +76,9 @@ resolve_paths() {
     return 2
   fi
 
-  local inputs=() sep=""
+  # INFO sep=" " -> This value must NOT be empty, otherwise there will be an error in the function 'normalize_list'.
+  # INFO Since we pass the value to the function `normalize_list` and it cannot be distinguished whether it is an empty or an unset value.
+  local inputs=() sep=" "
   local output_all_var="" output_exist_var="" output_missing_var=""
   local output_read_var="" output_not_read_var=""
   local output_write_var="" output_not_write_var=""
@@ -157,3 +166,7 @@ resolve_paths() {
 
   return 0
 }
+
+
+declare -a all
+resolve_paths -i "./ ../" -o-all all
