@@ -19,13 +19,6 @@
 # @license     : MIT License
 # ========================================================================================
 
-source /home/marcel/Git_Public/Bash-Function-Collection/Normalize_List/normalize_list.sh
-
-log_msg() {
-  local level="$1"; shift
-  local msg="$*"
-  echo "[$level] $msg"
-}
 
 #---------------------- FUNCTION: resolve_paths --------------------------------
 # Resolves given paths, classifies them by existence, readability, and writability,
@@ -166,7 +159,3 @@ resolve_paths() {
 
   return 0
 }
-
-
-declare -a all
-resolve_paths -i "./ ../" -o-all all
