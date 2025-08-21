@@ -18,14 +18,6 @@
 # @copyright   : Copyright (c) 2025 Marcel Gräfen
 # @license     : MIT License
 # ========================================================================================
-log_msg() {
-  local level="$1"; shift
-  local msg="$*"
-  echo "[$level] $msg"
-}
-
-# Function -> Normaliz List
-source <(wget -qO- "https://raw.githubusercontent.com/Marcel-Graefen/Bash-Function-Collection/refs/heads/main/Normalize_List/normalize_list.sh")
 
 
 #---------------------- FUNCTION: resolve_paths --------------------------------
@@ -249,10 +241,3 @@ resolve_paths() {
 
   return 0
 }
-
-
-declare -a all
-
-resolve_paths -i "/*/*/Git*/*/file_sys*.sh" --out-all all
-
-echo "${all[@]}"
