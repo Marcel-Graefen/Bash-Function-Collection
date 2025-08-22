@@ -5,7 +5,7 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 1.1.2
+# @version     : 1.1.3
 # @date        : 2025-08-20
 #
 # @requires    : Bash 4.0+
@@ -56,7 +56,7 @@ normalize_list() {
     [[ -z "$1" ]] && { log_msg ERROR "'$2' requires a value"; return $?; }
 
     for f in "${forbidden_flags[@]}"; do
-      [[ "$1" == "$f" ]] && { log_msg ERROR "$2' requires a value, got a flag instead"; return $?; }
+      [[ "$1" != "$f" ]] || { log_msg ERROR "$2' requires a value, got a flag instead"; return $?; }
     done
   }
 
