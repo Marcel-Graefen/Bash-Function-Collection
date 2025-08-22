@@ -43,12 +43,14 @@
 #   - Output is only through the named array specified with -o|--output
 #
 
+# TODO Außnahmen hinzufügen damit bestimmte dinge NICHT Gesplitet werden
+
 normalize_list() {
 
   # Fail if no arguments provided
   [[ $# -eq 0 ]] && { echo "❌ ERROR: ${FUNCNAME[0]}: No arguments provided"; return 2; }
 
-  local inputs=() output_var="" extra_sep="" default_sep=",| "
+  local inputs=() output_var="" extra_sep="" default_sep=",|"
 
   check_value() {
     local forbidden_flags=("-i" "-o" "-s" "--input" "--output" "--separator")
@@ -71,6 +73,7 @@ normalize_list() {
   done
 
   [[ -z "$output_var" ]] && { echo "❌ ERROR: ${FUNCNAME[0]}: --output missing" >&2; return 2; }
+
 
   local sep="${default_sep}${extra_sep}" tmp=()
   for item in "${inputs[@]}"; do
