@@ -16,6 +16,8 @@
 # @license     : MIT License
 # ========================================================================================
 
+
+
 #---------------------- FUNCTION: normalize_list -----------------------------------
 # Splits input strings into an array based on a custom separator.
 #
@@ -48,13 +50,15 @@ normalize_list() {
 
   local inputs=() output_var="" extra_sep="" default_sep=",| "
 
-  # Helper functions
-    check_value() {
-    if [[ -z "$1" || "$1" == -* ]]; then
-      log_msg ERROR ${FUNCNAME[1]}: "$2 requires a value"
-      return 2
-    fi
-   }
+  check_value() {
+    local forbidden_flags=("-i" "-o" "-s" "--input" "--output" "--separator")
+
+    [[ -z "$1" ]] && { log_msg ERROR "'$2' requires a value"; return $?; }
+
+    for f in "${forbidden_flags[@]}"; do
+      [[ "$1" == "$f" ]] && { log_msg ERROR "$2' requires a value, got a flag instead"; return $?; }
+    done
+  }
 
   # Parse options
   while [[ $# -gt 0 ]]; do
