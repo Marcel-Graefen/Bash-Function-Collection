@@ -1,6 +1,6 @@
 # 📋 Bash Function: Classify Paths
 
-[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](../README.de.md)
+[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](../../../README.de.md)
 [![Version](https://img.shields.io/badge/version-0.0.1_beta.01-blue.svg)](#)
 [![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
