@@ -1,129 +1,119 @@
-## 1️⃣ Testplan für `classify_paths()` / `prepare_paths_for_classify_paths()`
-
-### **A. Allgemeine Prüfungen**
-
-| Testfall                            | Erwartetes Ergebnis                                               |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| Kein Parameter                      | Fehler `No parameters provided`                                   |
-| Nur Output gesetzt, kein Input      | Fehler `No input paths`                                           |
-| Nur Input gesetzt, kein Output      | Fehler `Output not set`                                           |
-| Input enthält `/`\*\*`**/`\*\`      | Fehler `Leading '/**/' is not allowed`                            |
-| Separator enthält `/`, `*` oder `.` | Fehler `Separator cannot contain /, * or .`                       |
-| Ungültige Berechtigungsmasken       | Fehler `All permission masks invalid` oder Warnung bei Teilmasken |
+Alles klar! Ich habe **Resolve Paths** und **classify\_paths** wieder getrennt und jeweils eigene Abschnitte mit kurzem Beispiel erstellt. Hier ist die überarbeitete README:
 
 ---
 
-### **B. Argument Parsing**
+# 📂 Bash Functions Collection
 
-* `-i` / `--input` korrekt: Eingaben landen im Array `inputs`.
-* `-d` / `--dir` oder `-f` / `--file` korrekt: wie `-i`.
-* `-o` / `--output` korrekt: Name wird für das assoziative Array gesetzt.
-* `-s` / `--separator` korrekt: Separator wird übernommen.
-* `-p` / `--perm` korrekt: Masken werden übernommen, ungültige Masken werden ignoriert.
+[![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
+[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
----
-
-### **C. Wildcard & Normalisierung**
-
-* Wildcards `*`, `?`, `**` expandieren korrekt.
-* Doppelte Pfade werden entfernt.
-* `realpath -m` liefert absolute Pfade.
+Willkommen zur **Bash Functions Collection**!
+Dieses Repository enthält eine Sammlung nützlicher Bash-Funktionen, die modular, dokumentiert und direkt in eigene Skripte integrierbar sind.
 
 ---
 
-### **D. Pfadklassifizierung**
+## 📌 Kurze Zusammenfassung
 
-* Existierende Dateien → `file`, Verzeichnisse → `dir`.
-* Fehlende Pfade → `file,missing` oder `dir,missing`.
-* `all` enthält alles.
-* `all,missing` enthält alles, was nicht existiert.
+Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte eingebunden werden können:
 
----
-
-### **E. Berechtigungsprüfung**
-
-* Prüft alle möglichen Masken:
-
-  * `r`, `w`, `x`, `rw`, `rx`, `wx`, `rwx`, `r--`, `rw-`, `r-x`, `-w-`, `-wx`, `--x`, `---`
-* Prüft existierende und nicht existierende Pfade.
-* Prüft gemischte gültige/ungültige Masken.
+* [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Zerlegt Eingabe-Strings anhand von Leerzeichen, Kommas, Pipes oder eigenen Trennzeichen und gibt ein sauberes Array zurück. [🔗 Vollständige Dokumentation](Normalize_List/README.de.md)
+* [📋 Display Table](#-display-table) – Zeigt formatierte Tabellen im Terminal an, berechnet Spaltenbreiten automatisch und zentriert den Header. Unterstützt mehrere Zeilen und benutzerdefinierte Separatoren. [🔗 Vollständige Dokumentation](Display_Table/README.de.md)
+* [✅ Check Requirements](#-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [🔗 Vollständige Dokumentation](Check_Requirements/README.de.md)
+* [📂 Resolve Paths](#📂-resolve-paths) – Normalisiert Eingabepfade und wandelt sie in absolute Pfade um. [🔗 Vollständige Dokumentation](Resolve_Paths/README.de.md)
+* [📋 classify\_paths](#📋-classify-paths) – Klassifiziert Pfade nach **Existenz** und **Berechtigungen** inkl. Wildcards (`*`, `**`) und speichert Ergebnisse in benannte Arrays. [🔗 Vollständige Dokumentation](classify_paths/README.de.md)
+* [👤 Autor & Kontakt](#-autor--kontakt)
+* [🤖 Generierungshinweis](#-generierungshinweis)
+* [📜 Lizenz](#-lizenz)
 
 ---
 
-### **F. Fehlerfälle absichtlich triggern**
+## ⚙️ Normalize List
 
-1. Ungültiger Parameter: `-z` → `Unknown option -z`.
-2. Kein Wert nach Flag: `-i` → `requires a value`.
-3. Value ist Flag: `-i -o` → `requires a value, got a flag instead`.
-4. Ungültige Masken: `aaa`, `rwxx` → Fehler.
-5. Separator enthält `*`, `/` oder `.` → Fehler.
-6. Input startet mit `/**/` → Fehler.
-7. Private-Funktion direkt aufrufen → Fehler.
+*Details unverändert…*
 
 ---
 
-### **G. Spezielle Fälle**
+## 📋 Display Table
 
-* Eingabe enthält Pfade mit Leerzeichen → prüfen, dass alles korrekt normalisiert und expanded wird.
-* Pfade mit versteckten Dateien (dotfiles) → `dotglob` prüft korrekt.
-* Pfade mit Mix aus Dateien, Verzeichnissen, fehlenden → alles korrekt klassifiziert.
-* Alle Arrays (`file`, `dir`, `file,missing`, etc.) korrekt initialisiert, auch bei leeren Gruppen.
+*Details unverändert…*
 
 ---
 
-## 2️⃣ Vorschlag: Bash-Testskript
+## ✅ Check Requirements
+
+*Details unverändert…*
+
+---
+
+## 📂 Resolve Paths
+
+### Normalisiert Eingabepfade und wandelt sie in absolute Pfade um.
+
+* 🗂️ **Eingaben normalisieren:** Mehrere `-i/--input`, `-d/--dir`, `-f/--file`.
+* 🔹 **Absolute Pfade:** Normalisierung via `realpath -m`.
+* ✨ **Wildcard-Erweiterung:** `*` und `**` (Globstar) werden unterstützt.
+* 🟣 **Existenzprüfung:** Trennt vorhandene Pfade von fehlenden.
+* 💡 **Return-Werte:** 0 bei Erfolg, 2 bei Fehler.
+
+**Kurzes Beispiel:**
 
 ```bash
-#!/usr/bin/env bash
+declare -a all exist
 
-set -euo pipefail
+resolve_paths -i "file1.txt,file2.txt,/tmp/file3" --out-all all --out-exist exist
 
-# --- Hilfsfunktionen ---
-mock_log_msg() {
-  echo "$1: $2"
-}
-
-# Überschreibe log_msg
-log_msg() { mock_log_msg "$@"; }
-
-# Temporäre Dateien/Verzeichnisse für Tests
-mkdir -p /tmp/test_classify_paths/dir1
-touch /tmp/test_classify_paths/file1
-rm -f /tmp/test_classify_paths/missing_file
-
-# --- Tests ---
-declare -A out
-
-echo "Test 1: Kein Parameter"
-if classify_paths -o out; then
-    echo "❌ Fehler: sollte fehl schlagen"
-else
-    echo "✅ OK"
-fi
-
-echo "Test 2: Ungültige Berechtigung"
-if classify_paths -i /tmp/test_classify_paths/file1 -p aaa -o out; then
-    echo "❌ Fehler: ungültige Maske sollte Fehler"
-else
-    echo "✅ OK"
-fi
-
-echo "Test 3: Wildcard Expansion"
-classify_paths -i "/tmp/test_classify_paths/*" -o out
-echo "Gefundene Pfade: ${out[all]}"
-
-echo "Test 4: Separieren existierende/fehlende"
-classify_paths -i /tmp/test_classify_paths/file1 -i /tmp/test_classify_paths/missing_file -o out
-echo "file: ${out[file]}"
-echo "file,missing: ${out[file,missing]}"
-
-echo "Test 5: Berechtigungen"
-classify_paths -i /tmp/test_classify_paths/file1 -p r -p w -o out
-echo "file,r: ${out[file,r]}"
-echo "file,r,not: ${out[file,r,not]}"
-echo "file,w: ${out[file,w]}"
-echo "file,w,not: ${out[file,w,not]}"
-
-# Cleanup
-rm -rf /tmp/test_classify_paths
+printf "All: %s\nExist: %s\n" "${all[*]}" "${exist[*]}"
 ```
+
+---
+
+## 📋 classify\_paths
+
+### Klassifiziert Pfade nach **Existenz** und **Berechtigungen** (r/w/x, rw, rx, wx, rwx) und speichert Ergebnisse in benannte Arrays. Unterstützt Wildcards (`*`, `**`) und flexible Separatoren.
+
+* 🗂️ **Eingaben normalisieren:** Mehrere `-i/--input`, `-d/--dir`, `-f/--file`.
+* 🔹 **Absolute Pfade:** Normalisierung via `realpath -m`.
+* ✨ **Wildcard-Erweiterung:** `*` und `**` (Globstar), Dotfiles berücksichtigt.
+* 🔒 **Berechtigungsprüfung:** r/w/x, Kombinationen (rw, rx, wx, rwx), Negationen (`-` / `not`).
+* ⚡ **Flexible Separatoren:** Standard `|`. Sonderzeichen, Leerzeichen oder kein Separator möglich. Ungültige Werte → Warnung.
+* 🟣 **Existenzprüfung & Klassifizierung:** `file`, `dir`, `missing`. Berechtigungs-Keys: `file.{mask}`, `dir.{mask}`, `{mask}`, `{mask,not}`.
+* ♻️ **Duplikaterkennung:** Doppelte Pfade entfernt; existierende/fehlende getrennt.
+* ⚠️ **Logging & Warnungen:** Ungültige Masken oder Separatoren werden gemeldet.
+* 💡 **Return-Werte:** 0 bei Erfolg, 2 bei Fehler.
+
+**Kurzes Beispiel:**
+
+```bash
+declare -A Hallo
+
+classify_paths -i "/tmp/file1 /tmp/file2 /tmp/nonexistent" -o Hallo -p "r w x rwx"
+
+echo "All files: ${Hallo[all]}"
+echo "Existing files: ${Hallo[file]}"
+echo "Missing files: ${Hallo[missing]}"
+```
+
+---
+
+## 👤 Autor & Kontakt
+
+* **Marcel Gräfen**
+* 📧 [info@mgraefen.com](mailto:info@mgraefen.com)
+
+---
+
+## 🤖 Generierungshinweis
+
+Dieses Projekt wurde mithilfe einer Künstlichen Intelligenz (KI) erstellt. Skripte, Kommentare und Dokumentation wurden final geprüft und angepasst.
+
+---
+
+## 📜 Lizenz
+
+[![MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+---
+
+Wenn du willst, kann ich als Nächstes die **README auch vollständig auf Englisch übersetzen**, sodass sie zweisprachig wird.
+
+Willst du, dass ich das direkt mache?

@@ -5,7 +5,7 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 0.0.-beta.02
+# @version     : 0.0.-beta.01
 # @date        : 2025-08-22
 #
 # @requires    : Bash 4.3+
@@ -17,34 +17,6 @@
 # @copyright   : Copyright (c) 2025 Marcel Gräfen
 # @license     : MIT License
 # ========================================================================================
-
-#---------------------- FUNCTION: -og_msg-----------------------------------
-#
-# @version 0.0.-beta.01
-#
-# Logs messages with different severity levels: INFO, WARNING, ERROR, or custom.
-# Supports hierarchical function call tracing and configurable output behavior.
-#
-# GLOBAL DEFAULTS:
-#   SHOW_LOG_IN_TERMINAL  - If true, prints INFO and WARNING messages to terminal
-#   SHOW_WARNING          - If true, WARNING messages are displayed
-#   LOG_ON_ERROR_EXIT      - If true, ERROR messages exit the script; otherwise return 2
-#
-# USAGE:
-#   log_msg <TYPE> <MESSAGE>
-#
-# PARAMETERS:
-#   TYPE    - Severity level: INFO, WARNING, ERROR, or custom
-#   MESSAGE - Message string to log
-#
-# FEATURES:
-#   - Prepends the call chain (function hierarchy) to the log message
-#   - Uses icons for WARNING (⚠) and ERROR (❌) messages
-#   - Respects global configuration variables for flexible logging behavior
-#
-# RETURN:
-#   - INFO/WARNING: always returns 0
-#   - ERROR: returns 2 or exits (depending on LOG_ON_ERROR_EXIT)
 
 
 # Global defaults
@@ -89,13 +61,14 @@ log_msg() {
 }
 
 # Function -> Normaliz List
- source <(wget -qO- "https://raw.githubusercontent.com/Marcel-Graefen/Bash-Function-Collection/refs/heads/main/Normalize_List/normalize_list.sh")
+# source <(wget -qO- "https://raw.githubusercontent.com/Marcel-Graefen/Bash-Function-Collection/refs/heads/main/Normalize_List/normalize_list.sh")
+
+source /home/marcel/Git_Public/Bash-Function-Collection/Normalize_List/normalize_list.sh
+
+
 
 
 #---------------------- FUNCTION: check_perm_mask -----------------------------------
-#
-# @version 0.0.-beta.01
-#
 # Checks the file or directory permissions based on a given mask.
 #
 # GLOBAL VARIABLES:
@@ -118,7 +91,6 @@ log_msg() {
 #   - Checks positive permissions (r, w, x) and negative permissions ('-')
 #   - Supports masks of length 1, 2, or 3
 #   - Returns 1 if any required permission is missing or forbidden permission is present
-
 check_perm_mask() {
   local path="$1"
   local rawmask="$2"
@@ -161,9 +133,6 @@ check_perm_mask() {
 
 
 #---------------------- FUNCTION: classify_paths --------------------------------
-#
-# @version 0.0.-beta.02
-#
 # Classifies and organizes filesystem paths based on existence and permissions.
 #
 # Features:
@@ -178,11 +147,6 @@ check_perm_mask() {
 #       • Permissions according to provided masks (r, w, x, rw, rx, wx, rwx)
 #       • Not matching permissions (not-r, not-w, etc.)
 #   - Assigns results to caller-provided associative array via nameref
-#   - Supports configurable separators:
-#       • Standard: '|'
-#       • Allowed special characters: | ! $ & ' ( ) * ; < > ? [ ] ^ { } ~ or space
-#       • Use 'false', 'off', 'no', or 'not' to disable separator (empty string)
-#   - Logs warnings for invalid separators
 #
 # GLOBAL VARIABLES:
 #   None
@@ -199,9 +163,6 @@ check_perm_mask() {
 #   -i, --input, -d, --dir, -f, --file    Space-separated list of input paths
 #   -o, --output                           Name of the output associative array
 #   -p, --perm                             Permission masks to filter paths (optional)
-#   -s, --seperator                        Separator for output lists (default: '|')
-#                                          Allowed: | ! $ & ' ( ) * ; < > ? [ ] ^ { } ~
-#                                          'false'/'off/no/not' to disable separator (empty string)
 #
 # Returns:
 #   0  on success
@@ -211,12 +172,6 @@ check_perm_mask() {
 #   - Requires at least one input path and an output array name
 #   - Handles leading wildcards '**/' and normalizes paths
 #   - Errors and warnings are logged via log_msg
-#   - Duplicate paths are automatically removed
-#   - Permissions logic:
-#       • Full mask (rwx): all rights must be checked
-#       • Partial mask (r, rw, rx, etc.): only specified rights are checked; unspecified ignored
-#       • Negated mask (-): right must NOT be set
-
 
 classify_paths() {
 
@@ -232,7 +187,7 @@ classify_paths() {
   local perms=() _perms=()
   local processed=() processed_missing=()
   local types=("file" "dir")
-  local seperator="|"
+
 
   # ----------------- Helper -----------------
   check_value() {
@@ -242,6 +197,7 @@ classify_paths() {
       [[ "$1" != "$f" ]] || { log_msg ERROR "'$2' requires a value, got a flag instead"; return $?; }
     done
   }
+
 
   # --------- Parse arguments ---------
   while [[ $# -gt 0 ]]; do
@@ -255,17 +211,12 @@ classify_paths() {
         ;;
       -o|--output)
         check_value "$2" "$1" || return $?
-        output="$2"
+        output="$2"      # Nur einmal
         shift 2
         ;;
       -p|--perm)
         check_value "$2" "$1" || return $?
-        perms+=("$2")
-        shift 2
-        ;;
-      -s|--seperator)
-        check_value "$2" "$1" || return $?
-        seperator="$2"
+        perms+=("$2")    # Optional mehrfach
         shift 2
         ;;
       *)
@@ -275,9 +226,11 @@ classify_paths() {
     esac
   done
 
+
   # --------- Check arguments Values ---------
   (( ${#inputs[@]} )) || { log_msg ERROR "No input paths"; return $?; }
   [[ -n $output ]] || { log_msg ERROR "Output not set"; return $?; }
+
 
   # --------- Check for leading /**/ in any input ---------
   for p in "${inputs[@]}"; do
@@ -285,13 +238,10 @@ classify_paths() {
   done
 
   # --------- Check Separator ---------
-  if [[ $seperator =~ ^(false|off|no|not)$ ]]; then
-    seperator=""   # NO Separator
-    log_msg WARNING "No separator set.
-  elif [[ ! " |!$&'()*;<>?[]^{}~" =~ $seperator ]]; then
-    log_msg WARNING "Separator '$seperator' is invalid. Allowed separators are: '| ! \$ & ' ( ) * ; < > ? [ ] ^ { } ~' Space or empty (false/off/no/not). It was reset to default '|'."
-    seperator="|"
-  fi
+  [[ -n "$sep" && ( "$sep" == *"/"* || "$sep" == *"*"* || "$sep" == *"."* ) ]] && {
+    log_msg ERROR "Separator cannot contain /, * or ."
+    return $?
+  }
 
   # --------- Check perms ---------
   if (( ${#perms[@]} )); then
@@ -315,7 +265,8 @@ classify_paths() {
     (( ${#invalid_masks[@]} )) && log_msg WARNING "Some masks ignored: ${invalid_masks[*]}"
   fi
 
-  # --------- Initialize output -----------------
+
+  # --------- Initialize output ---------
   if ! declare -p "$output" &>/dev/null; then
     declare -g -A "$output"
   fi
@@ -326,18 +277,9 @@ classify_paths() {
   _ref[dir]=""
   _ref[missing]=""
 
-  # Initialize perm keys
-  for mask in "${_perms[@]}"; do
-    _ref[$mask]=""
-    _ref[$mask,not]=""
-    for t in file dir; do
-      _ref[$t,$mask]=""
-      _ref[$t,$mask,not]=""
-    done
-  done
 
   # --------- Wildcard expansion -----------------
-  shopt -s dotglob globstar
+  shopt -s dotglob globstar   # nullglob nicht gesetzt, damit fehlende Wildcards erkannt werden
   for p in "${inputs[@]}"; do
     if [[ "$p" == *"*"* ]]; then
       if compgen -G "$p" > /dev/null; then
@@ -348,10 +290,11 @@ classify_paths() {
         processed_missing+=("$(realpath -m "$p")")
       fi
     else
-      processed+=("$(realpath -m "$p")")
+    processed+=("$(realpath -m "$p")")
     fi
   done
   shopt -u dotglob globstar
+
 
   # --------- Remove duplicates -----------------
   local unique=()
@@ -366,50 +309,65 @@ classify_paths() {
   for f in "${processed_missing[@]}"; do
     [[ -z "${seen_missing[$f]}" ]] && { unique_missing+=("$f"); seen_missing[$f]=1; }
   done
-  processed_missing=("${unique_missing[@]}")
 
   # --------- Set Variable -----------------
   _ref[missing]="${processed_missing[@]}"
   _ref[all]="${processed[@]} ${processed_missing[@]}"
 
-  # --------- Separate exist / missing & apply perms -----------------
+  # --------- Separate exist / missing ---------
   for p in "${processed[@]}"; do
     if [[ -d "$p" ]]; then
       type="dir"
-      [[ -n "${_ref[dir]}" ]] && _ref[dir]+="${seperator}${p}" || _ref[dir]="$p"
+      # _ref[dir]+="$p" "# NOTE Original
+      # NOTE This Make a | in the string so can we Split
+      # BUG Problem with Space in Folder/File Path
+      [[ -n "${_ref[dir]}" ]] && _ref[dir]+="|$p" || _ref[dir]="$p"
     elif [[ -f "$p" ]]; then
       type="file"
-      [[ -n "${_ref[file]}" ]] && _ref[file]+="${seperator}${p}" || _ref[file]="$p"
+      # _ref[file]+="$p" "# NOTE Original
+      # NOTE This Make a | in the string so can we Split
+      # BUG Problem with Space in Folder/File Path
+      [[ -n "${_ref[file]}" ]] && _ref[file]+="|$p" || _ref[file]="$p"
     else
       type="missing"
       _ref[missing]+="$p"
-      continue
     fi
-
     if [[ -e "$p" ]]; then
       for perm_mask in "${_perms[@]}"; do
         if check_perm_mask "$p" "$perm_mask"; then
-          [[ -n "${_ref[$type,$perm_mask,not]}" ]] && _ref[$type,$perm_mask,not]+="${seperator}${p}" || _ref[$type,$perm_mask,not]="$p"
-          [[ -n "${_ref[$perm_mask,not]}" ]] && _ref[$perm_mask,not]+="${seperator}${p}" || _ref[$perm_mask,not]="$p"
+          # _ref[$type,$perm_mask,not]+="$p "# NOTE Original
+          # NOTE This Make a | in the string so can we Split
+          # BUG Problem with Space in Folder/File Path
+          [[ -n "${_ref[$type,$perm_mask,not]}" ]] && _ref[$type,$perm_mask,not]+="|$p" || _ref[$type,$perm_mask,not]="$p"
+
+          # _ref[$perm_mask,not]+="$p " "# NOTE Original
+          # NOTE This Make a | in the string so can we Split
+          # BUG Problem with Space in Folder/File Path
+          [[ -n "${_ref[$perm_mask,not]}" ]] && _ref[$perm_mask,not]+="|$p" || _ref[$perm_mask,not]="$p"
         else
-          [[ -n "${_ref[$type,$perm_mask]}" ]] && _ref[$type,$perm_mask]+="${seperator}${p}" || _ref[$type,$perm_mask]="$p"
-          [[ -n "${_ref[$perm_mask]}" ]] && _ref[$perm_mask]+="${seperator}${p}" || _ref[$perm_mask]="$p"
+          # _ref[$type,$perm_mask]+="$p  "# NOTE Original
+          # NOTE This Make a | in the string so can we Split
+          # BUG Problem with Space in Folder/File Path
+          [[ -n "${_ref[$type,$perm_mask]}" ]] && _ref[$type,$perm_mask]+="|$p" || _ref[$type,$perm_mask]="$p"
+
+          # _ref[$perm_mask]+="$p " "# NOTE Original
+          # NOTE This Make a | in the string so can we Split
+          # BUG Problem with Space in Folder/File Path
+          [[ -n "${_ref[$perm_mask]}" ]] && _ref[$perm_mask]+="|$p" || _ref[$perm_mask]="$p"
         fi
       done
     fi
   done
 
   return 0
-}
 
+}
 
 
 #---------------------- EXAMPLE --------------------------------
 
-rein=("/home/marcel/Git_Public/Bash-Function-Collection/test.md" "/home/marcel/Git_Public/Bash-Function-Collection/README.md")
-classify_paths -i "${rein[@]}" -o Hallo -p "r w x wr-" -s "no"
-
-echo "All: ${Hallo[file]}"
+rein=("/home/marcel/Git_Public/Bash-Function-Collection/test dir/file1.txt" "/home/marcel/Git_Public/Bash-Function-Collection/test dir/file2.txt")
+classify_paths -i "${rein[@]}" -o Hallo -p "r w x wr-"
 
 IFS='|' read -r -a File <<< "${Hallo[file]}"
 echo "1: ${File[0]}"

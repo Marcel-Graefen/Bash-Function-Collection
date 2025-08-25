@@ -10,15 +10,15 @@ Dieses Repository enthält eine Sammlung nützlicher Bash-Funktionen, die modula
 
 ## 📌 Kurze Zusammenfassung
 
-Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte eingebunden werden können.
+Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte eingebunden werden können:
 
 * [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Zerlegt Eingabe-Strings anhand von Leerzeichen, Kommas, Pipes oder eigenen Trennzeichen und gibt ein sauberes Array zurück. [🔗 Vollständige Dokumentation](Normalize_List/README.de.md)
 * [📋 Display Table](#-display-table) – Zeigt formatierte Tabellen im Terminal an, berechnet Spaltenbreiten automatisch und zentriert den Header. Unterstützt mehrere Zeilen und benutzerdefinierte Separatoren. [🔗 Vollständige Dokumentation](Display_Table/README.de.md)
-* [✅ Check Requirements](#-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [🔗 Vollständige Dokumentation](Check_Requirements/README.de.md)
-* [📂 Resolve Paths](#-resolve-paths) - Normalisiert Eingabepfade, wandelt sie in absolute Pfade um und klassifiziert sie anschließend nach Existenz, Lesbarkeit und Schreibberechtigung.[🔗 Vollständige Dokumentation](Resolve_Paths/README.de.md)
-* [👤 Autor & Kontakt](#-autor--kontakt)
-* [🤖 Generierungshinweis](#-generierungshinweis)
-* [📜 Lizenz](#-lizenz)
+* [✅ Check Requirements](#✅-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [🔗 Vollständige Dokumentation](Check_Requirements/README.de.md)
+* [📂 Resolve Paths](#📂-resolve-paths) – Normalisiert Eingabepfade und wandelt sie in absolute Pfade um. [🔗 Vollständige Dokumentation](Resolve_Paths/README.de.md)
+* [📋 Classify Paths](#📋-classify-paths) – Klassifiziert Pfade nach **Existenz** und **Berechtigungen** inkl. Wildcards (`*`, `**`) und speichert Ergebnisse in benannte Arrays. [🔗 Vollständige Dokumentation](Classify_Paths/README.de.md)
+* [🤖 Generierungshinweis](#🤖-generierungshinweis)
+* [👤 Autor & Kontakt](#👤-autor--kontakt)
 
 ---
 
@@ -28,7 +28,7 @@ Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte einge
 
 * 🟢 **Flexible Eingabe:** Akzeptiert einen oder mehrere Strings gleichzeitig.
 * 🔹 **Benutzerdefinierte Trennzeichen:** Regex-ähnlich, z. B. Leerzeichen, Komma, Pipe oder eigene Zeichen.
-* 🟣 **Array-Ausgabe:** Befüllt ein Bash-Array über Nameref (`--out|---oututput`).
+* 🟣 **Array-Ausgabe:** Befüllt ein Bash-Array über Nameref (`--out|---output`).
 * 🔒 **Robustes Fehlerhandling:** Fehlende Parameter werden erkannt und gemeldet.
 * ⚡ **Einfache Integration:** Kann direkt in Skripte eingebunden werden, keine externen Abhängigkeiten.
 * 💡 **Return-Wert:** 0 bei Erfolg, 2 bei Fehlern.
@@ -40,7 +40,6 @@ declare -a my_array
 
 normalize_list -i "apple orange,banana|kiwi" --out my_array
 
-# Ausgabe prüfen
 printf "%s\n" "${my_array[@]}"
 ```
 
@@ -53,7 +52,7 @@ banana
 kiwi
 ```
 
-[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Normalize_List/README.de.md).
+[🔗 Vollständige Dokumentation](Normalize_List/README.de.md)
 
 ---
 
@@ -88,45 +87,41 @@ display_table -H "My Table" \
 +--------+--------+--------+
 ```
 
-[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Display_Table/README.de.md).
+[🔗 Vollständige Dokumentation](Display_Table/README.de.md)
 
 ---
 
 ## ✅ Check Requirements
 
-### Eine Bash-Funktion zum Überprüfen von Skriptanforderungen, wie Bash-Version, erforderliche Funktionen und Programme. Optional können Root-Rechte geprüft werden, und alternative Programme können als Gruppe spezifiziert werden.
+### Eine Bash-Funktion zum Überprüfen von Skriptanforderungen: Bash-Version, Funktionen, Programme und optional Root-Rechte.
 
-* 🟢 **Bash-Version prüfen:** Optionale Vorgaben für Major/Minor.
-* ⚙️ **Funktionen prüfen:** Über `--funcs/-f` können zu prüfende Funktionen angegeben werden.
+* 🟢 **Bash-Version prüfen:** Optional für Major/Minor.
+* ⚙️ **Funktionen prüfen:** Über `--funcs/-f` zu prüfende Funktionen.
 * 🟣 **Programme prüfen:** Über `--programs/-p` oder Gruppen `--programs-alternative/-a`.
 * 🔒 **Root-Rechte prüfen:** Optional via `--root/-r` oder `--sudo/-s`.
-* ⚡ **Flexible Fehlerbehandlung:** Mit `--exit/-x` lässt sich steuern, ob das Skript im Fehlerfall sofort mit `exit` beendet oder lediglich mit `return` zurückkehrt.
-* 🔍 **Vollständige Prüfung:** Alle angegebenen Anforderungen werden zuerst geprüft; Rückgabe oder Abbruch erfolgt erst nach Abschluss aller Checks.
+* ⚡ **Flexible Fehlerbehandlung:** Mit `--exit/-x` wird entschieden, ob das Skript bei Fehler sofort abbricht.
+* 🔍 **Vollständige Prüfung:** Alle Anforderungen werden zuerst geprüft; Rückgabe erfolgt nach Abschluss.
 * 💡 **Return-Werte:** 0 bei Erfolg, 2 bei einem oder mehreren Fehlern.
 
 **Kurzes Beispiel:**
 
 ```bash
-# Prüft Bash ≥ 4, Funktion normalize_list, Programm awk, mindestens eines der Programme git oder svn, und Root-Rechte
 check_requirements --major 4 --funcs "normalize_list" --programs "awk" --programs-alternative "git svn" --root
 ```
 
-[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Check_Requirements/README.de.md).
+[🔗 Vollständige Dokumentation](Check_Requirements/README.de.md)
 
 ---
+
 ## 📂 Resolve Paths
 
-### Eine Bash-Funktion zum Normalisieren und Auflösen von Dateipfaden, automatische Wildcard-Erweiterung (*?), Klassifizierung nach Existenz und einzelnen sowie kombinierten Berechtigungen (r/w/x, rw, rx, wx, rwx) sowie optionales Mapping der Ergebnisse in benannte Arrays.
+### Normalisiert Eingabepfade und wandelt sie in absolute Pfade um.
 
-* 🗂️ **Eingaben normalisieren:** Trennt Pfade automatisch nach Leerzeichen oder benutzerdefinierten Zeichen.
-* 🔹 **Absolute Pfade:** Wandelt relative Pfade in absolute Pfade um (`realpath`).
-* ✨ **Automatische Wildcard-Erweiterung:** Unterstützt `*` und `**` (Globstar).
-* 🟣 **Existenzprüfung:** Trennt vorhandene von fehlenden Pfaden.
-* 🔒 **Berechtigungsprüfung:** Prüft Lesbarkeit (`r`), Schreibbarkeit (`w`) und Ausführbarkeit (`x`) sowie Kombinationen (`rw`, `rx`, `wx`, `rwx`) inklusive Negationen.
-* ⚡ **Flexible Ausgabe:** Ergebnisse können in benannte Arrays geschrieben werden.
-* ❌ **Eingabeschutz:** `/ **/` als führender Pfad wird abgelehnt.
-* ❌ **Separator-Prüfung:** Trennzeichen dürfen `/`, `*` oder `.` nicht enthalten.
-* 💡 **Rückgabewerte:** `0` bei Erfolg, `2` bei Fehler.
+* 🗂️ **Eingaben normalisieren:** Mehrere `-i/--input`, `-d/--dir`, `-f/--file`.
+* 🔹 **Absolute Pfade:** Normalisierung via `realpath -m`.
+* ✨ **Wildcard-Erweiterung:** `*` und `**` (Globstar) werden unterstützt.
+* 🟣 **Existenzprüfung:** Trennt vorhandene Pfade von fehlenden.
+* 💡 **Return-Werte:** 0 bei Erfolg, 2 bei Fehler.
 
 **Kurzes Beispiel:**
 
@@ -138,35 +133,48 @@ resolve_paths -i "file1.txt,file2.txt,/tmp/file3" --out-all all --out-exist exis
 printf "All: %s\nExist: %s\n" "${all[*]}" "${exist[*]}"
 ```
 
-Es zeigt **alle Pfade** und **nur existierende Pfade** in zwei Arrays.
-
-**Output:**
-
-```
-All: file1.txt file2.txt /tmp/file3
-Exist: /tmp/file3
-```
-
-[🔗 Die vollständige Dokumentation und weitere Optionen findest du hier](Resolve_Paths/README.de.md)
+[🔗 Vollständige Dokumentation](Resolve_Paths/README.de.md)
 
 ---
 
+## 📋 Classify Paths
 
-## 👤 Autor & Kontakt
+### Klassifiziert Pfade nach **Existenz** und **Berechtigungen** (r/w/x, rw, rx, wx, rwx) und speichert Ergebnisse in benannte Arrays. Unterstützt Wildcards (`*`, `**`) und flexible Separatoren.
 
-* **Marcel Gräfen**
-* 📧 [info@mgraefen.com](mailto:info@mgraefen.com)
+* 🗂️ **Eingaben normalisieren:** Mehrere `-i/--input`, `-d/--dir`, `-f/--file`.
+* 🔹 **Absolute Pfade:** Normalisierung via `realpath -m`.
+* ✨ **Wildcard-Erweiterung:** `*` und `**` (Globstar), Dotfiles berücksichtigt.
+* 🔒 **Berechtigungsprüfung:** r/w/x, Kombinationen (rw, rx, wx, rwx), Negationen (`-` / `not`).
+* ⚡ **Flexible Separatoren:** Standard `|`. Sonderzeichen, Leerzeichen oder kein Separator möglich. Ungültige Werte → Warnung.
+* 🟣 **Existenzprüfung & Klassifizierung:** `file`, `dir`, `missing`. Berechtigungs-Keys: `file.{mask}`, `dir.{mask}`, `{mask}`, `{mask,not}`.
+* ♻️ **Duplikaterkennung:** Doppelte Pfade entfernt; existierende/fehlende getrennt.
+* ⚠️ **Logging & Warnungen:** Ungültige Masken oder Separatoren werden gemeldet.
+* 💡 **Return-Werte:** 0 bei Erfolg, 2 bei Fehler.
+
+**Kurzes Beispiel:**
+
+```bash
+declare -A Hallo
+
+classify_paths -i "/tmp/file1 /tmp/file2 /tmp/nonexistent" -o Hallo -p "r w x rwx"
+
+echo "All files: ${Hallo[all]}"
+echo "Existing files: ${Hallo[file]}"
+echo "Missing files: ${Hallo[missing]}"
+```
+
+[🔗 Vollständige Dokumentation](Classify_Paths/README.de.md)
 
 ---
 
 ## 🤖 Generierungshinweis
 
-Dieses Projekt wurde mithilfe einer Künstlichen Intelligenz (KI) entwickelt.
-Die KI hat bei der Erstellung des Skripts, der Kommentare und der Dokumentation (README.md) geholfen.
-Das endgültige Ergebnis wurde von mir überprüft und angepasst.
+Dieses Projekt wurde mithilfe einer Künstlichen Intelligenz (KI) erstellt. Skripte, Kommentare und Dokumentation wurden final geprüft und angepasst.
 
 ---
 
-## 📜 Lizenz
+## 👤 Autor & Kontakt
 
-[MIT Lizenz](LICENSE)
+* **Marcel Gräfen**
+* 📧 [info@mgraefen.com](mailto:info@mgraefen.com)
+* 📄 [MIT Lizenz](LICENSE)
