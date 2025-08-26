@@ -12,8 +12,8 @@ This repository contains a set of useful Bash functions that are modular, docume
 
 This repository provides modular Bash functions that can be directly included in scripts:
 
-* [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Splits input strings by spaces, commas, pipes, or custom delimiters and returns a clean array. [🔗 Full Documentation](Normalize_List/README.md)
-* [📋 Display Table](#-display-table) – Displays formatted tables in the terminal, automatically calculates column widths, and centers headers. Supports multiple rows and custom separators. [🔗 Full Documentation](Display_Table/README.md)
+* [⚙️ Normalize List](#⚙️-normalize-list) – Splits input strings by spaces, commas, pipes, or custom delimiters and returns a clean array. [🔗 Full Documentation](Normalize_List/README.md)
+* [📋 Display Table](#📋-display-table) – Displays formatted tables in the terminal, automatically calculates column widths, and centers headers. Supports multiple rows and custom separators. [🔗 Full Documentation](Display_Table/README.md)
 * [✅ Check Requirements](#✅-check-requirements) – Checks Bash version, required functions, programs, alternative program groups, and optional root privileges. [🔗 Full Documentation](Check_Requirements/README.md)
 * [📂 Resolve Paths](#📂-resolve-paths) – Normalizes input paths and converts them to absolute paths. [🔗 Full Documentation](Resolve_Paths/README.md)
 * [📋 Classify Paths](#📋-classify-paths) – Classifies paths by **existence** and **permissions** including wildcards (`*`, `**`) and stores results in named arrays. [🔗 Full Documentation](Classify_Paths/README.md)

@@ -9,21 +9,14 @@ Eine Bash-Funktion zum Klassifizieren von Dateipfaden nach **Existenz** und **Be
 
 ---
 
-## ✨ Neue Features – `classify_paths()`
+## ✨ Neue Features
 
-* 🔑 **Flexible Berechtigungsprüfung:** Teilmasken (`r`, `w`, `x`, `rw`, `rx`, `wx`, `rwx`) + Negation (`-` / `not`), nicht angegebene Rechte werden ignoriert. Alle Perm-Keys inkl. `not` initialisiert.
 * ⚡ **Separator-Option:** Unterstützt `| ! $ & ' ( ) * ; < > ? [ ] ^ { } ~` + Leerzeichen / kein Separator (`false/off/no/not`). Ungültige Werte → Warnung + Standard `|`.
 * ✨ **Wildcard-Erweiterung:** `*` und `**` werden aufgelöst, Dotfiles korrekt, fehlende Pfade landen in `missing`.
-* 🗂️ **Handling von Pfaden mit Leerzeichen:** Separatoren korrekt eingefügt, Arrays sauber konvertierbar.
-* 🔄 **Duplikaterkennung:** Doppelte Pfade zuverlässig entfernt; existierende vs. fehlende Pfade getrennt.
+* 🗂️ **Handling von Pfaden mit Leerzeichen:** Separatoren korrekt eingefügt, 
 * ⚠️ **Logging & Warnungen:** Hinweise bei ungültigen Masken, Separatoren oder führendem `/**/`.
 * 📝 **Output-Keys vollständig initialisiert:** Alle Typen (`file`, `dir`) + Masken (`mask`, `mask,not`) vorbereitet.
 * 🔄 **Rückwärtskompatibel:** Alte Aufrufe funktionieren weiterhin; neue Features optional nutzbar.
-
----
-
-Wenn du willst, kann ich daraus noch **eine kleine Tabelle mit Icon + Feature + Kurzbeschreibung** bauen, die noch übersichtlicher wirkt. Willst du, dass ich das mache?
-
 
 ---
 

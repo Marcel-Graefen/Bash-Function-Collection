@@ -11,11 +11,9 @@ A Bash function for classifying file paths based on **existence** and **permissi
 
 ## ✨ New Features – `classify_paths()`
 
-* 🔑 **Flexible Permission Check:** Partial masks (`r`, `w`, `x`, `rw`, `rx`, `wx`, `rwx`) + negation (`-` / `not`), unspecified rights are ignored. All perm-keys including `not` initialized.
 * ⚡ **Separator Option:** Supports `| ! $ & ' ( ) * ; < > ? [ ] ^ { } ~` + space / no separator (`false/off/no/not`). Invalid values → warning + default `|`.
 * ✨ **Wildcard Expansion:** `*` and `**` expanded, dotfiles handled correctly, missing paths go into `missing`.
 * 🗂️ **Handles Paths with Spaces:** Separators correctly inserted, arrays easily splittable.
-* 🔄 **Duplicate Detection:** Duplicate paths reliably removed; existing vs. missing paths separated.
 * ⚠️ **Logging & Warnings:** Warnings for invalid masks, separators, or leading `/**/`.
 * 📝 **Output Keys Fully Initialized:** All types (`file`, `dir`) + masks (`mask`, `mask,not`) prepared.
 * 🔄 **Backward Compatible:** Old calls still work; new features optional.
