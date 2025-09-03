@@ -1,0 +1,13 @@
+Date: 2025-09-03 23:43:13
+Status: INFO
+Message: This is an info message 1
+Call chain:
+
+├─ /home/marcel/Git_Public/Bash-Function-Collection/Log_Msg/1.sh
+├─ funktion3
+│  └─ /home/marcel/Git_Public/Bash-Function-Collection/Log_Msg/4.sh
+
+Other Log files:
+|  /haus
+|  └─ [ERROR] Folder does not exist
+|  /home/marcel/Git_Public/Bash-Function-Collection/Log_Msg/hallo.log
