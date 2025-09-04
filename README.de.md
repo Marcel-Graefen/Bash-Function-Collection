@@ -17,6 +17,7 @@ Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte einge
 * [✅ Check Requirements](#✅-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [🔗 Vollständige Dokumentation](Check_Requirements/README.de.md)
 * [📂 Resolve Paths](#📂-resolve-paths) – Normalisiert Eingabepfade und wandelt sie in absolute Pfade um. [🔗 Vollständige Dokumentation](Resolve_Paths/README.de.md)
 * [📋 Classify Paths](#📋-classify-paths) – Klassifiziert Pfade nach **Existenz** und **Berechtigungen** inkl. Wildcards (`*`, `**`) und speichert Ergebnisse in benannte Arrays. [🔗 Vollständige Dokumentation](Classify_Paths/README.de.md)
+* [📋 Log Call Chain](#📋-log-call-chain) – Zeichnet **verschachtelte Funktions- und Skriptaufrufe** auf, erzeugt ASCII-Bäume, unterstützt mehrere Log-Dateien, Details, Fehlermeldungen und Unterdrückungen. [🔗 Vollständige Dokumentation](Log_Call_Chain/README.de.md)
 * [🤖 Generierungshinweis](#🤖-generierungshinweis)
 * [👤 Autor & Kontakt](#👤-autor--kontakt)
 
@@ -167,9 +168,47 @@ echo "Missing files: ${Hallo[missing]}"
 
 ---
 
+## 📋 Log Call Chain
+
+### A Bash function for **fully logging nested function and script calls**.
+
+Generates an **ASCII tree** of the call chain, including shortened paths, error logs, and optional details. Supports multiple log files and directories, as well as suppression of specific functions or scripts.
+
+* 📋 **Hierarchical Logging:** Function and script calls displayed in a tree format.
+* ✨ **Shortened Paths:** Shows only first folder + ... + script name.
+* 💬 **Message & Details:** `-m/--message` for a short description, `-D/--details` for detailed error messages.
+* 🗂️ **Flexible Log Output:** Supports multiple log files and directories.
+* ❌ **Suppressions:** Certain functions or scripts can be excluded from the call chain.
+* ⚡ **Error Logging:** Logs directories that do not exist or are not writable.
+* 📝 **Legend:** Full paths of scripts at the end; other log files listed if more than one exists.
+
+
+**Short example:**
+
+```bash
+log_call_chain -s INFO -m "Starting process" -d "/tmp" -f "process.log"
+```
+
+**Detailed example:**
+
+```bash
+log_call_chain -s ERROR -m "Failed task" -D "Detailed error description with stack trace" -d "/tmp/logs" -f "error.log"
+```
+
+**Suppressing functions:**
+
+```bash
+log_call_chain -s WARNING -m "Partial run" -x "func_to_skip" -d "/tmp/logs" -f "partial.log"
+```
+
+[🔗 Vollständige Dokumentation](Log_Call_Chain/README.de.md)
+
+---
+
 ## 🤖 Generierungshinweis
 
-Dieses Projekt wurde mithilfe einer Künstlichen Intelligenz (KI) erstellt. Skripte, Kommentare und Dokumentation wurden final geprüft und angepasst.
+Dieses Projekt wurde mithilfe einer Künstlichen Intelligenz (KI) erstellt.
+Skripte, Kommentare und Dokumentation wurden final geprüft und angepasst.
 
 ---
 

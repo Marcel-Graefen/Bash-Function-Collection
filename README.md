@@ -1,10 +1,10 @@
 # 📂 Bash Functions Collection
 
-[![Deutsch](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
+[![German](https://img.shields.io/badge/Sprache-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
 Welcome to the **Bash Functions Collection**!
-This repository contains a set of useful Bash functions that are modular, documented, and can be directly integrated into your own scripts.
+This repository contains a collection of useful Bash functions that are modular, documented, and can be directly integrated into your own scripts.
 
 ---
 
@@ -14,9 +14,10 @@ This repository provides modular Bash functions that can be directly included in
 
 * [⚙️ Normalize List](#⚙️-normalize-list) – Splits input strings by spaces, commas, pipes, or custom delimiters and returns a clean array. [🔗 Full Documentation](Normalize_List/README.md)
 * [📋 Display Table](#📋-display-table) – Displays formatted tables in the terminal, automatically calculates column widths, and centers headers. Supports multiple rows and custom separators. [🔗 Full Documentation](Display_Table/README.md)
-* [✅ Check Requirements](#✅-check-requirements) – Checks Bash version, required functions, programs, alternative program groups, and optional root privileges. [🔗 Full Documentation](Check_Requirements/README.md)
+* [✅ Check Requirements](#✅-check-requirements) – Checks Bash version, required functions, programs, alternative program groups, and optionally root privileges. [🔗 Full Documentation](Check_Requirements/README.md)
 * [📂 Resolve Paths](#📂-resolve-paths) – Normalizes input paths and converts them to absolute paths. [🔗 Full Documentation](Resolve_Paths/README.md)
-* [📋 Classify Paths](#📋-classify-paths) – Classifies paths by **existence** and **permissions** including wildcards (`*`, `**`) and stores results in named arrays. [🔗 Full Documentation](Classify_Paths/README.md)
+* [📋 Classify Paths](#📋-classify-paths) – Classifies paths by **existence** and **permissions**, including wildcards (`*`, `**`), and stores results in named arrays. [🔗 Full Documentation](Classify_Paths/README.md)
+* [📋 Log Call Chain](#📋-log-call-chain) – Logs **nested function and script calls**, generates ASCII trees, supports multiple log files, details, error messages, and suppressions. [🔗 Full Documentation](Log_Call_Chain/README.md)
 * [🤖 Generation Note](#🤖-generation-note)
 * [👤 Author & Contact](#👤-author--contact)
 
@@ -24,16 +25,18 @@ This repository provides modular Bash functions that can be directly included in
 
 ## ⚙️ Normalize List
 
-### A flexible Bash function to normalize input strings into arrays. It splits strings by spaces, commas, pipes, or custom delimiters and returns a clean array.
+### A flexible Bash function to normalize input strings into arrays.
 
-* 🟢 **Flexible Input:** Accepts one or multiple strings at once.
+It splits strings by spaces, commas, pipes, or custom delimiters and returns a clean array.
+
+* 🟢 **Flexible Input:** Accepts one or more strings simultaneously.
 * 🔹 **Custom Delimiters:** Regex-like, e.g., space, comma, pipe, or custom characters.
-* 🟣 **Array Output:** Populates a Bash array using nameref (`--out|--output`).
-* 🔒 **Robust Error Handling:** Detects and reports missing parameters.
-* ⚡ **Easy Integration:** Can be embedded directly in scripts, no external dependencies.
+* 🟣 **Array Output:** Populates a Bash array via Nameref (`--out|--output`).
+* 🔒 **Robust Error Handling:** Missing parameters are detected and reported.
+* ⚡ **Easy Integration:** Can be directly included in scripts, no external dependencies.
 * 💡 **Return Value:** 0 on success, 2 on error.
 
-**Short Example:**
+**Short example:**
 
 ```bash
 declare -a my_array
@@ -58,16 +61,18 @@ kiwi
 
 ## 📋 Display Table
 
-### A flexible Bash function to display formatted tables in the terminal. It automatically calculates column widths, centers the header, and formats each row neatly.
+### A flexible Bash function to display formatted tables in the terminal.
+
+It automatically calculates column widths, centers headers, and formats each row neatly.
 
 * 🟢 **Flexible Rows & Columns:** Each row can contain multiple columns.
 * 🔹 **Automatic Column Widths:** Adjusts column width to longest content.
 * 🟣 **Header Centering:** Optional table header is centered.
 * 🔒 **Robust Error Checking:** Checks for missing functions.
-* ⚡ **Easy Integration:** Can be embedded directly in Bash scripts.
+* ⚡ **Easy Integration:** Can be directly included in Bash scripts.
 * 💡 **Return Value:** 0 on success, 2 if required functions are missing.
 
-**Short Example:**
+**Short example:**
 
 ```bash
 display_table -H "My Table" \
@@ -95,15 +100,15 @@ display_table -H "My Table" \
 
 ### A Bash function to check script requirements: Bash version, functions, programs, and optionally root privileges.
 
-* 🟢 **Check Bash Version:** Optional Major/Minor.
-* ⚙️ **Check Functions:** Functions to verify via `--funcs/-f`.
-* 🟣 **Check Programs:** Programs via `--programs/-p` or alternative groups via `--programs-alternative/-a`.
-* 🔒 **Check Root Privileges:** Optional via `--root/-r` or `--sudo/-s`.
-* ⚡ **Flexible Error Handling:** With `--exit/-x` the script can exit immediately or return after errors.
-* 🔍 **Complete Check:** All requirements are checked first; results are returned after completion.
-* 💡 **Return Values:** 0 on success, 2 on one or more errors.
+* 🟢 **Check Bash Version:** Optional for major/minor versions.
+* ⚙️ **Check Functions:** Functions to check via `--funcs/-f`.
+* 🟣 **Check Programs:** Programs via `--programs/-p` or alternative groups `--programs-alternative/-a`.
+* 🔒 **Root Privileges:** Optional via `--root/-r` or `--sudo/-s`.
+* ⚡ **Flexible Error Handling:** With `--exit/-x`, decides whether the script exits on error.
+* 🔍 **Full Verification:** All requirements are checked first; return after completion.
+* 💡 **Return Values:** 0 on success, 2 if one or more errors.
 
-**Short Example:**
+**Short example:**
 
 ```bash
 check_requirements --major 4 --funcs "normalize_list" --programs "awk" --programs-alternative "git svn" --root
@@ -123,7 +128,7 @@ check_requirements --major 4 --funcs "normalize_list" --programs "awk" --program
 * 🟣 **Existence Check:** Separates existing and missing paths.
 * 💡 **Return Values:** 0 on success, 2 on error.
 
-**Short Example:**
+**Short example:**
 
 ```bash
 declare -a all exist
@@ -151,7 +156,7 @@ printf "All: %s\nExist: %s\n" "${all[*]}" "${exist[*]}"
 * ⚠️ **Logging & Warnings:** Invalid masks or separators are reported.
 * 💡 **Return Values:** 0 on success, 2 on error.
 
-**Short Example:**
+**Short example:**
 
 ```bash
 declare -A Hallo
@@ -164,6 +169,42 @@ echo "Missing files: ${Hallo[missing]}"
 ```
 
 [🔗 Full Documentation](Classify_Paths/README.md)
+
+---
+
+## 📋 Log Call Chain
+
+### A Bash function for **fully logging nested function and script calls**.
+
+Generates an **ASCII tree** of the call chain, including shortened paths, error logs, and optional details. Supports multiple log files and directories, as well as suppression of specific functions or scripts.
+
+* 📋 **Hierarchical Logging:** Function and script calls displayed in a tree format.
+* ✨ **Shortened Paths:** Shows only first folder + ... + script name.
+* 💬 **Message & Details:** `-m/--message` for a short description, `-D/--details` for detailed error messages.
+* 🗂️ **Flexible Log Output:** Supports multiple log files and directories.
+* ❌ **Suppressions:** Certain functions or scripts can be excluded from the call chain.
+* ⚡ **Error Logging:** Logs directories that do not exist or are not writable.
+* 📝 **Legend:** Full paths of scripts at the end; other log files listed if more than one exists.
+
+**Short example:**
+
+```bash
+log_call_chain -s INFO -m "Starting process" -d "/tmp" -f "process.log"
+```
+
+**Detailed example:**
+
+```bash
+log_call_chain -s ERROR -m "Failed task" -D "Detailed error description with stack trace" -d "/tmp/logs" -f "error.log"
+```
+
+**Suppressing functions:**
+
+```bash
+log_call_chain -s WARNING -m "Partial run" -x "func_to_skip" -d "/tmp/logs" -f "partial.log"
+```
+
+[🔗 Full Documentation](Log_Call_Chain/README.md)
 
 ---
 
