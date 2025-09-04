@@ -1,6 +1,6 @@
 # 📂 Bash Functions Collection
 
-[![German](https://img.shields.io/badge/Sprache-German-blue)](./README.de.md)
+[![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
 Welcome to the **Bash Functions Collection**!
