@@ -12,15 +12,15 @@ This repository contains a collection of useful Bash functions that are modular,
 
 This repository provides modular Bash functions that can be directly included in scripts:
 
-* [⚙️ Normalize List](#⚙️-normalize-list) – Splits input strings by spaces, commas, pipes, or custom delimiters and returns a clean array. [🔗 Full Documentation](Normalize_List/README.md)
-* [📋 Display Table](#📋-display-table) – Displays formatted tables in the terminal, automatically calculates column widths, and centers headers. Supports multiple rows and custom separators. [🔗 Full Documentation](Display_Table/README.md)
-* [✅ Check Requirements](#✅-check-requirements) – Checks Bash version, required functions, programs, alternative program groups, and optionally root privileges. [🔗 Full Documentation](Check_Requirements/README.md)
-* [📂 Resolve Paths](#📂-resolve-paths) – Normalizes input paths and converts them to absolute paths. [🔗 Full Documentation](Resolve_Paths/README.md)
-* [📋 Classify Paths](#📋-classify-paths) – Classifies paths by **existence** and **permissions**, including wildcards (`*`, `**`), and stores results in named arrays. [🔗 Full Documentation](Classify_Paths/README.md)
-* [📋 Log Call Chain](#📋-log-call-chain) – Logs **nested function and script calls**, generates ASCII trees, supports multiple log files, details, error messages, and suppressions. [🔗 Full Documentation](Log_Call_Chain/README.md)
-* [📋 Parse Case Flags](#📋-parse-case-flags) – Parses, validates, and assigns command-line flags within a case block. [🔗 Full Documentation](Parse_Case_Flags/README.md)
-* [🤖 Generation Note](#🤖-generation-note)
-* [👤 Author & Contact](#👤-author--contact)
+* [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Splits input strings by spaces, commas, pipes, or custom delimiters and returns a clean array. [🔗 Full Documentation](Normalize_List/README.md)
+* [📋 Display Table](#-display-table) – Displays formatted tables in the terminal, automatically calculates column widths, and centers headers. Supports multiple rows and custom separators. [🔗 Full Documentation](Display_Table/README.md)
+* [✅ Check Requirements](#-check-requirements) – Checks Bash version, required functions, programs, alternative program groups, and optionally root privileges. [🔗 Full Documentation](Check_Requirements/README.md)
+* [📂 Resolve Paths](#-resolve-paths) – Normalizes input paths and converts them to absolute paths. [🔗 Full Documentation](Resolve_Paths/README.md)
+* [📋 Classify Paths](#-classify-paths) – Classifies paths by **existence** and **permissions**, including wildcards (`*`, `**`), and stores results in named arrays. [🔗 Full Documentation](Classify_Paths/README.md)
+* [📋 Log Call Chain](#-log-call-chain) – Logs **nested function and script calls**, generates ASCII trees, supports multiple log files, details, error messages, and suppressions. [🔗 Full Documentation](Log_Call_Chain/README.md)
+* [📋 Parse Case Flags](#-parse-case-flags) – Parses, validates, and assigns command-line flags within a case block. [🔗 Full Documentation](Parse_Case_Flags/README.md)
+* [🤖 Generation Note](#-generation-note)
+* [👤 Author & Contact](#-author--contact)
 
 ---
 
