@@ -18,6 +18,7 @@ Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte einge
 * [📂 Resolve Paths](#📂-resolve-paths) – Normalisiert Eingabepfade und wandelt sie in absolute Pfade um. [🔗 Vollständige Dokumentation](Resolve_Paths/README.de.md)
 * [📋 Classify Paths](#📋-classify-paths) – Klassifiziert Pfade nach **Existenz** und **Berechtigungen** inkl. Wildcards (`*`, `**`) und speichert Ergebnisse in benannte Arrays. [🔗 Vollständige Dokumentation](Classify_Paths/README.de.md)
 * [📋 Log Call Chain](#📋-log-call-chain) – Zeichnet **verschachtelte Funktions- und Skriptaufrufe** auf, erzeugt ASCII-Bäume, unterstützt mehrere Log-Dateien, Details, Fehlermeldungen und Unterdrückungen. [🔗 Vollständige Dokumentation](Log_Call_Chain/README.de.md)
+* [📋 Parse Case Flags](#📋-parse-case-flags) – Parsen, Validieren und Zuweisen von Kommandozeilen-Flags innerhalb eines case-Blocks. [🔗 Vollständige Dokumentation](Parse_Case_Flags/README.de.md)
 * [🤖 Generierungshinweis](#🤖-generierungshinweis)
 * [👤 Autor & Kontakt](#👤-autor--kontakt)
 
@@ -170,38 +171,87 @@ echo "Missing files: ${Hallo[missing]}"
 
 ## 📋 Log Call Chain
 
-### A Bash function for **fully logging nested function and script calls**.
+### Eine Bash-Funktion für **vollständiges Logging verschachtelter Funktions- und Skriptaufrufe**.
 
-Generates an **ASCII tree** of the call chain, including shortened paths, error logs, and optional details. Supports multiple log files and directories, as well as suppression of specific functions or scripts.
+Erzeugt einen **ASCII-Baum** der Aufrufkette, einschließlich gekürzter Pfade, Fehlerlogs und optionaler Details. Unterstützt mehrere Log-Dateien und -Verzeichnisse sowie Unterdrückung bestimmter Funktionen oder Skripte.
 
-* 📋 **Hierarchical Logging:** Function and script calls displayed in a tree format.
-* ✨ **Shortened Paths:** Shows only first folder + ... + script name.
-* 💬 **Message & Details:** `-m/--message` for a short description, `-D/--details` for detailed error messages.
-* 🗂️ **Flexible Log Output:** Supports multiple log files and directories.
-* ❌ **Suppressions:** Certain functions or scripts can be excluded from the call chain.
-* ⚡ **Error Logging:** Logs directories that do not exist or are not writable.
-* 📝 **Legend:** Full paths of scripts at the end; other log files listed if more than one exists.
+* 📋 **Hierarchisches Logging:** Funktions- und Skriptaufrufe in Baumstruktur.
+* ✨ **Gekürzte Pfade:** Zeigt nur ersten Ordner + … + Skriptname.
+* 💬 **Nachrichten & Details:** `-m/--message` für kurze Beschreibung, `-D/--details` für detaillierte Fehlerinformationen.
+* 🗂️ **Flexibles Log-Output:** Mehrere Log-Dateien und Verzeichnisse unterstützt.
+* ❌ **Unterdrückungen:** Bestimmte Funktionen oder Skripte können ausgeschlossen werden.
+* ⚡ **Fehler-Logging:** Meldet Verzeichnisse, die nicht existieren oder nicht beschreibbar sind.
+* 📝 **Legende:** Vollständige Pfade am Ende; andere Log-Dateien gelistet, falls mehrere vorhanden.
 
-
-**Short example:**
+**Kurzes Beispiel:**
 
 ```bash
 log_call_chain -s INFO -m "Starting process" -d "/tmp" -f "process.log"
 ```
 
-**Detailed example:**
+**Detailliertes Beispiel:**
 
 ```bash
 log_call_chain -s ERROR -m "Failed task" -D "Detailed error description with stack trace" -d "/tmp/logs" -f "error.log"
 ```
 
-**Suppressing functions:**
+**Funktionen unterdrücken:**
 
 ```bash
 log_call_chain -s WARNING -m "Partial run" -x "func_to_skip" -d "/tmp/logs" -f "partial.log"
 ```
 
 [🔗 Vollständige Dokumentation](Log_Call_Chain/README.de.md)
+
+---
+
+## 📋 Parse Case Flags
+
+### Eine Bash-Funktion zum **Parsen, Validieren und Zuweisen von Kommandozeilen-Flags innerhalb eines case-Blocks**.
+
+Unterstützt **Einzelwerte, Arrays, Toggle-Flags**, prüft Werte auf Zahlen, Buchstaben oder verbotene Zeichen/Werte und lässt **alle verbleibenden Argumente** nach der Verarbeitung erhalten.
+
+* 🎯 **Flag Parsing:** Einzelne Flags, Arrays und Toggle-Optionen werden unterstützt.
+* 🔢 **Zahlenvalidierung:** `--number` erlaubt nur numerische Werte.
+* 🔤 **Buchstabenvalidierung:** `--letters` erlaubt nur alphabetische Zeichen.
+* ❌ **Verbotene Zeichen & Werte:** `--forbid` und `--forbid-full` verhindern bestimmte Zeichen oder ganze Werte (Wildcards `*` werden unterstützt).
+* 💾 **Variable Zuweisung:** Dynamische Zuweisung per Nameref (`declare -n`).
+* 🔄 **Erhalt der restlichen Argumente:** Alle nicht verarbeiteten CLI-Argumente bleiben in `"$@"` erhalten.
+* ⚡ **Toggle-Flags:** Flags ohne Wert setzen die Variable auf `true`.
+* 🔗 **Kombinierbare Optionen:** Alle Validierungsoptionen können beliebig kombiniert werden, z. B. `--array --number --forbid-full "root" "admin*"`.
+
+**Kurzes Beispiel:**
+
+```bash
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --name)
+      parse_case_flags "$1" name_var --letters "$2" -i "$@" || return 1
+      shift 2
+      ;;
+  esac
+done
+```
+
+**Array-Beispiel:**
+
+```bash
+parse_case_flags --tags tags_array --array Dev Ops QA -i "$@" || return 1
+```
+
+**Toggle-Beispiel:**
+
+```bash
+parse_case_flags --verbose verbose_flag --toggle -i "$@" || return 1
+```
+
+**Kombinierte Optionen-Beispiel:**
+
+```bash
+parse_case_flags --ids ids_array --array --number --forbid-full "0" "999" 1 2 3 -i "$@" || return 1
+```
+
+[🔗 Vollständige Dokumentation](Parse_Case_Flags/README.de.md)
 
 ---
 

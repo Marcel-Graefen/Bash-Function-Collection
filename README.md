@@ -18,6 +18,7 @@ This repository provides modular Bash functions that can be directly included in
 * [📂 Resolve Paths](#📂-resolve-paths) – Normalizes input paths and converts them to absolute paths. [🔗 Full Documentation](Resolve_Paths/README.md)
 * [📋 Classify Paths](#📋-classify-paths) – Classifies paths by **existence** and **permissions**, including wildcards (`*`, `**`), and stores results in named arrays. [🔗 Full Documentation](Classify_Paths/README.md)
 * [📋 Log Call Chain](#📋-log-call-chain) – Logs **nested function and script calls**, generates ASCII trees, supports multiple log files, details, error messages, and suppressions. [🔗 Full Documentation](Log_Call_Chain/README.md)
+* [📋 Parse Case Flags](#📋-parse-case-flags) – Parses, validates, and assigns command-line flags within a case block. [🔗 Full Documentation](Parse_Case_Flags/README.md)
 * [🤖 Generation Note](#🤖-generation-note)
 * [👤 Author & Contact](#👤-author--contact)
 
@@ -205,6 +206,60 @@ log_call_chain -s WARNING -m "Partial run" -x "func_to_skip" -d "/tmp/logs" -f "
 ```
 
 [🔗 Full Documentation](Log_Call_Chain/README.md)
+
+---
+
+## 📋 Parse Case Flags
+
+### A Bash function for **parsing, validating, and assigning command-line flags within a case block**.
+
+Supports **single values, arrays, toggle flags**, validates values for numbers, letters, or forbidden characters/values, and keeps **all remaining arguments** after processing.
+
+* 🎯 **Flag Parsing:** Single flags, arrays, and toggle options supported.
+* 🔢 **Number Validation:** `--number` allows numeric values only.
+* 🔤 **Letter Validation:** `--letters` allows alphabetic characters only.
+* ❌ **Forbidden Characters & Values:** `--forbid` and `--forbid-full` prevent specific
+
+
+characters or whole values (wildcards `*` supported).
+
+* 💾 **Variable Assignment:** Dynamic assignment via Nameref (`declare -n`).
+* 🔄 **Keep Remaining Arguments:** All unprocessed CLI arguments remain in `"$@"`.
+* ⚡ **Toggle Flags:** Flags without values set the variable to `true`.
+* 🔗 **Combinable Options:** All validation options can be combined, e.g., `--array --number --forbid-full "root" "admin*"`.
+
+**Short Example:**
+
+```bash
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --name)
+      parse_case_flags "$1" name_var --letters "$2" -i "$@" || return 1
+      shift 2
+      ;;
+  esac
+done
+```
+
+**Array Example:**
+
+```bash
+parse_case_flags --tags tags_array --array Dev Ops QA -i "$@" || return 1
+```
+
+**Toggle Example:**
+
+```bash
+parse_case_flags --verbose verbose_flag --toggle -i "$@" || return 1
+```
+
+**Combined Options Example:**
+
+```bash
+parse_case_flags --ids ids_array --array --number --forbid-full "0" "999" 1 2 3 -i "$@" || return 1
+```
+
+[🔗 Full Documentation](Parse_Case_Flags/README.md)
 
 ---
 
