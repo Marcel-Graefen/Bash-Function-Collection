@@ -12,15 +12,15 @@ Dieses Repository enthält eine Sammlung nützlicher Bash-Funktionen, die modula
 
 Dieses Repository enthält modulare Bash-Funktionen, die direkt in Skripte eingebunden werden können:
 
-* [⚙️ Normalize List](#⚙️-normalize-list) – Zerlegt Eingabe-Strings anhand von Leerzeichen, Kommas, Pipes oder eigenen Trennzeichen und gibt ein sauberes Array zurück. [🔗 Vollständige Dokumentation](Normalize_List/README.de.md)
-* [📋 Display Table](#📋-display-table) – Zeigt formatierte Tabellen im Terminal an, berechnet Spaltenbreiten automatisch und zentriert den Header. Unterstützt mehrere Zeilen und benutzerdefinierte Separatoren. [🔗 Vollständige Dokumentation](Display_Table/README.de.md)
-* [✅ Check Requirements](#✅-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [🔗 Vollständige Dokumentation](Check_Requirements/README.de.md)
-* [📂 Resolve Paths](#📂-resolve-paths) – Normalisiert Eingabepfade und wandelt sie in absolute Pfade um. [🔗 Vollständige Dokumentation](Resolve_Paths/README.de.md)
-* [📋 Classify Paths](#📋-classify-paths) – Klassifiziert Pfade nach **Existenz** und **Berechtigungen** inkl. Wildcards (`*`, `**`) und speichert Ergebnisse in benannte Arrays. [🔗 Vollständige Dokumentation](Classify_Paths/README.de.md)
-* [📋 Log Call Chain](#📋-log-call-chain) – Zeichnet **verschachtelte Funktions- und Skriptaufrufe** auf, erzeugt ASCII-Bäume, unterstützt mehrere Log-Dateien, Details, Fehlermeldungen und Unterdrückungen. [🔗 Vollständige Dokumentation](Log_Call_Chain/README.de.md)
-* [📋 Parse Case Flags](#📋-parse-case-flags) – Parsen, Validieren und Zuweisen von Kommandozeilen-Flags innerhalb eines case-Blocks. [🔗 Vollständige Dokumentation](Parse_Case_Flags/README.de.md)
-* [🤖 Generierungshinweis](#🤖-generierungshinweis)
-* [👤 Autor & Kontakt](#👤-autor--kontakt)
+* [⚙️ Normalize List](#%EF%B8%8F-normalize-list) – Zerlegt Eingabe-Strings anhand von Leerzeichen, Kommas, Pipes oder eigenen Trennzeichen und gibt ein sauberes Array zurück. [🔗 Vollständige Dokumentation](Normalize_List/README.de.md)
+* [📋 Display Table](#-display-table) – Zeigt formatierte Tabellen im Terminal an, berechnet Spaltenbreiten automatisch und zentriert den Header. Unterstützt mehrere Zeilen und benutzerdefinierte Separatoren. [🔗 Vollständige Dokumentation](Display_Table/README.de.md)
+* [✅ Check Requirements](#-check-requirements) – Prüft Bash-Version, benötigte Funktionen, Programme, alternative Programmgruppen und optional Root-Rechte. [🔗 Vollständige Dokumentation](Check_Requirements/README.de.md)
+* [📂 Resolve Paths](#-resolve-paths) – Normalisiert Eingabepfade und wandelt sie in absolute Pfade um. [🔗 Vollständige Dokumentation](Resolve_Paths/README.de.md)
+* [📋 Classify Paths](#-classify-paths) – Klassifiziert Pfade nach **Existenz** und **Berechtigungen** inkl. Wildcards (`*`, `**`) und speichert Ergebnisse in benannte Arrays. [🔗 Vollständige Dokumentation](Classify_Paths/README.de.md)
+* [📋 Log Call Chain](#-log-call-chain) – Zeichnet **verschachtelte Funktions- und Skriptaufrufe** auf, erzeugt ASCII-Bäume, unterstützt mehrere Log-Dateien, Details, Fehlermeldungen und Unterdrückungen. [🔗 Vollständige Dokumentation](Log_Call_Chain/README.de.md)
+* [📋 Parse Case Flags](#-parse-case-flags) – Parsen, Validieren und Zuweisen von Kommandozeilen-Flags innerhalb eines case-Blocks. [🔗 Vollständige Dokumentation](Parse_Case_Flags/README.de.md)
+* [🤖 Generierungshinweis](#-generierungshinweis)
+* [👤 Autor & Kontakt](#-autor--kontakt)
 
 ---
 
