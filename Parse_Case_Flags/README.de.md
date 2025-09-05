@@ -14,7 +14,7 @@ Unterstützt **Einzelwerte, Arrays, Toggle-Flags**, prüft Werte auf Zahlen, Buc
 
 * [📌 Wichtige Hinweise](#-wichtige-hinweise)
 * [🛠️ Funktionen & Features](#-funktionen--features)
-* [⚙️ Voraussetzungen](#-voraussetzungen)
+* [⚙️ Voraussetzungen](#%EF%B8%8F-voraussetzungen)
 * [📦 Installation](#-installation)
 * [📝 Nutzung](#-nutzung)
 
