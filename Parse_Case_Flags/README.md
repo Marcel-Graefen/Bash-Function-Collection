@@ -13,18 +13,18 @@ Supports **single values, arrays, toggle flags**, validates values for numbers, 
 ## 🚀 Table of Contents
 
 * [📌 Important Notes](#-important-notes)
-* [🛠️ Features](#🛠️-features)
-* [⚙️ Requirements](#⚙️-requirements)
-* [📦 Installation](#📦-installation)
-* [📝 Usage](#📝-usage)
+* [🛠️ Features](#-features)
+* [⚙️ Requirements](#-requirements)
+* [📦 Installation](#-installation)
+* [📝 Usage](#-usage)
 
-  * [🪄 Single Flag](#🪄-single-flag)
-  * [📚 Array & Multiple Values](#📚-array--multiple-values)
-  * [⚡ Toggle Flags](#⚡-toggle-flags)
-  * [🔗 Combined Options](#🔗-combined-options)
-* [📌 API Reference](#📌-api-reference)
-* [🤖 Generation Note](#🤖-generation-note)
-* [👤 Author & Contact](#👤-author--contact)
+  * [🪄 Single Flag](#-single-flag)
+  * [📚 Array & Multiple Values](#-array--multiple-values)
+  * [⚡ Toggle Flags](#-toggle-flags)
+  * [🔗 Combined Options](#-combined-options)
+* [📌 API Reference](#-api-reference)
+* [🤖 Generation Note](#-generation-note)
+* [👤 Author & Contact](#-author--contact)
 
 ---
 

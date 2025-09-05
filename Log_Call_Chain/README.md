@@ -12,17 +12,17 @@ Generates an **ASCII tree** of the call chain including shortened paths, error l
 
 ## 🚀 Table of Contents
 
-* [🛠️ Functions & Features](#🛠️-functions--features)
-* [⚙️ Requirements](#⚙️-requirements)
-* [📦 Installation](#📦-installation)
-* [📝 Usage](#📝-usage)
+* [🛠️ Functions & Features](#-functions--features)
+* [⚙️ Requirements](#-requirements)
+* [📦 Installation](#-installation)
+* [📝 Usage](#-usage)
 
-  * [🪄 Simple Log](#🪄-simple-log)
-  * [💡 Detailed Logs](#💡-detailed-logs)
-  * [📛 Errors & Suppressions](#📛-errors--suppressions)
-* [📌 API Reference](#📌-api-reference)
-* [🤖 Generation Note](#🤖-generation-note)
-* [👤 Author & Contact](#👤-author--contact)
+  * [🪄 Simple Log](#-simple-log)
+  * [💡 Detailed Logs](#-detailed-logs)
+  * [📛 Errors & Suppressions](#-errors--suppressions)
+* [📌 API Reference](#-api-reference)
+* [🤖 Generation Note](#-generation-note)
+* [👤 Author & Contact](#-author--contact)
 
 ---
 

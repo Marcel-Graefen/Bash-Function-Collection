@@ -12,17 +12,17 @@ Erzeugt eine **ASCII-Baumdarstellung** der Call Chain inklusive verkürzter Pfad
 
 ## 🚀 Inhaltsverzeichnis
 
-* [🛠️ Funktionen & Features](#🛠️-funktionen--features)
-* [⚙️ Voraussetzungen](#⚙️-voraussetzungen)
-* [📦 Installation](#📦-installation)
-* [📝 Nutzung](#📝-nutzung)
+* [🛠️ Funktionen & Features](#-funktionen--features)
+* [⚙️ Voraussetzungen](#-voraussetzungen)
+* [📦 Installation](#-installation)
+* [📝 Nutzung](#-nutzung)
 
-  * [🪄 Einfacher Log](#🪄-einfacher-log)
-  * [💡 Detaillierte Logs](#💡-detaillierte-logs)
-  * [📛 Fehler & Unterdrückungen](#📛-fehler--unterdrückungen)
-* [📌 API-Referenz](#📌-api-referenz)
-* [🤖 Generierungshinweis](#🤖-generierungshinweis)
-* [👤 Autor & Kontakt](#👤-autor--kontakt)
+  * [🪄 Einfacher Log](#-einfacher-log)
+  * [💡 Detaillierte Logs](#-detaillierte-logs)
+  * [📛 Fehler & Unterdrückungen](#-fehler--unterdrückungen)
+* [📌 API-Referenz](#-api-referenz)
+* [🤖 Generierungshinweis](#-generierungshinweis)
+* [👤 Autor & Kontakt](#-autor--kontakt)
 
 
 ---

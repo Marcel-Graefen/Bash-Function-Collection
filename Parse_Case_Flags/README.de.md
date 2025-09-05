@@ -13,18 +13,18 @@ Unterstützt **Einzelwerte, Arrays, Toggle-Flags**, prüft Werte auf Zahlen, Buc
 ## 🚀 Inhaltsverzeichnis
 
 * [📌 Wichtige Hinweise](#-wichtige-hinweise)
-* [🛠️ Funktionen & Features](#🛠️-funktionen--features)
-* [⚙️ Voraussetzungen](#⚙️-voraussetzungen)
-* [📦 Installation](#📦-installation)
-* [📝 Nutzung](#📝-nutzung)
+* [🛠️ Funktionen & Features](#-funktionen--features)
+* [⚙️ Voraussetzungen](#-voraussetzungen)
+* [📦 Installation](#-installation)
+* [📝 Nutzung](#-nutzung)
 
-  * [🪄 Einfaches Flag](#🪄-einfaches-flag)
-  * [📚 Array & Multiple Werte](#📚-array--multiple-werte)
-  * [⚡ Toggle Flags](#⚡-toggle-flags)
-  * [🔗 Kombinierte Optionen](#🔗-kombinierte-optionen)
-* [📌 API-Referenz](#📌-api-referenz)
-* [🤖 Generierungshinweis](#🤖-generierungshinweis)
-* [👤 Autor & Kontakt](#👤-autor--kontakt)
+  * [🪄 Einfaches Flag](#-einfaches-flag)
+  * [📚 Array & Multiple Werte](#-array--multiple-werte)
+  * [⚡ Toggle Flags](#-toggle-flags)
+  * [🔗 Kombinierte Optionen](#-kombinierte-optionen)
+* [📌 API-Referenz](#-api-referenz)
+* [🤖 Generierungshinweis](#-generierungshinweis)
+* [👤 Autor & Kontakt](#-autor--kontakt)
 
 ---
 
