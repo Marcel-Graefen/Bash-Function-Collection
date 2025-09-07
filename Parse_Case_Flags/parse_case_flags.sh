@@ -86,7 +86,7 @@ parse_case_flags() {
       --forbid-full)
         shift
         forbid_full=()
-        while [[ $# -gt 0 && "$1" != "-i" ]]; do
+        while [[ $# -gt 0 && "$1" != "-i" && ! ( "$1" == -* && "$1" != \"*\" && "$1" != \'*\' ) ]]; do
           forbid_full+=("$1")
           shift
         done
@@ -98,7 +98,7 @@ parse_case_flags() {
 
   # --------- Collecting values ---------
   local values=()
-  while [[ $# -gt 0 && "$1" != "-i" ]]; do
+  while [[ $# -gt 0 && "$1" != "-i" && ! ( "$1" == -* && "$1" != \"*\" && "$1" != \'*\' ) ]]; do
     values+=("$1")
     shift
   done
