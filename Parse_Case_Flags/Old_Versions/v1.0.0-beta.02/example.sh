@@ -10,7 +10,6 @@ Write_File() {
   local numbers=()
   local letters=()
   local files_forbidden=()
-  local files_allowed=()
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -45,13 +44,8 @@ Write_File() {
       -k|--forbid_full)
         shift
         forbidden_values=("hallo" "error_file")
-        parse_case_flags "--forbid-full" files --array --forbid-full "${forbidden_values[@]}" || return 1
+        parse_case_flags "--forbid-full" files --array --forbid-full "${forbidden_values[@]}" #-i "$@" || return 1
         shift ${#files[@]}
-        ;;
-      -a|--allow)
-        shift
-        parse_case_flags "-a" files_allowed --array --allow "a-zA-Z0-9._" -i "$@" || return 1
-        shift ${#files_allowed[@]}
         ;;
       *)
         echo "❌ [ERROR] Unknown parameter: $1"
@@ -70,14 +64,17 @@ Write_File() {
     return 1
   fi
 
+
+
   # --- Output ---
   echo "Dirs: ${dirs[*]}"
   echo "Files: ${files[*]}"
   echo "Numbers: ${numbers[*]}"
   echo "Letters: ${letters[*]}"
   echo "Verbose: $verbose"
-  echo "Allowed files: ${files_allowed[*]}"
 }
 
 # ---------------- Example call ----------------
-Write_File -d "output_dir" -f "wow" -a "test_file" "okay_123" "BAD!file"
+input=("test_file" "hallo" "safe_file" "error_file")
+
+Write_File -d "hallo" -f "wow"

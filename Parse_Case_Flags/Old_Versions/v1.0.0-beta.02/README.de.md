@@ -1,7 +1,7 @@
 # 📋 Bash Funktion: parse_case_flags
 
 [![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
-[![Version](https://img.shields.io/badge/version-0.0.0_beta.03-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.0.0_beta.01-blue.svg)](#)
 [![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
@@ -10,35 +10,21 @@ Unterstützt **Einzelwerte, Arrays, Toggle-Flags**, prüft Werte auf Zahlen, Buc
 
 ---
 
-## ✨ Neue Features
-
-* 🔹 Neue Option: `--allow`
-Ermöglicht die Angabe, welche Zeichen in einem Wert erlaubt sind. Werte, die nicht in der Allow-Liste enthalten sind, führen zu einer Fehlermeldung.
-
----
-
 ## 🚀 Inhaltsverzeichnis
 
 * [📌 Wichtige Hinweise](#-wichtige-hinweise)
 * [🛠️ Funktionen & Features](#-funktionen--features)
-* [⚙️ Voraussetzungen](#%EF%B8%8F-voraussetzungen)
+* [⚙️ Voraussetzungen](#-voraussetzungen)
 * [📦 Installation](#-installation)
 * [📝 Nutzung](#-nutzung)
+
   * [🪄 Einfaches Flag](#-einfaches-flag)
   * [📚 Array & Multiple Werte](#-array--multiple-werte)
   * [⚡ Toggle Flags](#-toggle-flags)
   * [🔗 Kombinierte Optionen](#-kombinierte-optionen)
-  * [🛡️ Eingabe-Validierung (Allow / Forbid / Forbid-Full)</summary)](#-eingabe-validierung-allow--forbid--forbid-full)
-    * [✅ Allow Flag](#-allow-flag)
-    * [⛔ Forbid Flag](#-forbid-flag)
-    * [🚫 Forbid-Full Flag](#-forbid-full-flag)
-    * [📊 Vergleich](#-vergleich)
-    * [🧩 Komplettes Beispiel mit allen Flags](#-komplettes-beispiel-mit-allen-flags)
 * [📌 API-Referenz](#-api-referenz)
-* [🗂️ Changelog](#-changelog)
 * [🤖 Generierungshinweis](#-generierungshinweis)
 * [👤 Autor & Kontakt](#-autor--kontakt)
-
 
 ---
 
@@ -139,98 +125,6 @@ parse_case_flags --ids ids_array --array --number --forbid-full "0" "999" 1 2 3 
 
 ---
 
-Perfekt 🚀 — dann erweitere ich deinen **README-Abschnitt** um ein komplettes Beispiel, das **alle drei Flags gleichzeitig** demonstriert.
-Das ist sehr praktisch, weil man so direkt sieht, wie man `--allow`, `--forbid` und `--forbid-full` kombiniert.
-
-Hier der fertige Block:
-
----
-
-## 🛡️ Eingabe-Validierung (Allow / Forbid / Forbid-Full)
-
-### ✅ Allow Flags
-
-```bash
-parse_case_flags --name myvar --array --allow "a-zA-Z0-9._" -i "$@" || return 1
-```
-
-**Erklärung:**
-Mit `--allow` kannst du genau festlegen, welche Zeichen in einem Wert erlaubt sind.
-Alle anderen Zeichen führen zu einem Fehler.
-Im Beispiel sind nur Buchstaben, Zahlen, Punkte und Unterstriche zulässig.
-
----
-
-### ❌ Forbid Flags
-
-```bash
-parse_case_flags --name myvar --array --forbid "!@#" -i "$@" || return 1
-```
-
-**Erklärung:**
-Mit `--forbid` kannst du einzelne **verbotene Zeichen** angeben.
-Tauchen diese Zeichen im Wert auf, wird ein Fehler geworfen.
-Im Beispiel sind die Zeichen `!`, `@` und `#` verboten.
-
----
-
-### ⛔ Forbid-Full Flags
-
-```bash
-forbidden_values=("root" "admin" "error_file")
-parse_case_flags --name myvar --array --forbid-full "${forbidden_values[@]}" -i "$@" || return 1
-```
-
-**Erklärung:**
-Mit `--forbid-full` kannst du **bestimmte ganze Werte** verbieten.
-Im Beispiel sind die Strings `root`, `admin` und `error_file` nicht zulässig – wenn ein Parameter exakt so lautet, bricht die Funktion mit einem Fehler ab.
-
----
-
-### 📊 Vergleich
-
-| Flag            | Zweck                          | Beispiel Fehler                |
-| --------------- | ------------------------------ | ------------------------------ |
-| `--allow`       | Nur bestimmte Zeichen zulassen | `bad@file` → `@` nicht erlaubt |
-| `--forbid`      | Bestimmte Zeichen verbieten    | `bad@file` → `@` verboten      |
-| `--forbid-full` | Ganze Werte verbieten          | `error_file` → Wert verboten   |
-
----
-
-### 🧩 Komplettes Beispiel mit allen Flags
-
-```bash
-#!/usr/bin/env bash
-source ./parse_case_flags.sh
-
-validate_inputs() {
-  local inputs=()
-
-  # Verbotene ganze Werte
-  local forbidden_values=("root" "admin" "error_file")
-
-  parse_case_flags -i "$@" \
-    --name inputs --array \
-    --allow "a-zA-Z0-9._" \        # Nur Buchstaben, Zahlen, . und _ erlaubt
-    --forbid "!@#" \               # Zeichen ! @ # verboten
-    --forbid-full "${forbidden_values[@]}" || return 1  # ganze Werte verboten
-
-  echo "Valid inputs: ${inputs[*]}"
-}
-
-# Beispielaufruf
-validate_inputs "hello_world" "safe.file" "bad@file" "admin"
-```
-
-**Erklärung zum Beispiel:**
-
-* `hello_world` ✅ erlaubt
-* `safe.file` ✅ erlaubt
-* `bad@file` ❌ Fehler, da `@` nicht erlaubt ist (`--forbid`)
-* `admin` ❌ Fehler, da kompletter Wert verboten ist (`--forbid-full`)
-
----
-
 ## 📌 API-Referenz
 
 | Beschreibung      | Argument / Alias        | Optional | Mehrfach | Typ                            |
@@ -242,7 +136,6 @@ validate_inputs "hello_world" "safe.file" "bad@file" "admin"
 | Buchstaben        | `--letters`             | ✅        | ❌        | Flag                           |
 | Toggle            | `--toggle`              | ✅        | ❌        | Flag                           |
 | Verbotene Zeichen | `--forbid <chars>`      | ✅        | ❌        | String                         |
-| Erlaubte Zeichen  | `--allow <chars>`       | ✅        | ❌        | String                         |
 | Verbotene Werte   | `--forbid-full <value>` | ✅        | ✅        | String                         |
 | Ende Parsing      | `-i "$@"`               | ❌        | ❌        | Signal für restliche Argumente |
 
@@ -252,12 +145,6 @@ validate_inputs "hello_world" "safe.file" "bad@file" "admin"
 * Toggle auf `true` bei gesetztem Flag
 * Validierungsmeldungen bei Fehlern
 * Restliche CLI-Argumente bleiben für die Schleife erhalten
-
----
-
-## 🗂️ Changelog
-
-Mit `--allow` können nun erlaubte Zeichen explizit definiert werden.
 
 ---
 

@@ -5,8 +5,8 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 0.0.0-beta.03
-# @date        : 2025-09-06
+# @version     : 0.0.0-beta.01
+# @date        : 2025-09-05
 #
 # @requires    : Bash 4.3+
 #
@@ -19,7 +19,7 @@
 
 #---------------------- FUNCTION: parse_case_flags --------------------------------
 #
-# @version 0.0.0-beta.03
+# @version 0.0.0-beta.01
 #
 # Parses, validates, and assigns values from command-line flags within a case block.
 #
@@ -47,7 +47,6 @@
 #   --letters                      Only allow alphabetic characters
 #   --toggle                       Flag with no value, sets target variable to true
 #   --forbid <chars>               Disallow these characters in values
-#   --allow <chars>                Allow these characters in values
 #   --forbid-full <value1> [...]   Disallow specific full values (supports wildcards *)
 #   -i "$@"                        Marks end of internal parsing and passes all remaining CLI arguments to the function
 #
@@ -74,7 +73,6 @@ parse_case_flags() {
   local allow_letters=false
   local toggle=false
   local forbid_chars=""
-  local allow_chars=""
   local forbid_full=()
 
   # --------- Parse arguments ---------
@@ -85,11 +83,10 @@ parse_case_flags() {
       --letters) allow_letters=true; shift ;;
       --toggle) toggle=true; shift ;;
       --forbid) forbid_chars="$2"; shift 2 ;;
-      --allow) allow_chars="$2"; shift 2 ;;
       --forbid-full)
         shift
         forbid_full=()
-        while [[ $# -gt 0 && "$1" != "-i" && ! ( "$1" == -* && "$1" != \"*\" && "$1" != \'*\' ) ]]; do
+        while [[ $# -gt 0 && "$1" != "-"* && "$1" != "-i" ]]; do
           forbid_full+=("$1")
           shift
         done
@@ -101,7 +98,7 @@ parse_case_flags() {
 
   # --------- Collecting values ---------
   local values=()
-  while [[ $# -gt 0 && "$1" != "-i" && ! ( "$1" == -* && "$1" != \"*\" && "$1" != \'*\' ) ]]; do
+  while [[ $# -gt 0 && "$1" != "-"* && "$1" != "-i" ]]; do
     values+=("$1")
     shift
   done
@@ -123,12 +120,6 @@ parse_case_flags() {
     fi
     if [[ -n "$forbid_chars" && "$val" =~ [$forbid_chars] ]]; then
       echo "❌ [ERROR] $flag contains forbidden character: $val"
-      echo "   Forbiden: $forbid_chars"
-      return 1
-    fi
-    if [[ -n "$allow_chars" && ! "$val" =~ ^["$allow_chars"]+$ ]]; then
-      echo "❌ [ERROR] $flag contains invalid character: $val"
-      echo "   Allowed: $allow_chars"
       return 1
     fi
     for forbidden in "${forbid_full[@]}"; do
