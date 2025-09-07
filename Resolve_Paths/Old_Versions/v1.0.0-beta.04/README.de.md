@@ -1,6 +1,6 @@
 # 📋 Bash Funktion: Resolve Paths
 
-[![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](../README.de.md)
+[![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
 [![Version](https://img.shields.io/badge/version-1.0.0_beta.04-blue.svg)](#)
 [![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
@@ -11,32 +11,32 @@ Eine Bash-Funktion zum Normalisieren und Auflösen von Dateipfaden, automatische
 
 ## 🚀 Inhaltsverzeichnis
 
-* [📌 Wichtige Hinweise](#📌-wichtige-hinweise)
-* [🛠️ Funktionen & Features](#🛠️-funktionen--features)
-* [⚙️ Voraussetzungen](#⚙️-voraussetzungen)
-* [📦 Installation](#📦-installation)
-* [📝 Nutzung](#📝-nutzung)
+* [📌 Wichtige Hinweise](#-wichtige-hinweise)
+* [🛠️ Funktionen & Features](#-funktionen--features)
+* [⚙️ Voraussetzungen](#%EF%B8%8F-voraussetzungen)
+* [📦 Installation](#-installation)
+* [📝 Nutzung](#-nutzung)
 
   * <details>
     <summary>▶️ Beispiele</summary>
 
-    * [🗂️ Pfade normalisieren und auflösen](#🗂️-pfade-normalisieren-und-auflösen)
-    * [⚙️ Benutzerdefinierte Trennzeichen](#⚙️-benutzerdefinierte-trennzeichen)
-    * [🔍 Pfade klassifizieren](#🔍-pfade-klassifizieren)
+    * [🗂️ Pfade normalisieren und auflösen](#-pfade-normalisieren-und-auflösen)
+    * [⚙️ Benutzerdefinierte Trennzeichen](#%EF%B8%8F-benutzerdefinierte-trennzeichen)
+    * [🔍 Pfade klassifizieren](#-pfade-klassifizieren)
     * [📝 Ausgabe in benannte Arrays](#📝-ausgabe-in-benannte-arrays)
-    * [✨ Wildcards verwenden](#✨-wildcards-verwenden)
-    * [🔄 Kombination mehrerer Eingaben](#🔄-kombination-von-mehreren-eingaben)
-    * [🔑 Nur Schreibbarkeit prüfen](#🔑-prüfen-nur-nach-schreibbarkeit)
-    * [📛 Fehlende Dateien ermitteln](#📛-fehlende-dateien-ermitteln)
-    * [▶️ Prüfen auf ausführbare Skripte](#▶️-prüfen-auf-ausführbare-skripte)
-    * [🔒 Alle Berechtigungen prüfen](#🔒-alle-berechtigungen-prüfen)
+    * [✨ Wildcards verwenden](#-wildcards-verwenden)
+    * [🔄 Kombination mehrerer Eingaben](#-kombination-von-mehreren-eingaben)
+    * [🔑 Nur Schreibbarkeit prüfen](#-prüfen-nur-nach-schreibbarkeit)
+    * [📛 Fehlende Dateien ermitteln](#-fehlende-dateien-ermitteln)
+    * [▶️ Prüfen auf ausführbare Skripte](#-prüfen-auf-ausführbare-skripte)
+    * [🔒 Alle Berechtigungen prüfen](#-alle-berechtigungen-prüfen)
 
     </details>
-* [📌 API-Referenz](#📌-api-referenz)
-* [🗂️ Changelog](#🗂️-changelog)
-* [👤 Autor & Kontakt](#👤-autor--kontakt)
-* [🤖 Generierungshinweis](#🤖-generierungshinweis)
-* [📜 Lizenz](#📜-lizenz)
+* [📌 API-Referenz](#-api-referenz)
+* [🗂️ Changelog](#-changelog)
+* [👤 Autor & Kontakt](#-autor--kontakt)
+* [🤖 Generierungshinweis](#-generierungshinweis)
+* [📜 Lizenz](#-lizenz)
 
 ---
 

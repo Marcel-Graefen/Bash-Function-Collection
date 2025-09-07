@@ -1,6 +1,6 @@
 # 📋 Bash Funktion: Classify Paths
 
-[![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](../README.de.md)
+[![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
 [![Version](https://img.shields.io/badge/version-0.0.1_beta.02-blue.svg)](#)
 [![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
@@ -13,7 +13,7 @@ Eine Bash-Funktion zum Klassifizieren von Dateipfaden nach **Existenz** und **Be
 
 * ⚡ **Separator-Option:** Unterstützt `| ! $ & ' ( ) * ; < > ? [ ] ^ { } ~` + Leerzeichen / kein Separator (`false/off/no/not`). Ungültige Werte → Warnung + Standard `|`.
 * ✨ **Wildcard-Erweiterung:** `*` und `**` werden aufgelöst, Dotfiles korrekt, fehlende Pfade landen in `missing`.
-* 🗂️ **Handling von Pfaden mit Leerzeichen:** Separatoren korrekt eingefügt, 
+* 🗂️ **Handling von Pfaden mit Leerzeichen:** Separatoren korrekt eingefügt,
 * ⚠️ **Logging & Warnungen:** Hinweise bei ungültigen Masken, Separatoren oder führendem `/**/`.
 * 📝 **Output-Keys vollständig initialisiert:** Alle Typen (`file`, `dir`) + Masken (`mask`, `mask,not`) vorbereitet.
 * 🔄 **Rückwärtskompatibel:** Alte Aufrufe funktionieren weiterhin; neue Features optional nutzbar.
@@ -22,29 +22,29 @@ Eine Bash-Funktion zum Klassifizieren von Dateipfaden nach **Existenz** und **Be
 
 ## 🚀 Inhaltsverzeichnis
 
-* [📌 Wichtige Hinweise](#📌-wichtige-hinweise)
-* [🛠️ Funktionen & Features](#🛠️-funktionen--features)
-* [⚙️ Voraussetzungen](#⚙️-voraussetzungen)
-* [📦 Installation](#📦-installation)
-* [📝 Nutzung](#📝-nutzung)
+* [📌 Wichtige Hinweise](#-wichtige-hinweise)
+* [🛠️ Funktionen & Features](#-funktionen--features)
+* [⚙️ Voraussetzungen](#%EF%B8%8F-voraussetzungen)
+* [📦 Installation](#-installation)
+* [📝 Nutzung](#-nutzung)
 
   * <details>
     <summary>▶️ Beispiele</summary>
 
-    * [🔍 Pfade klassifizieren](#🔍-pfade-klassifizieren)
-    * [✨ Wildcards verwenden](#✨-wildcards-verwenden)
-    * [🔑 Berechtigungen prüfen](#🔑-berechtigungen-prüfen)
+    * [🔍 Pfade klassifizieren](#-pfade-klassifizieren)
+    * [✨ Wildcards verwenden](#-wildcards-verwenden)
+    * [🔑 Berechtigungen prüfen](#-berechtigungen-prüfen)
 
-      * [🛡️ Berechtigungslogik](#🛡️-berechtigungslogik)
-    * [📛 Fehlende Dateien ermitteln](#📛-fehlende-dateien-ermitteln)
-    * [📝 Output](#📝-output)
-      * [📊 Alle verfügbaren Output-Optionen](#📊-alle-verfügbaren-output-optionen)
+      * [🛡️ Berechtigungslogik](#-berechtigungslogik)
+    * [📛 Fehlende Dateien ermitteln](#-fehlende-dateien-ermitteln)
+    * [📝 Output](#-output)
+      * [📊 Alle verfügbaren Output-Optionen](#-alle-verfügbaren-output-optionen)
 
     </details>
-* [📌 API-Referenz](#📌-api-referenz)
-* [🗂️ Changelog](#🗂️-changelog)
-* [🤖 Generierungshinweis](#🤖-generierungshinweis)
-* [👤 Autor & Kontakt](#👤-autor--kontakt)
+* [📌 API-Referenz](#-api-referenz)
+* [🗂️ Changelog](#-changelog)
+* [🤖 Generierungshinweis](#-generierungshinweis)
+* [👤 Autor & Kontakt](#-autor--kontakt)
 
 ---
 

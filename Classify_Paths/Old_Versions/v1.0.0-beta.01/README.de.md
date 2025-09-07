@@ -1,6 +1,6 @@
 # 📋 Bash Funktion: Classify Paths
 
-[![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](../../../README.de.md)
+[![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
 [![Version](https://img.shields.io/badge/version-0.0.1_beta.01-blue.svg)](#)
 [![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
@@ -11,21 +11,21 @@ Eine Bash-Funktion zum Klassifizieren von Dateipfaden nach **Existenz** und **Be
 
 ## 🚀 Inhaltsverzeichnis
 
-* [📌 Wichtige Hinweise](#📌-wichtige-hinweise)
-* [🛠️ Funktionen & Features](#🛠️-funktionen--features)
-* [⚙️ Voraussetzungen](#⚙️-voraussetzungen)
-* [📦 Installation](#📦-installation)
-* [📝 Nutzung](#📝-nutzung)
+* [📌 Wichtige Hinweise](#-wichtige-hinweise)
+* [🛠️ Funktionen & Features](#-funktionen--features)
+* [⚙️ Voraussetzungen](#%EF%B8%8F-voraussetzungen)
+* [📦 Installation](#-installation)
+* [📝 Nutzung](#-nutzung)
 
-  * [🔍 Pfade klassifizieren](#🔍-pfade-klassifizieren)
-  * [✨ Wildcards verwenden](#✨-wildcards-verwenden)
-  * [🔑 Berechtigungen prüfen](#🔑-berechtigungen-prüfen)
-  * [📛 Fehlende Dateien ermitteln](#📛-fehlende-dateien-ermitteln)
-* [📌 API-Referenz](#📌-api-referenz)
-* [🗂️ Changelog](#🗂️-changelog)
-* [👤 Autor & Kontakt](#👤-autor--kontakt)
-* [🤖 Generierungshinweis](#🤖-generierungshinweis)
-* [📜 Lizenz](#📜-lizenz)
+  * [🔍 Pfade klassifizieren](#-pfade-klassifizieren)
+  * [✨ Wildcards verwenden](#-wildcards-verwenden)
+  * [🔑 Berechtigungen prüfen](#-berechtigungen-prüfen)
+  * [📛 Fehlende Dateien ermitteln](#-fehlende-dateien-ermitteln)
+* [📌 API-Referenz](#-api-referenz)
+* [🗂️ Changelog](#-changelog)
+* [👤 Autor & Kontakt](#-autor--kontakt)
+* [🤖 Generierungshinweis](#-generierungshinweis)
+* [📜 Lizenz](#-lizenz)
 
 ---
 

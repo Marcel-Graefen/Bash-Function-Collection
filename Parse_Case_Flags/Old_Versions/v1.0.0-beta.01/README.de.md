@@ -1,7 +1,7 @@
 # 📋 Bash Funktion: parse_case_flags
 
 [![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
-[![Version](https://img.shields.io/badge/version-0.0.0_beta.02-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.0.0_beta.01-blue.svg)](#)
 [![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
@@ -10,17 +10,11 @@ Unterstützt **Einzelwerte, Arrays, Toggle-Flags**, prüft Werte auf Zahlen, Buc
 
 ---
 
-## ✨ Neue Features
-
-* 🔹 **Führende Bindestriche als Value:** In der Funktion werden Werte, die mit `-` beginnen, in Quotes jetzt korrekt als Value übernommen.
-
----
-
 ## 🚀 Inhaltsverzeichnis
 
 * [📌 Wichtige Hinweise](#-wichtige-hinweise)
 * [🛠️ Funktionen & Features](#-funktionen--features)
-* [⚙️ Voraussetzungen](#%EF%B8%8F-voraussetzungen)
+* [⚙️ Voraussetzungen](#-voraussetzungen)
 * [📦 Installation](#-installation)
 * [📝 Nutzung](#-nutzung)
 
@@ -29,7 +23,6 @@ Unterstützt **Einzelwerte, Arrays, Toggle-Flags**, prüft Werte auf Zahlen, Buc
   * [⚡ Toggle Flags](#-toggle-flags)
   * [🔗 Kombinierte Optionen](#-kombinierte-optionen)
 * [📌 API-Referenz](#-api-referenz)
-* [🗂️ Changelog](#-changelog)
 * [🤖 Generierungshinweis](#-generierungshinweis)
 * [👤 Autor & Kontakt](#-autor--kontakt)
 
@@ -152,26 +145,6 @@ parse_case_flags --ids ids_array --array --number --forbid-full "0" "999" 1 2 3 
 * Toggle auf `true` bei gesetztem Flag
 * Validierungsmeldungen bei Fehlern
 * Restliche CLI-Argumente bleiben für die Schleife erhalten
-
----
-
-## 🗂️ Changelog
-
-**Führende `-` in Quotes werden jetzt als Value behandelt.**
-
-**Vorher:**
-
-```bash
-Test -tp -d haus
-# Parser interpretiert "-d" als Flag, nicht als Value
-```
-
-**Nachher:**
-
-```bash
-Test -tp "-d haus"
-# Parser nimmt "-d haus" korrekt als Value
-```
 
 ---
 

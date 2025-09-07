@@ -1,6 +1,6 @@
 # 📋 Bash Function: Classify Paths
 
-[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](../README.de.md)
+[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.md)
 [![Version](https://img.shields.io/badge/version-0.0.1_beta.02-blue.svg)](#)
 [![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
@@ -22,28 +22,28 @@ A Bash function for classifying file paths based on **existence** and **permissi
 
 ## 🚀 Table of Contents
 
-* [📌 Important Notes](#📌-important-notes)
-* [🛠️ Functions & Features](#🛠️-functions--features)
-* [⚙️ Requirements](#⚙️-requirements)
-* [📦 Installation](#📦-installation)
+* [📌 Important Notes](#-important-notes)
+* [🛠️ Functions & Features](#-functions--features)
+* [⚙️ Requirements](#%EF%B8%8F-requirements)
+* [📦 Installation](#-installation)
 * [📝 Usage](#📝-usage)
 
   * <details>
     <summary>▶️ Examples</summary>
 
-    * [🔍 Classify Paths](#🔍-classify-paths)
-    * [✨ Using Wildcards](#✨-using-wildcards)
-    * [🔑 Check Permissions](#🔑-check-permissions)
-      * [🛡️ Permission Logic](#🛡️-permission-logic)
-    * [📛 Missing Files](#📛-missing-files)
-    * [📝 Output](#📝-output)
-      * [📊 All Available Output Options](#📊-all-available-output-options)
+    * [🔍 Classify Paths](#-classify-paths)
+    * [✨ Using Wildcards](#-using-wildcards)
+    * [🔑 Check Permissions](#-check-permissions)
+      * [🛡️ Permission Logic](#-permission-logic)
+    * [📛 Missing Files](#-missing-files)
+    * [📝 Output](#-output)
+      * [📊 All Available Output Options](#-all-available-output-options)
 
     </details>
-* [📌 API Reference](#📌-api-reference)
-* [🗂️ Changelog](#🗂️-changelog)
-* [🤖 Generation Note](#🤖-generation-note)
-* [👤 Author & Contact](#👤-author--contact)
+* [📌 API Reference](#-api-reference)
+* [🗂️ Changelog](#-changelog)
+* [🤖 Generation Note](#-generation-note)
+* [👤 Author & Contact](#-author--contact)
 
 ---
 

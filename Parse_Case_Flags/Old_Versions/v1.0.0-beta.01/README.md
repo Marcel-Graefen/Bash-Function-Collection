@@ -1,19 +1,12 @@
 # 📋 Bash Function: Parse Case Flags
 
 [![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.md)
-[![Version](https://img.shields.io/badge/version-0.0.0_beta.02-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.0.0_beta.01-blue.svg)](#)
 [![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
 A Bash function for **parsing, validating, and assigning command-line flags within a case block**.
 Supports **single values, arrays, toggle flags**, validates values for numbers, letters, or forbidden characters/values, and keeps **all remaining arguments** after processing.
-
----
-
-## ✨ New Features
-
-* 🔹 **Leading dashes as values:** In the function, values that start with `-` are now correctly treated as values when enclosed in quotes.
-
 
 ---
 
@@ -30,7 +23,6 @@ Supports **single values, arrays, toggle flags**, validates values for numbers, 
   * [⚡ Toggle Flags](#-toggle-flags)
   * [🔗 Combined Options](#-combined-options)
 * [📌 API Reference](#-api-reference)
-* [🗂️ Changelog](#-changelog)
 * [🤖 Generation Note](#-generation-note)
 * [👤 Author & Contact](#-author--contact)
 
@@ -153,26 +145,6 @@ parse_case_flags --ids ids_array --array --number --forbid-full "0" "999" 1 2 3 
 * Toggle set to `true` if flag is used
 * Validation messages on error
 * Remaining CLI arguments preserved for the loop
-
----
-
-## 🗂️ Changelog
-
-**Leading `-` in quotes is now treated as a value.**
-
-**Before:**
-
-```bash
-Test -tp -d haus
-# Parser interprets "-d" as a flag, not as a value
-```
-
-**After:**
-
-```bash
-Test -tp "-d haus"
-# Parser correctly treats "-d haus" as a value
-```
 
 ---
 

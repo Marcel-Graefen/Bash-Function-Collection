@@ -1,6 +1,6 @@
 # 📋 Bash Function: check\_requirements
 
-[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](../README.md)
+[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.md)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](#)
 [![Language](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)

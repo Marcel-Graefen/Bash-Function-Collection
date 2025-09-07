@@ -1,6 +1,6 @@
 # 📋 Bash Function: Classify Paths
 
-[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](../../../README.de.md)
+[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.md)
 [![Version](https://img.shields.io/badge/version-0.0.1_beta.01-blue.svg)](#)
 [![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
@@ -11,21 +11,21 @@ A Bash function to **classify filesystem paths** based on **existence** and **pe
 
 ## 🚀 Table of Contents
 
-* [📌 Important Notes](#📌-important-notes)
-* [🛠️ Features](#🛠️-features)
-* [⚙️ Requirements](#⚙️-requirements)
-* [📦 Installation](#📦-installation)
-* [📝 Usage](#📝-usage)
+* [📌 Important Notes](#-important-notes)
+* [🛠️ Features](#-features)
+* [⚙️ Requirements](#%EF%B8%8F-requirements)
+* [📦 Installation](#-installation)
+* [📝 Usage](#-usage)
 
-  * [🔍 Classify Paths](#🔍-classify-paths)
-  * [✨ Using Wildcards](#✨-using-wildcards)
-  * [🔑 Check Permissions](#🔑-check-permissions)
-  * [📛 Detect Missing Files](#📛-detect-missing-files)
-* [📌 API Reference](#📌-api-reference)
-* [🗂️ Changelog](#🗂️-changelog)
-* [👤 Author & Contact](#👤-author--contact)
-* [🤖 Generation Note](#🤖-generation-note)
-* [📜 License](#📜-license)
+  * [🔍 Classify Paths](#-classify-paths)
+  * [✨ Using Wildcards](#-using-wildcards)
+  * [🔑 Check Permissions](#-check-permissions)
+  * [📛 Detect Missing Files](#-detect-missing-files)
+* [📌 API Reference](#-api-reference)
+* [🗂️ Changelog](#-changelog)
+* [👤 Author & Contact](#-author--contact)
+* [🤖 Generation Note](#-generation-note)
+* [📜 License](#-license)
 
 ---
 

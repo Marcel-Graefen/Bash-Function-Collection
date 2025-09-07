@@ -1,6 +1,6 @@
 # 📋 Bash Function: Resolve Paths
 
-[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](../README.de.md)
+[![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.md)
 [![Version](https://img.shields.io/badge/version-1.0.0_beta.04-blue.svg)](#)
 [![English](https://img.shields.io/badge/Language-English-blue)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
@@ -11,32 +11,32 @@ A Bash function for normalizing and resolving file paths, automatic wildcard exp
 
 ## 🚀 Table of Contents
 
-* [📌 Notes](#📌-notes)
-* [🛠️ Functions & Features](#🛠️-functions--features)
-* [⚙️ Requirements](#⚙️-requirements)
-* [📦 Installation](#📦-installation)
-* [📝 Usage](#📝-usage)
+* [📌 Notes](#-notes)
+* [🛠️ Functions & Features](#-functions--features)
+* [⚙️ Requirements](#%EF%B8%8F-requirements)
+* [📦 Installation](#-installation)
+* [📝 Usage](#-usage)
 
   * <details>
     <summary>▶️ Examples</summary>
 
-    * [🗂️ Normalize and resolve paths](#🗂️-normalize-and-resolve-paths)
-    * [⚙️ Custom separators](#⚙️-custom-separators)
-    * [🔍 Classify paths](#🔍-classify-paths)
-    * [📝 Output to named arrays](#📝-output-to-named-arrays)
-    * [✨ Use wildcards](#✨-use-wildcards)
-    * [🔄 Combine multiple inputs](#🔄-combine-multiple-inputs)
-    * [🔑 Check write-only permission](#🔑-check-write-only-permission)
-    * [📛 Detect missing files](#📛-detect-missing-files)
-    * [▶️ Check executable scripts](#▶️-check-executable-scripts)
-    * [🔒 Check all permissions](#🔒-check-all-permissions)
+    * [🗂️ Normalize and resolve paths](#-normalize-and-resolve-paths)
+    * [⚙️ Custom separators](#%EF%B8%8F-custom-separators)
+    * [🔍 Classify paths](#-classify-paths)
+    * [📝 Output to named arrays](#-output-to-named-arrays)
+    * [✨ Use wildcards](#-use-wildcards)
+    * [🔄 Combine multiple inputs](#-combine-multiple-inputs)
+    * [🔑 Check write-only permission](#-check-write-only-permission)
+    * [📛 Detect missing files](#-detect-missing-files)
+    * [▶️ Check executable scripts](#-check-executable-scripts)
+    * [🔒 Check all permissions](#-check-all-permissions)
 
     </details>
-* [📌 API Reference](#📌-api-reference)
-* [🗂️ Changelog](#🗂️-changelog)
-* [👤 Author & Contact](#👤-author--contact)
-* [🤖 Generation Note](#🤖-generation-note)
-* [📜 License](#📜-license)
+* [📌 API Reference](#-api-reference)
+* [🗂️ Changelog](#-changelog)
+* [👤 Author & Contact](#-author--contact)
+* [🤖 Generation Note](#-generation-note)
+* [📜 License](#-license)
 
 ---
 

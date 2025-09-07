@@ -5,8 +5,8 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 0.0.0-beta.02
-# @date        : 2025-09-06
+# @version     : 0.0.0-beta.01
+# @date        : 2025-09-05
 #
 # @requires    : Bash 4.3+
 #
@@ -19,7 +19,7 @@
 
 #---------------------- FUNCTION: parse_case_flags --------------------------------
 #
-# @version 0.0.0-beta.02
+# @version 0.0.0-beta.01
 #
 # Parses, validates, and assigns values from command-line flags within a case block.
 #
@@ -86,7 +86,7 @@ parse_case_flags() {
       --forbid-full)
         shift
         forbid_full=()
-        while [[ $# -gt 0 && "$1" != "-i" ]]; do
+        while [[ $# -gt 0 && "$1" != "-"* && "$1" != "-i" ]]; do
           forbid_full+=("$1")
           shift
         done
@@ -98,7 +98,7 @@ parse_case_flags() {
 
   # --------- Collecting values ---------
   local values=()
-  while [[ $# -gt 0 && "$1" != "-i" ]]; do
+  while [[ $# -gt 0 && "$1" != "-"* && "$1" != "-i" ]]; do
     values+=("$1")
     shift
   done
