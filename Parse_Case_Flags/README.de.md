@@ -1,7 +1,7 @@
 # 📋 Bash Funktion: parse_case_flags
 
 [![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
-[![Version](https://img.shields.io/badge/version-0.0.0_beta.03-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.0.0_beta.02-blue.svg)](#)
 [![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
@@ -257,7 +257,29 @@ validate_inputs "hello_world" "safe.file" "bad@file" "admin"
 
 ## 🗂️ Changelog
 
-Mit `--allow` können nun erlaubte Zeichen explizit definiert werden.
+### Version 0.0.0-Beta.02 – Verbesserungen gegenüber 0.0.1-Beta.01
+
+🆕 **Allow/Forbidden chars validation:**
+
+* Neue Funktion `check_chars()` für Allow- und Forbidden-Zeichenlisten
+* Automatische Reduktion von Klammerpaaren `()`, `[]`, `{}` auf öffnende Klammern
+* Alle Sonderzeichen korrekt geprüft, keine Regex-Probleme mehr
+
+⚡ **Performance & Robustheit:**
+
+* Character-by-character Prüfung ersetzt problematische Regex-Zeichenklassen
+* Stabil bei allen Eingaben, auch bei Kombinationen von Sonderzeichen und Klammern
+
+✨ **Argument improvements:**
+
+* Neuer Parameter `--allow` für erlaubte Zeichen
+* Verbesserte Verarbeitung von escaped Eingaben (`\-`) für `forbid_full` und Werte
+
+🧹 **Code Refactoring:**
+
+* Validierung ausgelagert in wiederverwendbare Funktion
+* Doppelte Regex-Logik entfernt
+* Einheitliche Fehlerausgaben mit erlaubten/verbotenen Zeichen
 
 ---
 

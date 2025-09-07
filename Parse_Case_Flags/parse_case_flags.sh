@@ -5,7 +5,7 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 0.0.0-beta.03
+# @version     : 0.0.0-beta.02
 # @date        : 2025-09-06
 #
 # @requires    : Bash 4.3+
@@ -19,7 +19,7 @@
 
 #---------------------- FUNCTION: parse_case_flags --------------------------------
 #
-# @version 0.0.0-beta.03
+# @version 0.0.0-beta.02
 #
 # Parses, validates, and assigns values from command-line flags within a case block.
 #
@@ -77,6 +77,41 @@ parse_case_flags() {
   local allow_chars=""
   local forbid_full=()
 
+  check_chars() {
+    local val="$1"
+    local chars="$2"      # Allow- oder Forbidden-Zeichen
+    local flag="$3"       # Name für Fehlermeldung
+    local mode="$4"       # "allow" oder "forbid"
+
+    # Schritt 1: Paare / Einzelklammern auf öffnende Klammern reduzieren
+    local processed=""
+    for pair in $chars; do
+      case "$pair" in
+        "()" | ")") processed+="(" ;;
+        "[]" | "]") processed+="[" ;;
+        "{}" | "}") processed+="{" ;;
+        *) processed+="$pair" ;;
+      esac
+    done
+
+    # Schritt 2: jeden Character prüfen
+    for (( i=0; i<${#val}; i++ )); do
+      local c="${val:i:1}"
+      if [[ "$mode" == "allow" && "$processed" != *"$c"* ]]; then
+        echo "❌ [ERROR] $flag contains invalid character: $val"
+        echo "   Allowed: $chars"
+        echo "   Input value: $val"
+        return 1
+      elif [[ "$mode" == "forbid" && "$processed" == *"$c"* ]]; then
+        echo "❌ [ERROR] $flag contains forbidden character: $val"
+        echo "   Forbidden: $chars"
+        return 1
+      fi
+    done
+
+    return 0
+  }
+
   # --------- Parse arguments ---------
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -84,53 +119,63 @@ parse_case_flags() {
       --number) allow_numbers=true; shift ;;
       --letters) allow_letters=true; shift ;;
       --toggle) toggle=true; shift ;;
-      --forbid) forbid_chars="$2"; shift 2 ;;
-      --allow) allow_chars="$2"; shift 2 ;;
+      --forbid) shift; forbid_chars="$1"; shift ;;
+      --allow) shift; allow_chars="$1"; shift ;;
       --forbid-full)
         shift
         forbid_full=()
-        while [[ $# -gt 0 && "$1" != "-i" && ! ( "$1" == -* && "$1" != \"*\" && "$1" != \'*\' ) ]]; do
-          forbid_full+=("$1")
+        while [[ $# -gt 0 && "$1" != "-"* && "$1" != "-i" ]]; do
+          if [[ "$1" =~ ^\\- ]]; then
+            forbid_full+=("${1:1}")
+          else
+            forbid_full+=("$1")
+          fi
           shift
         done
         ;;
-     -i) shift; break ;;
+      -i) shift; break ;;
       *) break ;;
     esac
   done
 
-  # --------- Collecting values ---------
+  # --------- Collect values ---------
   local values=()
-  while [[ $# -gt 0 && "$1" != "-i" && ! ( "$1" == -* && "$1" != \"*\" && "$1" != \'*\' ) ]]; do
-    values+=("$1")
+  while [[ $# -gt 0 && "$1" != "-"* && "$1" != "-i" ]]; do
+    if [[ "$1" =~ ^\\- ]]; then
+      values+=("${1:1}")
+    else
+      values+=("$1")
+    fi
     shift
   done
 
   # --------- Validation ---------
   if [[ ${#values[@]} -eq 0 && $toggle == false ]]; then
-    echo "❌ [ERROR] $flag have no Value" >&2
+    echo "❌ [ERROR] $flag has no value" >&2
     return 1
   fi
 
   for val in "${values[@]}"; do
+    # Numbers
     if $allow_numbers && [[ ! "$val" =~ ^[0-9]+$ ]]; then
       echo "❌ [ERROR] $flag must be numbers only: $val"
       return 1
     fi
+    # Letters
     if $allow_letters && [[ ! "$val" =~ ^[a-zA-Z]+$ ]]; then
       echo "❌ [ERROR] $flag must be letters only: $val"
       return 1
     fi
-    if [[ -n "$forbid_chars" && "$val" =~ [$forbid_chars] ]]; then
-      echo "❌ [ERROR] $flag contains forbidden character: $val"
-      echo "   Forbiden: $forbid_chars"
-      return 1
-    fi
-    if [[ -n "$allow_chars" && ! "$val" =~ ^["$allow_chars"]+$ ]]; then
-      echo "❌ [ERROR] $flag contains invalid character: $val"
-      echo "   Allowed: $allow_chars"
-      return 1
-    fi
+  # Forbidden chars prüfen
+  if [[ -n "$forbid_chars" ]]; then
+    check_chars "$val" "$forbid_chars" "$flag" "forbid" || return 1
+  fi
+
+  # Allowed chars prüfen
+  if [[ -n "$allow_chars" ]]; then
+    check_chars "$val" "$allow_chars" "$flag" "allow" || return 1
+  fi
+
     for forbidden in "${forbid_full[@]}"; do
       if [[ "$forbidden" == *"*"* ]]; then
         [[ "$val" == $forbidden ]] && { echo "❌ [ERROR] $flag value forbidden: $val"; return 1; }
@@ -138,6 +183,7 @@ parse_case_flags() {
         [[ "$val" == "$forbidden" ]] && { echo "❌ [ERROR] $flag value forbidden: $val"; return 1; }
       fi
     done
+
   done
 
   # --------- Assign values ---------
@@ -151,4 +197,5 @@ parse_case_flags() {
   if $toggle; then
     target_ref=true
   fi
+
 }

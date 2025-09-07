@@ -1,7 +1,7 @@
 # 📋 Bash Function: `parse_case_flags`
 
 [![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.md)
-[![Version](https://img.shields.io/badge/version-0.0.0_beta.03-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.0.0_beta.02-blue.svg)](#)
 [![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
@@ -253,7 +253,30 @@ arguments preserved for the loop
 
 ## 🗂️ Changelog
 
-* Added `--allow` to explicitly define allowed characters.
+### Version 0.0.0-Beta.02 – Improvements over 0.0.1-Beta.01
+
+🆕 **Allow/Forbidden chars validation:**
+
+* New `check_chars()` function for allow and forbidden character lists
+* Automatically reduces bracket pairs `()`, `[]`, `{}` to opening brackets
+* All special characters are correctly validated; no more regex issues
+
+⚡ **Performance & Robustness:**
+
+* Character-by-character validation replaces problematic regex character classes
+* Stable for all inputs, including combinations of special characters and brackets
+
+✨ **Argument Improvements:**
+
+* New `--allow` parameter for specifying allowed characters
+* Improved handling of escaped inputs (`\-`) for `forbid_full` and values
+
+🧹 **Code Refactoring:**
+
+* Validation logic moved to a reusable function
+* Duplicate regex logic removed
+* Consistent error messages showing allowed/forbidden characters
+
 
 ---
 
