@@ -5,7 +5,7 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 1.0.0-beta.02
+# @version     : 1.0.0-beta.01
 # @date        : 2025-09-08
 #
 # @requires    : Bash 4.3+
@@ -18,7 +18,7 @@
 
 #---------------------- FUNCTION: parse_case_flags --------------------------------
 #
-# @version 1.0.0-beta.02
+# @version 1.0.0-beta.01
 #
 # Parses, validates, and assigns values from command-line flags within a case block.
 #
@@ -102,18 +102,13 @@ parse_case_flags() {
         -d|--dropping) shift; dropping="$1"; shift ;;           # Dropped (invalid) array
         -D|--dedub|--deduplicate) shift; deduplicate="$1"; shift ;; # Deduplicated array (only for arrays)
         -F|--forbid-full)
-            local current_flag="$1"
+          shift
+          forbid_full=()
+          while [[ $# -gt 0 && "$1" != "-"* ]]; do
+            [[ "$1" =~ ^\\- ]] && forbid_full+=("${1:1}") || forbid_full+=("$1")
             shift
-            while [[ $# -gt 0 ]]; do
-                [[ "$1" == "-"* && "$1" != "$current_flag" && ! "$1" =~ ^\\- ]] && break  # New real flag → cancel
-                [[ "$1" == "$current_flag" ]] && { shift; continue; } # Same flag → skip
-                # Extract value, remove leading backslash
-                local val="$1"
-                [[ "$val" =~ ^\\- ]] && val="${val:1}"
-                forbid_full+=("$val")
-                shift
-            done
-            ;;
+          done
+          ;;
         -i|--input) shift; end_of_options=true; continue ;;     # End of options, start values
         *) break ;;
       esac
@@ -135,53 +130,20 @@ parse_case_flags() {
 
   # --------- Collect values after -i / --input ---------
   local values=()
-
-  # --- Single or Array ---
-  if [[ "$type" == "array" ]]; then
-    local current_flag="$1"
-    shift
-  fi
-
   while [[ $# -gt 0 ]]; do
-    # Check if it is a real flag (not a masked one)
-    if [[ "$type" == "array" && "$1" == "-"* && "$1" != "$current_flag" && ! "$1" =~ ^\\- ]]; then
-      # Foreign flag → skip including associated values
-      shift
-      while [[ $# -gt 0 && "$1" != "-"* ]]; do shift; done
-      continue
+    local val="${1#\\-}"  # Strip leading backslash if present
+    shift
+
+    # --- Deduplication for arrays ---
+    if [[ "$type" == "array" && -n "$deduplicate" ]]; then
+      if [[ " ${values[*]} " == *" $val "* ]]; then
+        deduplicate_ref+=("$val")
+        continue
+      fi
     fi
 
-    # Same flag → skip (only array)
-    [[ "$type" == "array" && "$1" == "$current_flag" ]] && { shift; continue; }
-
-    # --- Extract value, remove leading backslash only here ---
-    local val="$1"
-    [[ "$val" =~ ^\\- ]] && val="${val:1}"
-
     values+=("$val")
-    shift
-
-    # For single: only one value → break the loop
-    [[ "$type" != "array" ]] && break
   done
-
-  # --- Deduplication for Arrays ---
-  if [[ "$type" == "array" && -n "$deduplicate" ]]; then
-    local tmp=()
-    for v in "${values[@]}"; do
-      [[ " ${tmp[*]} " =~ " $v " ]] && dedup_ref+=("$v") && continue
-      tmp+=("$v")
-    done
-    values=("${tmp[@]}")
-  fi
-
-  # --- Assignment ---
-  if [[ "$type" == "array" ]]; then
-    target_ref+=("${values[@]}")
-  else
-    target_ref="${values[0]}"
-  fi
-
 
   # --------- Validation helper function (check_chars) ---------
   check_chars() {
@@ -286,7 +248,5 @@ parse_case_flags() {
 
   # --------- Apply toggle flag ---------
   $toggle && target_ref=true
-
-  return 0
 
 }

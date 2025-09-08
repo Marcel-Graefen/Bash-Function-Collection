@@ -1,7 +1,7 @@
 # 📋 Bash Function: Format Message Line
 
 [![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
-[![Version](https://img.shields.io/badge/version-0.0.0_beta.02-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.0.0_beta.01-blue.svg)](#)
 [![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 

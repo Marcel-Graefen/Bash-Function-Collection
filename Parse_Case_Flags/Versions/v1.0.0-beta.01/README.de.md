@@ -1,7 +1,7 @@
 # 📋 Bash-Funktion: Parse Case Flags
 
 [![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
-[![Version](https://img.shields.io/badge/version-1.0.0_beta.02-blue.svg)](./Versions/v1.0.0-beta.02/README.de.md)
+[![Version](https://img.shields.io/badge/version-1.0.0_beta.01-blue.svg)](./Versions/v1.0.0-beta.02/README.de.md)
 [![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
