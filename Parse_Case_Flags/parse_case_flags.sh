@@ -249,4 +249,6 @@ parse_case_flags() {
   # --------- Apply toggle flag ---------
   $toggle && target_ref=true
 
+  return 0
+
 }
