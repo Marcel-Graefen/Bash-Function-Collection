@@ -1,4 +1,4 @@
-# 📋 Bash Funktion: parse_case_flags
+# 📋 Bash Funktion: Parse Case Flags
 
 [![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
 [![Version](https://img.shields.io/badge/version-0.0.0_beta.02-blue.svg)](#)
@@ -12,8 +12,21 @@ Unterstützt **Einzelwerte, Arrays, Toggle-Flags**, prüft Werte auf Zahlen, Buc
 
 ## ✨ Neue Features
 
-* 🔹 Neue Option: `--allow`
-Ermöglicht die Angabe, welche Zeichen in einem Wert erlaubt sind. Werte, die nicht in der Allow-Liste enthalten sind, führen zu einer Fehlermeldung.
+ℹ️ **Info – Allow Flags**
+
+Mit `--allow` kannst du genau festlegen, welche Zeichen in einem Wert erlaubt sind.
+Alle anderen Zeichen führen automatisch zu einem Fehler.
+
+
+⚠️ Kombinationen wie `a-z` sind **nicht möglich**.
+Verwende stattdessen `--letters`, wenn du ganze Buchstabenbereiche zulassen möchtest.
+
+
+➖ Das Übergeben von `-` oder `-<value>` ist ebenfalls möglich.
+Dabei muss das Minuszeichen (`-`) jedoch mit einem Backslash (`\`) escaped werden.
+Intern wird das `\` entfernt und der Wert ohne Backslash weitergegeben.
+
+Das ist nützlich um z.b. Parameter intern an andere Funktionen weiter geben zu können.
 
 ---
 
@@ -28,7 +41,7 @@ Ermöglicht die Angabe, welche Zeichen in einem Wert erlaubt sind. Werte, die ni
   * [📚 Array & Multiple Werte](#-array--multiple-werte)
   * [⚡ Toggle Flags](#-toggle-flags)
   * [🔗 Kombinierte Optionen](#-kombinierte-optionen)
-  * [🛡️ Eingabe-Validierung (Allow / Forbid / Forbid-Full)</summary)](#-eingabe-validierung-allow--forbid--forbid-full)
+  * [🛡️ Eingabe-Validierung (Allow / Forbid / Forbid-Full)</summary)](#%EF%B8%8F-input-validation-allow--forbid--forbid-full)
     * [✅ Allow Flag](#-allow-flag)
     * [⛔ Forbid Flag](#-forbid-flag)
     * [🚫 Forbid-Full Flag](#-forbid-full-flag)
@@ -148,16 +161,26 @@ Hier der fertige Block:
 
 ## 🛡️ Eingabe-Validierung (Allow / Forbid / Forbid-Full)
 
+Verstanden 👍 – hier die **passende README-Ergänzung** für deine aktuelle Funktion:
+
+---
+
 ### ✅ Allow Flags
 
 ```bash
-parse_case_flags --name myvar --array --allow "a-zA-Z0-9._" -i "$@" || return 1
+parse_case_flags --name myvar --array --allow "azAZ09._" -i "$@" || return 1
 ```
 
 **Erklärung:**
 Mit `--allow` kannst du genau festlegen, welche Zeichen in einem Wert erlaubt sind.
 Alle anderen Zeichen führen zu einem Fehler.
 Im Beispiel sind nur Buchstaben, Zahlen, Punkte und Unterstriche zulässig.
+
+>️ **Hinweis:** Kombinationen wie `a-z` sind **nicht möglich**.
+>
+> Verwende stattdessen `--letters`, für ganze Buchstabenbereiche,
+>
+> oder `--number`, für zahlen.
 
 ---
 
@@ -211,7 +234,7 @@ validate_inputs() {
 
   parse_case_flags -i "$@" \
     --name inputs --array \
-    --allow "a-zA-Z0-9._" \        # Nur Buchstaben, Zahlen, . und _ erlaubt
+    --allow "azAZ09._" \
     --forbid "!@#" \               # Zeichen ! @ # verboten
     --forbid-full "${forbidden_values[@]}" || return 1  # ganze Werte verboten
 

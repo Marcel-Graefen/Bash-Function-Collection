@@ -1,71 +1,80 @@
-# 📋 Bash Function: `parse_case_flags`
+# 📋 Bash Function: Parse Case Flags
 
 [![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.md)
-[![Version](https://img.shields.io/badge/version-0.0.0_beta.02-blue.svg)](#)
-[![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
+[![Version](https://img.shields.io/badge/version-0.0.0_beta.02-blue.svg)](Old_Versions/v1.0.0-beta.01/README.md#)
+[![Language](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
-A Bash function for **parsing, validating, and assigning command-line flags within a case block**.
-Supports **single values, arrays, and toggle flags**, validates values for numbers, letters, or forbidden characters/values, and keeps **all remaining arguments** after processing.
+A Bash function for **parsing, validating, and assigning command-line flags inside a case block**.
+Supports **single values, arrays, toggle flags**, validates numbers, letters, forbidden characters/values, and keeps **all remaining arguments** intact after processing.
 
 ---
 
 ## ✨ New Features
 
-* 🔹 **New `--allow` Option**
-  Allows specifying which characters are **permitted** in a value. Any characters not in the allow list will trigger an error.
+ℹ️ **Info – Allow Flags**
+
+With `--allow` you can explicitly define which characters are permitted in a value.
+Any other characters will automatically result in an error.
+
+⚠️ Ranges like `a-z` are **not supported**.
+Instead, use `--letters` to allow full letter ranges.
+
+➖ Passing `-` or `-<value>` is also possible.
+The minus sign (`-`) must be escaped with a backslash (`\`).
+Internally the `\` is removed, and the value is passed without the backslash.
+
+This is useful for forwarding parameters internally to other functions.
 
 ---
 
 ## 🚀 Table of Contents
 
-* [📌 Important Notes](#-important-notes)
-* [🛠️ Features & Functions](#-features--functions)
-* [⚙️ Requirements](#%EF%B8%8F-requirements)
-* [📦 Installation](#-installation)
-* [📝 Usage](#-usage)
-
-  * [🪄 Simple Flag](#-simple-flag)
-  * [📚 Array & Multiple Values](#-array--multiple-values)
-  * [⚡ Toggle Flags](#-toggle-flags)
-  * [🔗 Combined Options](#-combined-options)
-  * [🛡️ Input Validation (Allow / Forbid / Forbid-Full)](#-input-validation-allow--forbid--forbid-full)
-
-    * [✅ Allow Flag](#-allow-flag)
-    * [⛔ Forbid Flag](#-forbid-flag)
-    * [🚫 Forbid-Full Flag](#-forbid-full-flag)
-    * [📊 Comparison](#-comparison)
-    * [🧩 Complete Example with All Flags](#-complete-example-with-all-flags)
-* [📌 API Reference](#-api-reference)
-* [🗂️ Changelog](#-changelog)
-* [🤖 Generation Note](#-generation-note)
-* [👤 Author & Contact](#-author--contact)
+* [📌 Important Notes](Old_Versions/v1.0.0-beta.01/README.md#-important-notes)
+* [🛠️ Features](Old_Versions/v1.0.0-beta.01/README.md#-features)
+* [⚙️ Requirements](Old_Versions/v1.0.0-beta.01/README.md#️-requirements)
+* [📦 Installation](Old_Versions/v1.0.0-beta.01/README.md#-installation)
+* [📝 Usage](Old_Versions/v1.0.0-beta.01/README.md#-usage)
+  * [🪄 Simple Flag](Old_Versions/v1.0.0-beta.01/README.md#-simple-flag)
+  * [📚 Array & Multiple Values](Old_Versions/v1.0.0-beta.01/README.md#-array--multiple-values)
+  * [⚡ Toggle Flags](Old_Versions/v1.0.0-beta.01/README.md#-toggle-flags)
+  * [🔗 Combined Options](Old_Versions/v1.0.0-beta.01/README.md#-combined-options)
+  * [🛡️ Input Validation (Allow / Forbid / Forbid-Full)](Old_Versions/v1.0.0-beta.01/README.md#️-input-validation-allow--forbid--forbid-full)
+    * [✅ Allow Flag](Old_Versions/v1.0.0-beta.01/README.md#-allow-flag)
+    * [⛔ Forbid Flag](Old_Versions/v1.0.0-beta.01/README.md#-forbid-flag)
+    * [🚫 Forbid-Full Flag](Old_Versions/v1.0.0-beta.01/README.md#-forbid-full-flag)
+    * [📊 Comparison](Old_Versions/v1.0.0-beta.01/README.md#-comparison)
+    * [🧩 Complete Example with All Flags](Old_Versions/v1.0.0-beta.01/README.md#-complete-example-with-all-flags)
+* [📌 API Reference](Old_Versions/v1.0.0-beta.01/README.md#-api-reference)
+* [🗂️ Changelog](Old_Versions/v1.0.0-beta.01/README.md#-changelog)
+* [🤖 Generation Note](Old_Versions/v1.0.0-beta.01/README.md#-generation-note)
+* [👤 Author & Contact](Old_Versions/v1.0.0-beta.01/README.md#-author--contact)
 
 ---
 
 ## 📌 Important Notes
 
-* ⚠️ All **error or validation messages** are printed directly via `echo` to **stderr**—no external logging functions or tools are used.
-* ⚠️ The function is intended to be used **within a while/case structure**. [More 💡Info](#-usage)
+* ⚠️ All **error and validation messages** are printed directly using `echo` to **stderr** – no external logging tools are required.
+* ⚠️ The function is designed for usage **inside a while/case structure**. [More 💡 info](Old_Versions/v1.0.0-beta.01/README.md#-usage)
 
 ---
 
-## 🛠️ Features & Functions
+## 🛠️ Features
 
-* 🎯 **Flag Parsing:** Supports single flags, arrays, and toggle options.
-* 🔢 **Number Validation:** `--number` ensures only numeric values are allowed.
-* 🔤 **Letter Validation:** `--letters` allows only alphabetic characters.
-* ❌ **Forbidden Characters & Values:** `--forbid` and `--forbid-full` prevent certain characters or whole values (wildcards `*` supported).
-* 💾 **Variable Assignment:** Dynamic assignment to any variable using Nameref (`declare -n`).
-* 🔄 **Preserve Remaining Arguments:** Any CLI arguments not processed remain in `"$@"`.
-* ⚡ **Toggle Flags:** Flags without a value are set to `true`.
-* 🔗 **Combinable Options:** All validation options can be combined, e.g., `--array --number --forbid-full "root" "admin*"`.
+* 🎯 **Flag parsing:** Supports single values, arrays, and toggle flags.
+* 🔢 **Number validation:** `--number` ensures only numeric values are allowed.
+* 🔤 **Letter validation:** `--letters` allows only alphabetic characters.
+* ❌ **Forbidden characters & values:** `--forbid` and `--forbid-full` block specific characters or whole values (including wildcards `*`).
+* 💾 **Variable assignment:** Dynamic assignment to any variable via Nameref (`declare -n`).
+* 🔄 **Preserves remaining arguments:** All unprocessed CLI arguments remain in `"$@"`.
+* ⚡ **Toggle flags:** Flags without values can be set to `true`.
+* 🔗 **Combinable options:** All validation options can be freely combined, e.g. `--array --number --forbid-full "root" "admin*"`.
 
 ---
 
 ## ⚙️ Requirements
 
-* 🐚 **Bash Version ≥ 4.3** (for `declare -n`)
+* 🐚 **Bash version ≥ 4.3** (for `declare -n`)
 
 ---
 
@@ -107,7 +116,7 @@ parse_case_flags --tags tags_array --array Dev Ops QA -i "$@" || return 1
 
 **Explanation:**
 
-* `--array` → collects multiple values
+* `--array` → collects multiple values into an array
 * Result: `tags_array=("Dev" "Ops" "QA")`
 
 ---
@@ -120,7 +129,7 @@ parse_case_flags --verbose verbose_flag --toggle -i "$@" || return 1
 
 **Explanation:**
 
-* Flag without value → sets `verbose_flag` to `true`.
+* A flag without a value → sets the variable `verbose_flag` to `true`.
 
 ---
 
@@ -133,10 +142,10 @@ parse_case_flags --ids ids_array --array --number --forbid-full "0" "999" 1 2 3 
 **Explanation:**
 
 * `--array` → collects multiple values
-* `--number` → allows only numbers
-* `--forbid-full "0" "999"` → forbids certain values
+* `--number` → only numbers allowed
+* `--forbid-full "0" "999"` → forbids specific values
 * Result: `ids_array=(1 2 3)`
-* Remaining CLI arguments stay for the loop
+* Remaining CLI arguments are preserved for the loop
 
 ---
 
@@ -145,12 +154,19 @@ parse_case_flags --ids ids_array --array --number --forbid-full "0" "999" 1 2 3 
 ### ✅ Allow Flag
 
 ```bash
-parse_case_flags --name myvar --array --allow "a-zA-Z0-9._" -i "$@" || return 1
+parse_case_flags --name myvar --array --allow "azAZ09._" -i "$@" || return 1
 ```
 
 **Explanation:**
-With `--allow`, you can specify exactly which characters are allowed in a value. All other characters cause an error.
-In the example, only letters, numbers, dots, and underscores are permitted.
+With `--allow` you can explicitly define which characters are permitted.
+Any other characters will result in an error.
+In this example, only letters, numbers, dots, and underscores are allowed.
+
+> ⚠️ **Note:** Ranges like `a-z` are **not supported**.
+>
+> Use `--letters` for full letter ranges,
+>
+> or `--number` for numbers.
 
 ---
 
@@ -161,13 +177,13 @@ parse_case_flags --name myvar --array --forbid "!@#" -i "$@" || return 1
 ```
 
 **Explanation:**
-`--forbid` lets you specify **individual forbidden characters**.
-If these characters appear in the value, an error is thrown.
-Example: `!`, `@`, and `#` are forbidden.
+With `--forbid` you can specify individual **forbidden characters**.
+If any of these appear in a value, an error is raised.
+In this example, the characters `!`, `@`, and `#` are forbidden.
 
 ---
 
-### 🚫 Forbid-Full Flag
+### ⛔ Forbid-Full Flag
 
 ```bash
 forbidden_values=("root" "admin" "error_file")
@@ -175,18 +191,18 @@ parse_case_flags --name myvar --array --forbid-full "${forbidden_values[@]}" -i 
 ```
 
 **Explanation:**
-`--forbid-full` forbids **specific full values**.
-In the example, `"root"`, `"admin"`, and `"error_file"` are prohibited—if a parameter matches exactly, the function exits with an error.
+With `--forbid-full` you can block **entire values**.
+In this example, the strings `root`, `admin`, and `error_file` are not allowed – if a parameter matches exactly, the function fails with an error.
 
 ---
 
 ### 📊 Comparison
 
-| Flag            | Purpose                       | Example Error                  |
-| --------------- | ----------------------------- | ------------------------------ |
-| `--allow`       | Allow only certain characters | `bad@file` → `@` not allowed   |
-| `--forbid`      | Forbid specific characters    | `bad@file` → `@` forbidden     |
-| `--forbid-full` | Forbid full values            | `error_file` → value forbidden |
+| Flag            | Purpose                   | Example Error                |
+| --------------- | ------------------------- | ---------------------------- |
+| `--allow`       | Allow only specific chars | `bad@file` → `@` not allowed |
+| `--forbid`      | Forbid certain characters | `bad@file` → `@` forbidden   |
+| `--forbid-full` | Forbid entire values      | `error_file` → value blocked |
 
 ---
 
@@ -204,9 +220,9 @@ validate_inputs() {
 
   parse_case_flags -i "$@" \
     --name inputs --array \
-    --allow "a-zA-Z0-9._" \        # Only letters, numbers, . and _ allowed
-    --forbid "!@#" \               # Forbidden characters ! @ #
-    --forbid-full "${forbidden_values[@]}" || return 1  # Forbidden full values
+    --allow "azAZ09._" \
+    --forbid "!@#" \               # forbid chars ! @ #
+    --forbid-full "${forbidden_values[@]}" || return 1  # forbid whole values
 
   echo "Valid inputs: ${inputs[*]}"
 }
@@ -215,12 +231,12 @@ validate_inputs() {
 validate_inputs "hello_world" "safe.file" "bad@file" "admin"
 ```
 
-**Explanation:**
+**Example explained:**
 
 * `hello_world` ✅ allowed
 * `safe.file` ✅ allowed
-* `bad@file` ❌ error because `@` is forbidden (`--forbid`)
-* `admin` ❌ error because full value is forbidden (`--forbid-full`)
+* `bad@file` ❌ error, because `@` is forbidden (`--forbid`)
+* `admin` ❌ error, because full value is forbidden (`--forbid-full`)
 
 ---
 
@@ -231,7 +247,7 @@ validate_inputs "hello_world" "safe.file" "bad@file" "admin"
 | Flag Name        | `<flag>`                | ❌        | ❌        | String                    |
 | Target Variable  | `<target_variable>`     | ❌        | ❌        | String                    |
 | Array            | `--array`               | ✅        | ❌        | Flag                      |
-| Number           | `--number`              | ✅        | ❌        | Flag                      |
+| Numbers          | `--number`              | ✅        | ❌        | Flag                      |
 | Letters          | `--letters`             | ✅        | ❌        | Flag                      |
 | Toggle           | `--toggle`              | ✅        | ❌        | Flag                      |
 | Forbidden Chars  | `--forbid <chars>`      | ✅        | ❌        | String                    |
@@ -242,12 +258,9 @@ validate_inputs "hello_world" "safe.file" "bad@file" "admin"
 **Output:**
 
 * Single value or array in the target variable
-* Toggle set to `true` if flag present
-* Validation errors on invalid input
-* Remaining CLI
-
-
-arguments preserved for the loop
+* Toggle set to `true` if flag provided
+* Validation messages in case of errors
+* Remaining CLI arguments preserved for further parsing
 
 ---
 
@@ -257,33 +270,32 @@ arguments preserved for the loop
 
 🆕 **Allow/Forbidden chars validation:**
 
-* New `check_chars()` function for allow and forbidden character lists
-* Automatically reduces bracket pairs `()`, `[]`, `{}` to opening brackets
-* All special characters are correctly validated; no more regex issues
+* New function `check_chars()` for allow/forbid character lists
+* Automatic reduction of bracket pairs `()`, `[]`, `{}` to opening brackets
+* Correct validation of all special characters, no regex issues anymore
 
-⚡ **Performance & Robustness:**
+⚡ **Performance & robustness:**
 
-* Character-by-character validation replaces problematic regex character classes
-* Stable for all inputs, including combinations of special characters and brackets
+* Character-by-character validation replaces problematic regex classes
+* Stable for all inputs, including special char/bracket combinations
 
-✨ **Argument Improvements:**
+✨ **Argument improvements:**
 
-* New `--allow` parameter for specifying allowed characters
+* New parameter `--allow` for allowed characters
 * Improved handling of escaped inputs (`\-`) for `forbid_full` and values
 
-🧹 **Code Refactoring:**
+🧹 **Code refactoring:**
 
-* Validation logic moved to a reusable function
-* Duplicate regex logic removed
-* Consistent error messages showing allowed/forbidden characters
-
+* Validation moved into reusable function
+* Removed duplicate regex logic
+* Unified error messages with allowed/forbidden character display
 
 ---
 
 ## 🤖 Generation Note
 
-This document was generated with AI support and manually reviewed afterward.
-Scripts, comments, and documentation were finalized and verified.
+This document was generated with AI assistance and manually verified.
+Scripts, comments, and documentation were reviewed and adjusted.
 
 ---
 
@@ -291,4 +303,4 @@ Scripts, comments, and documentation were finalized and verified.
 
 * **Marcel Gräfen**
 * 📧 [info@mgraefen.com](mailto:info@mgraefen.com)
-* 📄 [MIT License](LICENSE)
+* 📄 [MIT License](Old_Versions/v1.0.0-beta.01/LICENSE)

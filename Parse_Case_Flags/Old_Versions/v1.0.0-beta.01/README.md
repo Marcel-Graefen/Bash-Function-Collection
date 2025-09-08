@@ -1,7 +1,7 @@
 # 📋 Bash Function: Parse Case Flags
 
 [![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.md)
-[![Version](https://img.shields.io/badge/version-0.0.0_beta.01-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.0.0_beta.01-blue.svg)](../../README.md)
 [![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
@@ -30,8 +30,18 @@ Supports **single values, arrays, toggle flags**, validates values for numbers, 
 
 ## 📌 Important Notes
 
-* ⚠️ All **error or validation messages** are printed directly to **stderr** using `echo` – no external logging tools or functions are used.
-* ⚠️ The function is intended for use **inside a while/case structure**. [More 💡info](#📝-usage)
+With `--allow` you can explicitly define which characters are permitted in a value.
+Any other characters will automatically result in an error.
+
+⚠️ Ranges like `a-z` are **not supported**.
+Instead, use `--letters` if you want to allow entire letter ranges.
+
+➖ Passing `-` or `-<value>` is also possible.
+However, the minus sign (`-`) must be escaped with a backslash (`\`).
+Internally, the `\` is removed and the value is passed on without the backslash.
+
+This is useful, for example, when forwarding parameters internally to other functions.
+
 
 ---
 
