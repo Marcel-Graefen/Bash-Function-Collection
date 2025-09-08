@@ -17,7 +17,7 @@
 # ========================================================================================
 
 
-source <(wget -qO- https://raw.githubusercontent.com/Marcel-Graefen/Bash-Function-Collection/refs/heads/main/Parse_Case_Flags/parse_case_flags.sh)
+source <(wget -qO- https://raw.githubusercontent.com/Marcel-Graefen/Bash-Function-Collection/refs/heads/main/Parse_Case_Flags/Versions/v0.0.0-beta.02/parse_case_flags.sh)
 
 #---------------------- FUNCTION: format_message_line -----------------------
 #
@@ -39,7 +39,7 @@ source <(wget -qO- https://raw.githubusercontent.com/Marcel-Graefen/Bash-Functio
 #   seq, printf
 #
 # Internal functions used:
-#   parse_case_flags
+#   parse_case_flags version 0.0.0_beta.02
 #
 # Arguments (OPTIONS):
 #   -r, --result                  Optional: Name of variable to store output (via printf -v)
