@@ -143,6 +143,6 @@ format_message_line() {
 # --------- Beispielaufruf ---------
 
 
-# format_message_line --result wow --msg "Hello World" --length 50 --fill_char "-" --brackets "<>" --inner_padding 2 --outer_padding 3
+format_message_line --result wow --msg "Hello World" --length 50 --fill_char "#" --brackets "()" --inner_padding 2 --outer_padding 3
 
-# echo "$wow"
+echo "$wow"

@@ -58,8 +58,9 @@ parse_case_flags --name "username" --return user_var --letters -i "$@"
 * 💾 **Deduplicate Array**: Duplikate optional entfernen (`--deduplicate`)
 * 🔄 **Restliche Argumente bleiben erhalten**
 * ⚡ **Toggle-Flags**: Zielvariable wird auf `true` gesetzt, nur Single-Werte
-* 📢 **Verbose**: detaillierte Fehlermeldungen (`--verbose`)
+* 📢 **Verbose**: detaillierte Fehlermeldungen (`--verbose` / `-v`)
 * 💡 **Maskierte führende Bindestriche**: `\-value` → korrekt weitergegeben
+* 🛑 **None-Zero (`--none-zero` / `-nz`)**: zwingt, dass mindestens ein Wert übergeben wird (0 als Wert ist erlaubt)
 
 ---
 
@@ -185,6 +186,7 @@ parse_case_flags --name "options" --return opts_array --array -i "\-example" "\-
 | Deduplicate Array | `--deduplicate` (`-D`)                | ✅        | ❌      | Flag           |
 | Input Values      |  `--input` (`-i`)                     | ❌        | ✅      | String / Array |
 | Terminal Output   |  `--verbose` (`-v`)                   | ✅        | ❌      | Flag           |
+| Muss Value haben  |  `--none-zero` (`-nz`)                | ✅        | ❌      | Flag           |
 
 > ⚠️ Maskierte führende Bindestriche (`\-`) werden automatisch entfernt.
 

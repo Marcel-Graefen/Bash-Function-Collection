@@ -81,6 +81,7 @@ parse_case_flags() {
   local allow_numbers=false
   local allow_letters=false
   local toggle=false
+  local none_zero=false
   local name=""
   local forbid_chars=""
   local allow_chars=""
@@ -125,6 +126,7 @@ parse_case_flags() {
         -c|--number)                     allow_numbers=true;    shift ;;
         -l|--letters)                    allow_letters=true;    shift ;;
         -t|--toggle)                     toggle=true;           shift ;;
+        -nz|--none-zero)                 none_zero=true;        shift ;;
         -f|--forbid)              shift; forbid_chars="$1";     shift ;;
         -a|--allow)               shift; allow_chars="$1";      shift ;;
         -r|--return|-o|--output)  shift; return_var="$1";       shift ;;
@@ -159,6 +161,12 @@ parse_case_flags() {
       break
     fi
   done
+
+# --------- Check Value is set (none_zero) ---------
+  if $none_zero && [[ -z $1 ]]; then
+    $verbose && echo "❌ [ERROR] $name: no values provided"
+    return 1
+  fi
 
   # --------- Setup namerefs for Return ---------
   if [[ -n "$return_var" ]]; then

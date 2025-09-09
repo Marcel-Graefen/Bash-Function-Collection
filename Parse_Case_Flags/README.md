@@ -60,6 +60,7 @@ parse_case_flags --name "username" --return user_var --letters -i "$@"
 * ⚡ **Toggle Flags**: sets target variable to `true` (single value only)
 * 📢 **Verbose Mode**: detailed errors (`--verbose`)
 * 💡 **Masked Leading Dashes**: `\-value` is passed correctly
+* 🛑 **None-Zero (`--none-zero` / `-nz`)**: forces at least one value to be passed (0 as a value is allowed)
 
 ---
 
@@ -184,7 +185,8 @@ parse_case_flags --name "options" --return opts_array --array -i "\-example" "\-
 | Dropping Array    | `--dropping` (`-d`)                   | ✅      | ❌       | String / Array |
 | Deduplicate Array | `--deduplicate` (`-D`)                | ✅      | ❌       | Flag           |
 | Input Values      | `--input` (`-i`)                      | ❌      | ✅       | String / Array |
-| Terminal Output   |  `--verbose` (`-v`)                   | ✅        | ❌     | Flag           |
+| Terminal Output   |  `--verbose` (`-v`)                   | ✅      | ❌       | Flag           |
+| Must have value   |  `--none-zero` (`-nz`)                | ✅      | ❌       | Flag           |
 
 > ⚠️ Masked leading dashes (`\-`) are automatically unescaped.
 
