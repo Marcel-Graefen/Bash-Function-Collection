@@ -1,12 +1,12 @@
-# 📋 Bash-Funktion: Parse Case Flags
+# 📋 Bash-Funktion: Parse Case flags
 
-[![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
-[![Version](https://img.shields.io/badge/version-1.0.0_beta.02-blue.svg)](./Versions/v1.0.0-beta.02/README.de.md)
 [![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
+[![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-1.0.0_beta.03-blue.svg)](./Versions/v1.0.0-beta.03/README.md)
 
-Eine Bash-Funktion zum **parsen, validieren und zuweisen von Kommandozeilen-Flags innerhalb eines case-Blocks**.
-Unterstützt **Einzelwerte, Arrays und Toggle-Flags**, prüft Werte auf Zahlen, Buchstaben oder verbotene Zeichen/Werte und lässt **alle verbleibenden Argumente** nach der Verarbeitung erhalten.
+`parse_case_flags` ist eine Bash-Funktion zum **parsen, validieren und zuweisen von Kommandozeilen-Flags innerhalb eines case-Blocks**.
+Unterstützt **Single-Werte, Arrays und Toggle-Flags**, prüft Werte auf Zahlen, Buchstaben, erlaubte/verbotene Zeichen/Werte und lässt **alle nicht verarbeiteten Argumente** erhalten.
 
 ---
 
@@ -17,60 +17,55 @@ Unterstützt **Einzelwerte, Arrays und Toggle-Flags**, prüft Werte auf Zahlen, 
 * [⚙️ Voraussetzungen](#%EF%B8%8F-voraussetzungen)
 * [📦 Installation](#-installation)
 * [📝 Nutzung](#-nutzung)
-  * [🪄 Einfaches Flag](#-einfaches-flag)
-  * [📚 Array & Multiple Werte](#-array--multiple-werte)
+  * [💡 Einzelwert](#-einzelwert)
+  * [📦 Array & Multiple Werte](#-array--multiple-werte)
   * [⚡ Toggle Flags](#-toggle-flags)
   * [🔗 Kombinierte Optionen](#-kombinierte-optionen)
-  * [🛡️ Eingabe-Validierung (Allow / Forbid / Forbid-Full)](#-eingabe-validierung-allow--forbid--forbid-full)
-    * [✅ Allow Flag](#-allow-flag)
-    * [⛔ Forbid Flag](#-forbid-flag)
-    * [🚫 Forbid-Full Flag](#-forbid-full-flag)
-    * [📊 Vergleich](#-vergleich)
-    * [🧩 Komplettes Beispiel mit allen Flags](#-komplettes-beispiel-mit-allen-flags)
+  * [🛡️ Eingabe-Validierung (Allow / Forbid / Full)](#-eingabe-validierung-allow--forbid--full)
+  * [💎 Maskierte führende Bindestriche](#-maskierte-führende-bindestriche)
 * [📌 API-Referenz](#-api-referenz)
 * [🗂️ Changelog](#-changelog)
 * [🤖 Generierungshinweis](#-generierungshinweis)
-* [👤 Autor & Kontakt](#-autor--kontakt)
 
 ---
 
 ## ⚠️ Migrationshinweise
 
-In Version 1.0.0-beta.01 ist die Funktion **nicht abwärtskompatibel** mit 0.0.0-beta.02.
-**Neu erforderlich:** `-n|--name` und `-r|--return|-o|--output`.
-
-### 🔄 Beispiel (Alt → Neu)
+In Version **1.0.0-beta.03** sind `--name` (`-n`) und `--return` (`-r` / `-o`) verpflichtend.
+Ohne diese Parameter kann die Funktion keine Fehlermeldungen oder Rückgabewerte korrekt handhaben.
 
 ```bash
-# Alt (0.0.0-beta.02)
+# Alt (beta.02)
 parse_case_flags --letters Alice
 
-# Neu (1.0.0-beta.01)
+# Neu (beta.03)
 parse_case_flags --name "username" --return user_var --letters -i "$@"
 ```
 
-> **Erklärung:**
-> Du musst nun explizit den **Namen für Fehlermeldungen** (`-n|--name`) und die **Zielvariable für die Rückgabe** (`-r|--return|-o|--output`) angeben.
+> `--name` dient zur Fehlermeldung, `--return` zur Rückgabe.
 
 ---
 
 ## 🛠️ Funktionen & Features
 
-* 🎯 **Flag Parsing:** Einzelwerte, Arrays und Toggle-Optionen
-* 🔢 **Zahlenvalidierung:** `-n|--number` prüft, dass nur numerische Werte erlaubt sind
-* 🔤 **Buchstabenvalidierung:** `-l|--letters` erlaubt nur alphabetische Zeichen
-* ❌ **Verbotene Zeichen & Werte:** `-f|--forbid` und `-F|--forbid-full` verhindern bestimmte Zeichen oder ganze Werte (inkl. Wildcards `*`)
-* 💾 **Variable Zuweisung:** Dynamische Zuweisung an beliebige Variablen per Nameref (`declare -n`)
-* 🔄 **Erhalt der restlichen Argumente:** Alle nicht verarbeiteten CLI-Argumente bleiben erhalten
-* ⚡ **Toggle-Flags:** Flags ohne Wert können auf `true` gesetzt werden
-* 🧩 **Arrayprüfung:** Alle Werte eines Arrays werden geprüft
-* 📢 **Verbose-Output:** Bei aktivierter Option (`-v|--verbose`) werden Fehler direkt auf stdout/stderr angezeigt
+* 🎯 **Flag Parsing**: Single-Werte, Arrays, Toggle
+* 🔢 **Zahlenvalidierung**: `--number`
+* 🔤 **Buchstabenvalidierung**: `--letters`
+* ✅ **Erlaubte Zeichen & Werte**: `--allow` / `--allow-full`
+* ❌ **Verbotene Zeichen & Werte**: `--forbid` / `--forbid-full`
+* 💾 **Variable Zuweisung**: via Nameref (`declare -n`)
+* 💾 **Dropping Array**: ungültige Werte optional speichern (`--dropping`)
+* 💾 **Deduplicate Array**: Duplikate optional entfernen (`--deduplicate`)
+* 🔄 **Restliche Argumente bleiben erhalten**
+* ⚡ **Toggle-Flags**: Zielvariable wird auf `true` gesetzt, nur Single-Werte
+* 📢 **Verbose**: detaillierte Fehlermeldungen (`--verbose`)
+* 💡 **Maskierte führende Bindestriche**: `\-value` → korrekt weitergegeben
 
 ---
 
 ## ⚙️ Voraussetzungen
 
-* 🐚 **Bash Version ≥ 4.3** (für `declare -n` Nameref)
+* 🐚 Bash Version ≥ 4.3 (für Nameref `declare -n`)
 
 ---
 
@@ -85,187 +80,132 @@ source "/pfad/zu/parse_case_flags.sh"
 
 ## 📝 Nutzung
 
-### 🪄 Einfaches Flag
+### 💡 Einzelwert
 
 ```bash
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --name)
-      parse_case_flags --name "username" --return user_var --letters -i "$2" || return 1
-      shift 2
-      ;;
-  esac
-done
+-v|--value)
+  parse_case_flags --name "result" --return output --verbose -i "$2" || return 1
+  shift 2
+;;
 ```
 
-**Erklärung:**
-Parst das Flag `-n|--name` und weist den Wert `Alice` der Variablen `user_var` zu. Restliche Argumente bleiben erhalten.
+* `$2` wird als Single-Wert übergeben.
+* `--verbose` optional für Fehlerausgaben.
 
 ---
 
-### 📚 Array & Multiple Werte
+### 📦 Array & Multiple Werte
 
 ```bash
-parse_case_flags --name "tags" --return tags_array --array Dev Ops QA -i "$@" || return 1
+-a|--array)
+  parse_case_flags --name "tags" --return output --array --deduplicate --dropping invalid_tags --verbose -i "$@" || return 1
+  shift $#
+;;
 ```
 
-**Erklärung:**
-
-* `-y|--array` → sammelt mehrere Werte in einem Array
-* Ergebnis: `tags_array=("Dev" "Ops" "QA")`
+* `$@` → alle restlichen Argumente
+* `--deduplicate` → entfernt Duplikate
+* `--dropping` → ungültige Werte landen in `invalid_tags`
+* `shift $#` → alle verarbeiteten Argumente entfernen
 
 ---
 
 ### ⚡ Toggle Flags
 
 ```bash
-parse_case_flags --name "verbose_flag" --return verbose_flag --toggle -i "$@" || return 1
+-t|--toggle)
+  parse_case_flags --name "enabled_flag" --return output --toggle --verbose || return 1
+  shift
+;;
 ```
 
-**Erklärung:**
-
-* Flag ohne Wert → setzt `verbose_flag=true`.
+* Toggle setzt Zielvariable automatisch auf `true`
+* Nur Single-Werte möglich
 
 ---
 
 ### 🔗 Kombinierte Optionen
 
 ```bash
-parse_case_flags --name "ids" --return ids_array --array --number --forbid-full "0" "999" 1 2 3 -i "$@" || return 1
+-i|--ids)
+  parse_case_flags --name "ids" --return ids_array --array --number --forbid-full "0" "999" --deduplicate --dropping invalid_ids --verbose -i "$@" || return 1
+  shift $#
+;;
 ```
 
-**Erklärung:**
-
-* `y-|--array` → sammelt mehrere Werte
-* `-c|--number` → erlaubt nur Zahlen
-* `-F|--forbid-full "0" "999"` → verbietet bestimmte Werte
-* Ergebnis: `ids_array=(1 2 3)`
+* Zeigt Kombination von Array, Number-Check, Full-Forbid, Deduplication und Dropping
 
 ---
 
-## 🛡️ Eingabe-Validierung (Allow / Forbid / Forbid-Full)
-
-### ✅ Allow Flag
+### 🛡️ Eingabe-Validierung (Allow / Forbid / Full)
 
 ```bash
-parse_case_flags --name "myvar" --return myvar_array --array --allow "azAZ09._" -i "$@" || return 1
+parse_case_flags --name "inputs" --return inputs --array \
+  --allow "a-zA-Z0-9._" \
+  --forbid "!@#" \
+  --allow-full "user*" \
+  --forbid-full "root" "admin" \
+  --dropping invalid_inputs --verbose -i "$@" || return 1
+
+echo "Valid inputs: ${inputs[*]}"
+echo "Dropped invalid inputs: ${invalid_inputs[*]}"
 ```
 
-**Erklärung:**
-Nur Buchstaben, Zahlen, Punkte und Unterstriche sind erlaubt.
+* Zeichen-Prüfung (`--allow` / `--forbid`)
+* Wert-Prüfung (`--allow-full` / `--forbid-full`)
+* Wildcards in `allow-full` / `forbid-full` möglich
 
 ---
 
-### ⛔ Forbid Flag
+### 💎 Maskierte führende Bindestriche
 
 ```bash
-parse_case_flags --name "myvar" --return myvar_array --array --forbid "!@#" -i "$@" || return 1
+parse_case_flags --name "options" --return opts_array --array -i "\-example" "\-safe" --verbose || return 1
 ```
 
-**Erklärung:**
-Zeichen `!`, `@` und `#` sind verboten.
+* `\-example` → wird korrekt als `-example` weitergegeben
 
 ---
-
-### 🚫 Forbid-Full Flag
-
-```bash
-forbidden_values=("root" "admin" "error_file")
-parse_case_flags --name "myvar" --return myvar_array --array --forbid-full "${forbidden_values[@]}" -i "$@" || return 1
-```
-
-**Erklärung:**
-Strings `root`, `admin` und `error_file` sind verboten.
-
----
-
-### 📊 Vergleich
-
-| Flag                   | Zweck                          | Beispiel Fehler                |
-| ---------------------- | ------------------------------ | ------------------------------ |
-| `--allow` \ `-a`       | Nur bestimmte Zeichen zulassen | `bad@file` → `@` nicht erlaubt |
-| `--forbid` \ `-f`      | Bestimmte Zeichen verbieten    | `bad@file` → `@` verboten      |
-| `--forbid-full` \ `-F` | Ganze Werte verbieten          | `error_file` → Wert verboten   |
-
-#### Erläuterungen:
-
-* Bei `-a|--allow` und `-f|--forbid` wird die Prüfung zeichenweise durchgeführt. Es genügt, dass ein einzelnes der angegebenen Zeichen den Test nicht besteht, um einen Fehler auszulösen.
-* Bei `-F|--forbid-full` muss der gesamte Wert mit einem der verbotenen Strings übereinstimmen, damit ein Fehler ausgelöst wird.
-* `-F|--forbid-full` kann entweder mehrfach verwendet werden oder ein Array von Werten übergeben bekommen, um mehrere vollständige Werte zu prüfen.
-
----
-
-### 🧩 Komplettes Beispiel mit allen Flags
-
-```bash
-#!/usr/bin/env bash
-source ./parse_case_flags.sh
-
-validate_inputs() {
-  parse_case_flags --name "inputs" --return inputs --array \
-    --allow "azAZ09._" \
-    --forbid "!@#" \
-    --forbid-full "root" "admin" "error_file" -i "$@" || return 1
-
-  echo "Valid inputs: ${inputs[*]}"
-}
-
-validate_inputs "hello_world" "safe.file" "bad@file" "admin"
-```
-
-**Erklärung:**
-
-* `hello_world` ✅ erlaubt
-* `safe.file` ✅ erlaubt
-* `bad@file` ❌ enthält verbotenes Zeichen
-* `admin` ❌ kompletter Wert verboten
-
----
-
 
 ## 📌 API-Referenz
 
-| Beschreibung      | Argument / Alias                      | Optional | Mehrfach | Typ                       |
-| ----------------- | ------------------------------------- | -------- | -------- | ------------------------- |
-| Flag Name         | `--name` (`-n`)                       | ❌      | ❌       | String                    |
-| Zielvariable      | `--return` / `--output` (`-r` / `-o`) | ❌      | ❌       | String                    |
-| Array             | `--array` (`-y`)                      | ✅      | ❌       | Flag                      |
-| Zahlen            | `--number` (`-c`)                     | ✅      | ❌       | Flag                      |
-| Buchstaben        | `--letters` (`-l`)                    | ✅      | ❌       | Flag                      |
-| Toggle            | `--toggle` (`-t`)                     | ✅      | ❌       | Flag                      |
-| Verbotene Zeichen | `--forbid` (`-f`)                     | ✅      | ❌       | String                    |
-| Erlaubte Zeichen  | `--allow` (`-a`)                      | ✅      | ❌       | String                    |
-| Verbotene Werte   | `--forbid-full` (`-F`)                | ✅      | ✅       | String / Array            |
-| Dropping Array    | `--dropping` (`-d`)                   | ✅      | ❌       | Array                     |
-| Deduplicate Array | `--deduplicate` / `--dedub` (`-D`)    | ✅      | ❌       | Array (nur bei `--array`) |
-| Ende Parsing      | `--input` (`-i`)                      | ❌      | ❌       | Restliche Argumente       |
+| Beschreibung      | Argument / Alias                      | Optional  | Mehrfach | Typ            |
+| ----------------- | ------------------------------------- | --------- | -------- | -------------- |
+| Flag Name         | `--name` (`-n`)                       | ❌        | ❌      | String         |
+| Zielvariable      | `--return` / `--output` (`-r` / `-o`) | ❌        | ❌      | String         |
+| Array             | `--array` (`-y`)                      | ✅        | ❌      | Flag           |
+| Zahlen            | `--number` (`-c`)                     | ✅        | ❌      | Flag           |
+| Buchstaben        | `--letters` (`-l`)                    | ✅        | ❌      | Flag           |
+| Toggle            | `--toggle` (`-t`)                     | ✅        | ❌      | Flag           |
+| Verbotene Zeichen | `--forbid` (`-f`)                     | ✅        | ❌      | String         |
+| Erlaubte Zeichen  | `--allow` (`-a`)                      | ✅        | ❌      | String         |
+| Verbotene Werte   | `--forbid-full` (`-F`)                | ✅        | ✅      | String / Array |
+| Erlaubte Werte    | `--allow-full` (`-A`)                 | ✅        | ✅      | String / Array |
+| Dropping Array    | `--dropping` (`-d`)                   | ✅        | ❌      | String / Array |
+| Deduplicate Array | `--deduplicate` (`-D`)                | ✅        | ❌      | Flag           |
+| Input Values      |  `--input` (`-i`)                     | ❌        | ✅      | String / Array |
+| Terminal Output   |  `--verbose` (`-v`)                   | ✅        | ❌      | Flag           |
 
-### Hinweise zur Nutzung der Flags
-
-* `--name` (`-n`) – Name des Flags für Fehlermeldungen oder Validierungen. **Pflicht ab Version 1.0.0-beta.01**
-* `--return` (`-r` / `-o` / `--output`) – Zielvariable, in die der Wert oder das Array geschrieben wird. **Pflicht ab Version 1.0.0-beta.01**
-* `--array` (`-y`) – Sammelt mehrere Werte in einem Array
-* `--number` (`-n`) – Nur numerische Werte erlaubt
-* `--letters` (`-l`) – Nur alphabetische Werte erlaubt
-* `--toggle` (`-t`) – Flag ohne Wert; Zielvariable wird auf `true` gesetzt
-* `--forbid` (`-f`) – Verbotene einzelne Zeichen
-* `--allow` (`-a`) – Erlaubte einzelne Zeichen
-* `--forbid-full` (`-F`) – Verbotene ganze Werte (Strings); mehrfach verwendbar oder als Array
-* `--dropping` (`-d`) – Speichert ungültige Werte in einem Array
-* `--deduplicate` / `--dedub` (`-D`) – Entfernt Duplikate aus Arrays; optionales separates Array
-* `--input` (`-i`) – Ende der Optionsliste; alle verbleibenden CLI-Argumente werden an die Funktion übergeben
+> ⚠️ Maskierte führende Bindestriche (`\-`) werden automatisch entfernt.
 
 ---
 
 ## 🗂️ Changelog
 
-* ⚡ **Pflichtoptionen:** `-n|--name` und `-r|--return|-o|--output` müssen jetzt angegeben werden, da sonst kein Ziel für die Werte existiert.
-* 🧩 **Arrayprüfung:** Alle Werte eines Arrays werden einzeln validiert (Zahlen, Buchstaben, Allow/Forbid/Forbid-Full).
-* 💾 **Dropping:** Ungültige Werte können optional über `-d|--dropping` in einem Array gespeichert werden.
-* ♻️ **Deduplicate:** Duplikate in Arrays können optional über `-D|--dedub|--deduplicate` entfernt und in einem separaten Array gespeichert werden.
-* 🛠️ **Code Refactoring:** Vereinfachte Argumentverarbeitung, sauberere Nameref-Logik.
-* ✅ **Validierung verbessert:** Zahl- und Buchstaben-Checks, Allow/Forbid/Forbid-Full funktionieren konsistent für Einzelwerte und Arrays.
-* ⚡ **Verbose:** Optionales `-v|--verbose` zeigt detaillierte Fehlermeldungen für ungültige Werte an.
+**v1.0.0-beta.03**
+
+* `--name` und `--return` verpflichtend
+* Toggle-Flags auf Single-Werte beschränkt
+* Maskierte führende Bindestriche (`\`) hinzugefügt
+* Case-Block Beispiele für Single, Array, Toggle und kombiniert
+* Deduplication und Dropping berücksichtigt
+* Validierung Allow/Forbid/Full präzisiert
+
+**v1.0.0-beta.02**
+
+* Einzelwerte, Arrays, Toggle
+* Validierung auf Zahlen und Buchstaben
+* Erlaubte und verbotene Zeichen
 
 ---
 
@@ -273,11 +213,3 @@ validate_inputs "hello_world" "safe.file" "bad@file" "admin"
 
 Dieses Dokument wurde mit KI-Unterstützung erstellt und anschließend manuell überprüft.
 Skripte, Kommentare und Dokumentation wurden final geprüft und angepasst.
-
----
-
-## 👤 Autor & Kontakt
-
-* **Marcel Gräfen**
-* 📧 [info@mgraefen.com](mailto:info@mgraefen.com)
-* 📄 [MIT Lizenz](LICENSE)
