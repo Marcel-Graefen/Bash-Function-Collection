@@ -222,15 +222,21 @@ parse_case_flags() {
     local reason=""
 
     # --- Check numbers ---
-    if $allow_numbers && [[ ! "$val" =~ ^[0-9]+$ ]]; then
+    if $allow_numbers && ! $allow_letters && [[ ! "$val" =~ ^[0-9]+$ ]]; then
       invalid=true
       reason="must be numbers only"
     fi
 
     # --- Check letters ---
-    if ! $invalid && $allow_letters && [[ ! "$val" =~ ^[a-zA-Z]+$ ]]; then
+    if ! $invalid && $allow_letters && ! $allow_numbers && [[ ! "$val" =~ ^[a-zA-Z]+$ ]]; then
       invalid=true
       reason="must be letters only"
+    fi
+
+    # --- Check numbers & letters ---
+    if ! $invalid $$ $allow_numbers && $allow_letters && [[ ! "$val" =~ ^[a-zA-Z0-9]+$ ]]; then
+      invalid=true
+      reason="must be letters and or numbers only"
     fi
 
     # --- Check forbidden chars ---
