@@ -5,7 +5,7 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 1.0.0-beta.04
+# @version     : 1.0.0-beta.03
 # @date        : 2025-09-09
 #
 # @requires    : Bash 4.3+
@@ -18,7 +18,7 @@
 
 #---------------------- FUNCTION: parse_case_flags --------------------------------
 #
-# @version 1.0.0-beta.04
+# @version 1.0.0-beta.03
 #
 # Parses, validates, and assigns values from command-line flags within a case block.
 #
@@ -32,7 +32,6 @@
 #   - Preserves unprocessed arguments for subsequent flag handling
 #   - Handles multi-value parameters and multiple occurrences of the same flag
 #   - Handles toggle flags, which set the target variable to true
-#   - Optional flag recognition for case statement integration
 #   - Warns if characters are both allowed and forbidden
 #
 # GLOBAL VARIABLES:
@@ -46,43 +45,33 @@
 #   parse_full_flag - collects multiple full values for allow/forbid checks
 #
 # Arguments (OPTIONS):
-#   -n, --name <name>                 Name for error messages
-#   -y, --array                       Treat values as an array (collect multiple values)
-#   -v, --verbose                     Enable verbose error output
-#   -c, --number                      Only allow numeric values
-#   -l, --letters                     Only allow alphabetic characters
-#   -t, --toggle                      Flag with no value, sets target variable to true
-#   -nz, --none-zero                  Require at least one value
-#   -nrf, -NF, --no-recognize-flags   Disable flag recognition in array mode
-#   -f, --forbid <chars>              Disallow these characters in values
-#   -a, --allow <chars>               Allow only these characters in values
-#   -r, --return, -o, --output <var>  Name of variable to assign values to
-#   -d, --dropping <array_name>       Collect invalid values into this array
-#   -D, --deduplicate <array_name>    Collect duplicate values into this array
-#   -F, --forbid-full <values...>     Disallow specific full values (supports wildcards *)
-#   -A, --allow-full <values...>      Allow only specific full values (supports wildcards *)
-#   -i, --input "$@"                  Pass all remaining CLI arguments for processing
-#
-# Usage in case statements:
-#   -d|--dir)
-#     parse_case_flags -v -n "directory" -o dirs -y -i "$@" || return 1
-#     shift $?
-#     ;;
+#   <flag>                         The command-line flag to parse (e.g., --name)
+#   <target_variable>              Name of the variable to assign the value(s) to
+#   --array                        Treat values as an array (collect multiple arguments)
+#   --number                       Only allow numeric values
+#   --letters                      Only allow alphabetic characters
+#   --toggle                        Flag with no value, sets target variable to true
+#   --forbid <chars>               Disallow these characters in values
+#   --allow <chars>                Allow only these characters in values
+#   --forbid-full <value1> [...]   Disallow specific full values (supports wildcards *)
+#   --allow-full <value1> [...]    Allow only specific full values (supports wildcards *)
+#   --dropping <array_name>        Collect invalid values into this array
+#   --deduplicate <array_name>     Collect duplicate values into this array
+#   -i "$@" / --input "$@"         Pass all remaining CLI arguments for internal processing
 #
 # Requirements:
 #   Bash version >= 4.3 (for declare -n nameref support)
 #
 # Returns:
 #   0  on success
-#   1  if required values are missing or validation fails
-#   Number of consumed arguments (for proper shifting in case statements)
+#   1  if required values are missing or invalid
 #
 # Notes:
 #   - Designed to be used inside a case block to process CLI flags sequentially
 #   - Arrays, toggles, deduplication, dropping, and validation are handled internally
 #   - Must always be called with "$@" after -i/--input to ensure unprocessed arguments are preserved
 #   - Works with multi-value flags and multiple occurrences of the same flag
-#   - The --no-recognize-flags option controls whether flags are recognized in array mode
+
 
 parse_case_flags() {
 
@@ -93,7 +82,6 @@ parse_case_flags() {
   local allow_letters=false
   local toggle=false
   local none_zero=false
-  local recognize_flags=true
   local name=""
   local forbid_chars=""
   local allow_chars=""
@@ -102,6 +90,7 @@ parse_case_flags() {
   local deduplicate_var=""
   local forbid_full=()
   local allow_full=()
+
 
   # --------- Helper Function -----------------
   parse_full_flag() {
@@ -131,19 +120,18 @@ parse_case_flags() {
   while [[ $# -gt 0 ]]; do
     if [[ "$end_of_options" == false ]]; then
       case "$1" in
-        -n|--name)                shift; name="$1";              shift ;;
-        -y|--array)                      type="array";           shift ;;
-        -v|--verbose)                    verbose=true;           shift ;;
-        -c|--number)                     allow_numbers=true;     shift ;;
-        -l|--letters)                    allow_letters=true;     shift ;;
-        -t|--toggle)                     toggle=true;            shift ;;
-        -nz|--none-zero)                 none_zero=true;         shift ;;
-        -nrf|-NF|--no-recognize-flags)   recognize_flags=false;  shift ;;
-        -f|--forbid)              shift; forbid_chars="$1";      shift ;;
-        -a|--allow)               shift; allow_chars="$1";       shift ;;
-        -r|--return|-o|--output)  shift; return_var="$1";        shift ;;
-        -d|--dropping)            shift; dropping_var="$1";      shift ;;
-        -D|--dedub|--deduplicate) shift; deduplicate_var="$1";   shift ;;
+        -n|--name)                shift; name="$1";             shift ;;
+        -y|--array)                      type="array";          shift ;;
+        -v|--verbose)                    verbose=true;          shift ;;
+        -c|--number)                     allow_numbers=true;    shift ;;
+        -l|--letters)                    allow_letters=true;    shift ;;
+        -t|--toggle)                     toggle=true;           shift ;;
+        -nz|--none-zero)                 none_zero=true;        shift ;;
+        -f|--forbid)              shift; forbid_chars="$1";     shift ;;
+        -a|--allow)               shift; allow_chars="$1";      shift ;;
+        -r|--return|-o|--output)  shift; return_var="$1";       shift ;;
+        -d|--dropping)            shift; dropping_var="$1";     shift ;;
+        -D|--dedub|--deduplicate) shift; deduplicate_var="$1";  shift ;;
         -F|--forbid-full)
             local current_flag="$1"
             shift
@@ -174,7 +162,7 @@ parse_case_flags() {
     fi
   done
 
-  # --------- Check Value is set (none_zero) ---------
+# --------- Check Value is set (none_zero) ---------
   if $none_zero && [[ -z $1 ]]; then
     $verbose && echo "❌ [ERROR] $name: no values provided"
     return 1
@@ -206,14 +194,14 @@ parse_case_flags() {
   local values=()
 
   # --- Single or Array ---
-  if [[ "$type" == "array" && "$1" == "-"* && "$recognize_flags" == true ]]; then
+  if [[ "$type" == "array" ]]; then
     local current_flag="$1"
     shift
   fi
 
   while [[ $# -gt 0 ]]; do
     # Check if it is a real flag (not a masked one)
-    if [[ "$type" == "array" && "$1" == "-"* && "$1" != "$current_flag" && ! "$1" =~ ^\\- && "$recognize_flags" == true ]]; then
+    if [[ "$type" == "array" && "$1" == "-"* && "$1" != "$current_flag" && ! "$1" =~ ^\\- ]]; then
       # Foreign flag → skip including associated values
       shift
       while [[ $# -gt 0 && "$1" != "-"* ]]; do shift; done
@@ -235,7 +223,7 @@ parse_case_flags() {
   done
 
   # --- Deduplication for Arrays ---
-  if [[ "$type" == "array" && -n "$deduplicate_var" ]]; then
+  if [[ "$type" == "array" && -n "$deduplicate" ]]; then
     local tmp=()
     for v in "${values[@]}"; do
       [[ " ${tmp[*]} " =~ " $v " ]] && deduplicate_ref+=("$v") && continue
