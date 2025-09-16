@@ -236,12 +236,22 @@ parse_case_flags() {
 
   # --- Deduplication for Arrays ---
   if [[ "$type" == "array" && -n "$deduplicate_var" ]]; then
+    declare -A seen_values  # Assoziatives Array für schnelle Suche
     local tmp=()
+
     for v in "${values[@]}"; do
-      [[ " ${tmp[*]} " =~ " $v " ]] && deduplicate_ref+=("$v") && continue
+      if [[ -n "${seen_values["$v"]}" ]]; then
+        # Duplikat gefunden → zu deduplicate_ref hinzufügen
+        deduplicate_ref+=("$v")
+        continue
+      fi
+      # Erstmaliger Wert → merken und zu tmp hinzufügen
+      seen_values["$v"]=1
       tmp+=("$v")
     done
+
     values=("${tmp[@]}")
+    unset seen_values  # Cleanup
   fi
 
   # --------- Validation helper function (check_chars) ---------
