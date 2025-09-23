@@ -15,12 +15,12 @@ while [[ $# -gt 0 ]]; do
     -d|--dir|--directory)
       parse_case_flags --name "directories" --return tmpdir --array -i "$@" || exit 1
       directories+=("${tmpdir[@]}")
-      shift 2
+      shift $#
       ;;
     -f|--file)
       parse_case_flags --name "files" --return tmpfile --array -i "$@" || exit 1
       files+=("${tmpfile[@]}")
-      shift 2
+      shift $#
       ;;
     -D|--depth)
       parse_case_flags --name "depth" --return depth -i "$2" || exit 1

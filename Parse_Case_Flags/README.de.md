@@ -42,7 +42,7 @@ parse_case_flags --name "directory" --return dirs --array -i "$@"
 # Neu (beta.04)
 parse_case_flags --name "directory" --return tmpdir --array -i "$@"
 directories+=("${tmpdir[@]}")
-shift 2
+shift $#
 ```
 
 > Die neue Vorgehensweise nutzt **temporäre Variablen** und `+=`, um **mehrere gleiche Flags** korrekt zu sammeln.
@@ -112,12 +112,12 @@ while [[ $# -gt 0 ]]; do
     -d|--dir|--directory)
       parse_case_flags --name "directories" --return tmpdir --array -i "$@" || return 1
       directories+=("${tmpdir[@]}")
-      shift 2
+      shift $#
       ;;
     -f|--file)
       parse_case_flags --name "files" --return tmpfile --array -i "$@" || return 1
       files+=("${tmpfile[@]}")
-      shift 2
+      shift $#
       ;;
   esac
 done
@@ -165,7 +165,7 @@ Files: file1.txt file2.txt
 ```bash
 -i|--ids)
   parse_case_flags --name "ids" --return ids_array --array --number --forbid-full "0" "999" --deduplicate --dropping invalid_ids --verbose -i "$@" || return 1
-  shift 2
+  shift $#
 ;;
 ```
 
