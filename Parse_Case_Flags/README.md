@@ -18,7 +18,6 @@ It supports **single values, arrays, and toggle flags**, validates values for nu
 * [⚙️ Requirements](#-requirements)
 * [📦 Installation](#-installation)
 * [📝 Usage](#-usage)
-
   * [💡 Single Value](#-single-value)
   * [📦 Array & Multiple Values](#-array--multiple-values)
   * [⚡ Toggle Flags](#-toggle-flags)

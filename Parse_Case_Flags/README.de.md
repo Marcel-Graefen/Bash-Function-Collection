@@ -209,22 +209,24 @@ parse_case_flags --name "options" --return opts_array --array -i "\-example" "\-
 
 ## 📌 API-Referenz
 
-| Beschreibung      | Argument / Alias                      | Optional | Mehrfach | Typ            |
-| ----------------- | ------------------------------------- | -------- | -------- | -------------- |
-| Flag Name         | `--name` (`-n`)                       | ❌        | ❌        | String         |
-| Zielvariable      | `--return` / `--output` (`-r` / `-o`) | ❌        | ❌        | String         |
-| Array             | `--array` (`-y`)                      | ✅        | ❌        | Flag           |
-| Zahlen            | `--number` (`-c`)                     | ✅        | ❌        | Flag           |
-| Buchstaben        | `--letters` (`-l`)                    | ✅        | ❌        | Flag           |
-| Toggle            | `--toggle` (`-t`)                     | ✅        | ❌        | Flag           |
-| Verbotene Zeichen | `--forbid` (`-f`)                     | ✅        | ❌        | String         |
-| Erlaubte Zeichen  | `--allow` (`-a`)                      | ✅        | ❌        | String         |
-| Verbotene Werte   | `--forbid-full` (`-F`)                | ✅        | ✅        | String / Array |
-| Erlaubte Werte    | `--allow-full` (`-A`)                 | ✅        | ✅        | String / Array |
-| Dropping Array    | \`--                                  |          |          |                |
-
-
-dropping` (`-d`)                           | ✅        | ❌      | String / Array | | Deduplicate Array           | `--deduplicate` (`-D`)                        | ✅        | ❌      | Flag           | | Input Values                | `--input` (`-i`)                              | ❌        | ✅      | String / Array | | Terminal Output             | `--verbose` (`-v`)                            | ✅        | ❌      | Flag           | | Muss Value haben            | `--none-zero` (`-nz`)                         | ✅        | ❌      | Flag           | | Keine Flag-Erkennung        | `--no-recognize-flags` (`-nrf`, `-NF\`)        | ✅        | ❌      | Flag           |
+| Beschreibung         | Argument / Alias                         | Optional | Mehrfach | Typ            |
+| -------------------- | ---------------------------------------- | -------- | -------- | -------------- |
+| Flag Name            | `--name` (`-n`)                          | ❌       | ❌      | String         |
+| Zielvariable         | `--return` / `--output` (`-r` / `-o`)    | ❌       | ❌      | String         |
+| Array                | `--array` (`-y`)                         | ✅       | ❌      | Flag           |
+| Zahlen               | `--number` (`-c`)                        | ✅       | ❌      | Flag           |
+| Buchstaben           | `--letters` (`-l`)                       | ✅       | ❌      | Flag           |
+| Toggle               | `--toggle` (`-t`)                        | ✅       | ❌      | Flag           |
+| Verbotene Zeichen    | `--forbid` (`-f`)                        | ✅       | ❌      | String         |
+| Erlaubte Zeichen     | `--allow` (`-a`)                         | ✅       | ❌      | String         |
+| Verbotene Werte      | `--forbid-full` (`-F`)                   | ✅       | ✅      | String / Array |
+| Erlaubte Werte       | `--allow-full` (`-A`)                    | ✅       | ✅      | String / Array |
+| Dropping Array       | `--dropping` (`-d`)                      | ✅       | ❌      | String / Array |
+| Deduplicate Array    | `--deduplicate` (`-D`)                   | ✅       | ❌      | Flag           |
+| Input Values         | `--input` (`-i`)                         | ❌       | ✅      | String / Array |
+| Terminal Output      | `--verbose` (`-v`)                       | ✅       | ❌      | Flag           |
+| Muss Value haben     | `--none-zero` (`-nz`)                    | ✅        | ❌     | Flag           |
+| Keine Flag-Erkennung | `--no-recognize-flags` (`-nrf`, `-NF\`)  | ✅        | ❌     | Flag           |
 
 > ⚠️ Maskierte führende Bindestriche (`\-`) werden automatisch entfernt.
 
