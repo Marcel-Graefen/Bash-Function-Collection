@@ -1,12 +1,13 @@
 # 📋 Bash Function: Parse Case Flags
 
-[![German](https://img.shields.io/badge/Langugae-German-blue)](./README.de.md)
+[![German](https://img.shields.io/badge/Language-German-blue)](./README.de.md)
 [![Back to Main README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
+[![Version](https://img.shields.io/badge/version-1.0.0_beta.04-blue.svg)](./Versions/v1.1.0-beta.01/README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.0.0_beta.03-blue.svg)](./Versions/v1.0.0-beta.03/README.md)
+[![Bash](https://img.shields.io/badge/Bash-≥4.3-green.svg)]()
 
 `parse_case_flags` is a Bash function for **parsing, validating, and assigning command-line flags within a case block**.
-It supports **single values, arrays, and toggle flags**, validates numbers, letters, allowed/forbidden characters or values, and preserves **all remaining unprocessed arguments**.
+It supports **single values, arrays, and toggle flags**, validates values for numbers, letters, allowed/forbidden characters/values, and preserves **all unprocessed arguments**.
 
 ---
 
@@ -17,12 +18,14 @@ It supports **single values, arrays, and toggle flags**, validates numbers, lett
 * [⚙️ Requirements](#-requirements)
 * [📦 Installation](#-installation)
 * [📝 Usage](#-usage)
+
   * [💡 Single Value](#-single-value)
   * [📦 Array & Multiple Values](#-array--multiple-values)
   * [⚡ Toggle Flags](#-toggle-flags)
   * [🔗 Combined Options](#-combined-options)
   * [🛡️ Input Validation (Allow / Forbid / Full)](#-input-validation-allow--forbid--full)
-  * [💎 Masked Leading Dashes](#-masked-leading-dashes)
+  * [💎 Masked Leading Hyphens](#-masked-leading-hyphens)
+  * [🚩 Flag Detection in Case Statements](#-flag-detection-in-case-statements)
 * [📌 API Reference](#-api-reference)
 * [🗂️ Changelog](#-changelog)
 * [🤖 Generation Note](#-generation-note)
@@ -31,42 +34,45 @@ It supports **single values, arrays, and toggle flags**, validates numbers, lett
 
 ## ⚠️ Migration Notes
 
-In version **1.0.0-beta.03**, `--name` (`-n`) and `--return` (`-r` / `-o`) are **mandatory**.
-Without these parameters, the function cannot provide proper error messages or return values.
+In version **1.0.0-beta.04**, **flag detection** for case statements was improved:
 
 ```bash
-# Old (beta.02)
-parse_case_flags --letters Alice
+# Old (beta.03)
+parse_case_flags --name "directory" --return dirs --array -i "$@"
 
-# New (beta.03)
-parse_case_flags --name "username" --return user_var --letters -i "$@"
+# New (beta.04)
+parse_case_flags --name "directory" --return tmpdir --array -i "$@"
+directories+=("${tmpdir[@]}")
+shift 2
 ```
 
-> `--name` is used for error messages, `--return` specifies the target variable.
+> The new approach uses **temporary variables** + `+=` to correctly collect **multiple identical flags**.
 
 ---
 
 ## 🛠️ Features
 
 * 🎯 **Flag Parsing**: Single values, arrays, toggle
-* 🔢 **Number Validation**: `--number`
-* 🔤 **Letter Validation**: `--letters`
-* ✅ **Allowed Characters & Values**: `--allow` / `--allow-full`
-* ❌ **Forbidden Characters & Values**: `--forbid` / `--forbid-full`
-* 💾 **Variable Assignment**: via Nameref (`declare -n`)
-* 💾 **Dropping Array**: invalid values can be stored (`--dropping`)
-* 💾 **Deduplicate Array**: removes duplicates optionally (`--deduplicate`)
-* 🔄 **Remaining Arguments Preserved**
-* ⚡ **Toggle Flags**: sets target variable to `true` (single value only)
-* 📢 **Verbose Mode**: detailed errors (`--verbose`)
-* 💡 **Masked Leading Dashes**: `\-value` is passed correctly
-* 🛑 **None-Zero (`--none-zero` / `-nz`)**: forces at least one value to be passed (0 as a value is allowed)
+* 🔢 **Number validation**: `--number`
+* 🔤 **Letter validation**: `--letters`
+* ✅ **Allowed characters & values**: `--allow` / `--allow-full`
+* ❌ **Forbidden characters & values**: `--forbid` / `--forbid-full`
+* 💾 **Variable assignment** via nameref (`declare -n`)
+* 💾 **Dropping array**: optionally store invalid values (`--dropping`)
+* 💾 **Deduplicate array**: remove duplicates optionally (`--deduplicate`)
+* 🔄 **Unprocessed arguments remain**
+* ⚡ **Toggle flags**: sets target variable to `true`, single value only
+* 📢 **Verbose**: detailed error messages (`--verbose` / `-v`)
+* 💡 **Masked leading hyphens**: `\-value` → passed correctly
+* 🛑 **None-Zero (`--none-zero` / `-nz`)**: requires at least one value (0 is allowed)
+* 🚩 **Flag detection**: optional detection in array mode (`--no-recognize-flags`)
+* ⚠️ **Shift rules for case**: flags with values `shift 2`, toggle flags `shift 1`
 
 ---
 
 ## ⚙️ Requirements
 
-* 🐚 Bash ≥ 4.3 (for Nameref support via `declare -n`)
+* 🐚 Bash ≥ 4.3 (for nameref `declare -n`)
 
 ---
 
@@ -91,37 +97,67 @@ source "/path/to/parse_case_flags.sh"
 ```
 
 * `$2` is passed as a single value
-* `--verbose` is optional to show errors
+* `--verbose` optional for error messages
+* `shift 2` for flag + value
 
 ---
 
-### 📦 Array & Multiple Values
+### 📦 Array & Multiple Values (multiple identical flags)
 
 ```bash
--a|--array)
-  parse_case_flags --name "tags" --return output --array --deduplicate --dropping invalid_tags --verbose -i "$@" || return 1
-  shift $#
-;;
+directories=()
+files=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -d|--dir|--directory)
+      parse_case_flags --name "directories" --return tmpdir --array -i "$@" || return 1
+      directories+=("${tmpdir[@]}")
+      shift 2
+      ;;
+    -f|--file)
+      parse_case_flags --name "files" --return tmpfile --array -i "$@" || return 1
+      files+=("${tmpfile[@]}")
+      shift 2
+      ;;
+  esac
+done
+
+echo "Directories: ${directories[*]}"
+echo "Files: ${files[*]}"
 ```
 
-* `$@` passes all remaining arguments
-* `--deduplicate` removes duplicate entries
-* `--dropping` stores invalid values in `invalid_tags`
-* `shift $#` removes all processed arguments
+* **tmpdir / tmpfile** → only needed for multiple identical flags
+* `+=` → adds values to the final array
+* `shift 2` → remove flag + value
+
+#### Test Call:
+
+```bash
+create_folder -d "/etc" -d "/home" -f "file1.txt" -f "file2.txt"
+```
+
+#### Expected Output:
+
+```
+Directories: /etc /home
+Files: file1.txt file2.txt
+```
 
 ---
 
 ### ⚡ Toggle Flags
 
 ```bash
--t|--toggle)
-  parse_case_flags --name "enabled_flag" --return output --toggle --verbose || return 1
-  shift
+-F|--force)
+  parse_case_flags -n "force" --toggle || return 1
+  shift 1
 ;;
 ```
 
-* Sets the target variable to `true` automatically
-* Only single values supported
+* Sets target variable to `true`
+* Single value only
+* `shift 1` because no value follows
 
 ---
 
@@ -130,11 +166,11 @@ source "/path/to/parse_case_flags.sh"
 ```bash
 -i|--ids)
   parse_case_flags --name "ids" --return ids_array --array --number --forbid-full "0" "999" --deduplicate --dropping invalid_ids --verbose -i "$@" || return 1
-  shift $#
+  shift 2
 ;;
 ```
 
-* Demonstrates combining array, number validation, forbidden full-values, deduplication, and dropping
+* Demonstrates combination of array, number validation, full forbid, deduplication, and dropping
 
 ---
 
@@ -152,65 +188,77 @@ echo "Valid inputs: ${inputs[*]}"
 echo "Dropped invalid inputs: ${invalid_inputs[*]}"
 ```
 
-* Character validation (`--allow` / `--forbid`)
-* Full value validation (`--allow-full` / `--forbid-full`)
-* Wildcards supported in `allow-full` / `forbid-full`
-
 ---
 
-### 💎 Masked Leading Dashes
+### 💎 Masked Leading Hyphens
 
 ```bash
 parse_case_flags --name "options" --return opts_array --array -i "\-example" "\-safe" --verbose || return 1
 ```
 
-* `\-example` is correctly passed as `-example`
+* `\-example` → passed correctly as `-example`
+
+---
+
+## 🚩 Flag Detection in Case Statements
+
+* **Multiple identical flags** → use temporary variable + `+=`
+* **Sequential processing** → stops at next flag
+* **Shift**: flag + value `shift 2`, toggle `shift 1`
 
 ---
 
 ## 📌 API Reference
 
-| Description       | Argument / Alias                      | Optional | Multiple | Type           |
-| ----------------- | ------------------------------------- | -------- | -------- | -------------- |
-| Flag Name         | `--name` (`-n`)                       | ❌      | ❌       | String         |
-| Target Variable   | `--return` / `--output` (`-r` / `-o`) | ❌      | ❌       | String         |
-| Array             | `--array` (`-y`)                      | ✅      | ❌       | Flag           |
-| Number            | `--number` (`-c`)                     | ✅      | ❌       | Flag           |
-| Letters           | `--letters` (`-l`)                    | ✅      | ❌       | Flag           |
-| Toggle            | `--toggle` (`-t`)                     | ✅      | ❌       | Flag           |
-| Forbidden Chars   | `--forbid` (`-f`)                     | ✅      | ❌       | String         |
-| Allowed Chars     | `--allow` (`-a`)                      | ✅      | ❌       | String         |
-| Forbidden Values  | `--forbid-full` (`-F`)                | ✅      | ✅       | String / Array |
-| Allowed Values    | `--allow-full` (`-A`)                 | ✅      | ✅       | String / Array |
-| Dropping Array    | `--dropping` (`-d`)                   | ✅      | ❌       | String / Array |
-| Deduplicate Array | `--deduplicate` (`-D`)                | ✅      | ❌       | Flag           |
-| Input Values      | `--input` (`-i`)                      | ❌      | ✅       | String / Array |
-| Terminal Output   |  `--verbose` (`-v`)                   | ✅      | ❌       | Flag           |
-| Must have value   |  `--none-zero` (`-nz`)                | ✅      | ❌       | Flag           |
+| Description       | Argument / Alias                       | Optional | Multiple | Type           |
+| ----------------- | -------------------------------------- | -------- | -------- | -------------- |
+| Flag Name         | `--name` (`-n`)                        | ❌        | ❌        | String         |
+| Target Variable   | `--return` / `--output` (`-r` / `-o`)  | ❌        | ❌        | String         |
+| Array             | `--array` (`-y`)                       | ✅        | ❌        | Flag           |
+| Number            | `--number` (`-c`)                      | ✅        | ❌        | Flag           |
+| Letters           | `--letters` (`-l`)                     | ✅        | ❌        | Flag           |
+| Toggle            | `--toggle` (`-t`)                      | ✅        | ❌        | Flag           |
+| Forbidden chars   | `--forbid` (`-f`)                      | ✅        | ❌        | String         |
+| Allowed chars     | `--allow` (`-a`)                       | ✅        | ❌        | String         |
+| Forbidden values  | `--forbid-full` (`-F`)                 | ✅        | ✅        | String / Array |
+| Allowed values    | `--allow-full` (`-A`)                  | ✅        | ✅        | String / Array |
+| Dropping array    | `--dropping` (`-d`)                    | ✅        | ❌        | String / Array |
+| Deduplicate array | `--deduplicate` (`-D`)                 | ✅        | ❌        | Flag           |
+| Input values      | `--input` (`-i`)                       | ❌        | ✅        | String / Array |
+| Verbose           | `--verbose` (`-v`)                     | ✅        | ❌        | Flag           |
+| Must have value   | `--none-zero` (`-nz`)                  | ✅        | ❌        | Flag           |
+| No flag detection | `--no-recognize-flags` (`-nrf`, `-NF`) | ✅        | ❌        | Flag           |
 
-> ⚠️ Masked leading dashes (`\-`) are automatically unescaped.
+> ⚠️ Masked leading hyphens (`\-`) are automatically removed
 
 ---
 
 ## 🗂️ Changelog
 
+**v1.0.0-beta.04**
+
+* New flag detection for case statements
+* Temporary variables + `+=` for multiple identical flags
+* Shift 2 / 1 rules documented
+* Improved case integration
+
 **v1.0.0-beta.03**
 
-* `--name` and `--return` are mandatory
-* Toggle flags restricted to single values
-* Masked leading dashes (`\`) support added
-* Case-block examples updated for single, array, toggle, combined
-* Deduplication and dropping support
-* Allow/Forbid/Full validation clarified
+* `--name` and `--return` mandatory
+* Toggle flags limited to single value
+* Masked leading hyphens added
+* Deduplication and dropping supported
+* Allow/Forbid/Full validation refined
 
 **v1.0.0-beta.02**
 
 * Single values, arrays, toggle
-* Validation for numbers and letters
+* Number and letter validation
 * Allowed and forbidden characters
 
 ---
 
 ## 🤖 Generation Note
 
-This document was created with AI assistance and manually reviewed. Scripts, comments, and documentation were finalized and verified.
+This document was generated with AI assistance and manually reviewed.
+Scripts, comments, and documentation have been verified and adjusted.
