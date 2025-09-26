@@ -69,6 +69,17 @@ parse_case_flags() {
 
   }
 
+  #--------- Value Validation Helper ---------
+  validate_has_value() {
+    local flag="$1"
+    local value="$2"
+
+    [[ -z "$value" || "$value" == "-"* ]] && { $verbose && echo "❌ [ERROR] $flag requires a value"; return 1; }
+
+    return 0
+
+  }
+
   #--------- Parse Flags ---------
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -89,6 +100,8 @@ parse_case_flags() {
       -F|--forbid-full)
         local current_flag="$1"
         shift
+        # Validate that at least one value is provided
+        [[ $# -eq 0 || "$1" == "-"* ]] && { $verbose && echo "❌ [ERROR] $current_flag requires at least one value"; return 1; }
         while [[ $# -gt 0 ]]; do
           if parse_full_flag "$1" "$current_flag" forbid_full; then
             shift
@@ -101,6 +114,8 @@ parse_case_flags() {
       -A|--allow-full)
         local current_flag="$1"
         shift
+        # Validate that at least one value is provided
+        [[ $# -eq 0 || "$1" == "-"* ]] && { $verbose && echo "❌ [ERROR] $current_flag requires at least one value"; return 1; }
         while [[ $# -gt 0 ]]; do
           if parse_full_flag "$1" "$current_flag" allow_full; then
             shift
@@ -110,15 +125,16 @@ parse_case_flags() {
         done
         ;;
 
-      -m|--min-length)          shift;  min_length="$1";       shift ;;
-      -M|--max-length)          shift;  max_length="$1";       shift ;;
-      -d|--dropping)            shift;  dropping_var="$1";     shift ;;
-      -D|--dedub|--deduplicate) shift;  deduplicate_var="$1";  shift ;;
-      -R|--rest-params)         shift;  rest_array_name="$1";  shift ;;
-      -l|--label)               shift;  label="$1";            shift ;;
-      -f|--forbid)              shift;  forbid_chars="$1";     shift ;;
-      -a|--allow)               shift;  allow_chars="$1";      shift ;;
-      -o|--return|--output)     shift;  return_var="$1";       shift ;;
+      -m|--min-length)          shift;  validate_has_value "-m/--min-length" "$1"  || return 1; min_length="$1";      shift ;;
+      -M|--max-length)          shift;  validate_has_value "-M/--max-length" "$1"  || return 1; max_length="$1";      shift ;;
+      -d|--dropping)            shift;  validate_has_value "-d/--dropping" "$1"    || return 1; dropping_var="$1";    shift ;;
+      -D|--dedub|--deduplicate) shift;  validate_has_value "-D/--dedub" "$1"       || return 1; deduplicate_var="$1"; shift ;;
+      -R|--rest-params)         shift;  validate_has_value "-R/--rest-params" "$1" || return 1; rest_array_name="$1"; shift ;;
+      -l|--label)               shift;  validate_has_value "-l/--label" "$1"       || return 1; label="$1";           shift ;;
+      -f|--forbid)              shift;  validate_has_value "-f/--forbid" "$1"      || return 1; forbid_chars="$1";    shift ;;
+      -a|--allow)               shift;  validate_has_value "-a/--allow" "$1"       || return 1; allow_chars="$1";     shift ;;
+      -o|--return|--output)     shift;  validate_has_value "-o/--return" "$1"      || return 1; return_var="$1";      shift ;;
+
       # Longflags für Booleans
       --verbose)  verbose=true;       shift ;;
       --number)   allow_numbers=true; shift ;;
@@ -126,6 +142,7 @@ parse_case_flags() {
       --toggle)   toggle=true;        shift ;;
       --required) required=true;      shift ;;
       --help)     help=true;          shift ;;
+
       --string)
         string_output=true
         shift
@@ -170,7 +187,6 @@ parse_case_flags() {
     esac
   done
 
-
   # --------- Check Value is set (none_zero) ---------
   if $required && [[ -z $1 ]]; then
     $verbose && echo "❌ [ERROR] $label: no values provided"
@@ -190,7 +206,6 @@ parse_case_flags() {
     target_ref=(true)
     return 0
   fi
-
 
   #--------- Validate count length (min & max zusammen) ---------
   if [[ -n "$min_length" || -n "$max_length" ]]; then
@@ -223,13 +238,12 @@ parse_case_flags() {
       min_length=""
       max_length=""
     fi
-    
+
   fi
 
   #--------- Setup namerefs ---------
   [[ -n "$dropping_var" ]] && declare -n dropping_ref="$dropping_var"
   [[ -n "$deduplicate_var" ]] && declare -n deduplicate_ref="$deduplicate_var"
-
 
   #--------- Collect values after -i / --input ---------
   local values=()
@@ -265,7 +279,6 @@ parse_case_flags() {
       declare -n rest_ref="$rest_array_name"
       rest_ref=("$@")
   fi
-
 
   #--------- Deduplication ---------
   if [[ -n "$deduplicate_var" ]]; then
@@ -317,7 +330,6 @@ parse_case_flags() {
     return 0
 
   }
-
 
   #--------- Validate values ---------
   local new_values=()
@@ -408,7 +420,6 @@ parse_case_flags() {
     new_values+=("$val")
   done
 
-
   #--------- Assign values to target ---------
   if [[ "$string_output" == true ]]; then
       local joined=""
@@ -422,7 +433,6 @@ parse_case_flags() {
   fi
 
   return 0
-
 
   #--------- Help Message ---------
   if [[ "$help" == true ]]; then
@@ -464,5 +474,4 @@ parse_case_flags() {
 EOF
     return 0
   fi
-
 }
