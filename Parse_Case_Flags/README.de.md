@@ -2,18 +2,18 @@
 
 [![English](https://img.shields.io/badge/Sprache-English-blue)](./README.md)
 [![Zurück zum Haupt-README](https://img.shields.io/badge/Main-README-blue?style=flat\&logo=github)](https://github.com/Marcel-Graefen/Bash-Function-Collection/blob/main/README.de.md)
-[![Version](https://img.shields.io/badge/version-1.0.0_beta.04-blue.svg)](./Versions/v1.1.0-beta.01/README.md)
+[![Version](https://img.shields.io/badge/version-1.0.0_beta.04-blue.svg)](./Versions/README.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 [![Bash](https://img.shields.io/badge/Bash-≥4.3-green.svg)]()
 
 `parse_case_flags` ist eine Bash-Funktion zum **Parsen, Validieren und Zuweisen von Kommandozeilen-Flags innerhalb eines Case-Blocks**.
-Sie unterstützt **Single-Werte, Arrays und Toggle-Flags**, prüft Werte auf Zahlen, Buchstaben, erlaubte/verbotene Zeichen/Werte und lässt **alle nicht verarbeiteten Argumente** erhalten.
+Sie unterstützt **Single-Werte, Arrays und Toggle-Flags**, prüft Werte auf Zahlen, Buchstaben, erlaubte/verbotene Zeichen/Werte und gibt **automatisch restliche Parameter** zurück.
 
 ---
 
 ## 🚀 Inhaltsverzeichnis
 
-* [⚠️ Migrationshinweise](#-migrationshinweise)
+* [🆕 Neu in Version 1.1.0](#-neu-in-version-100-beta04)
 * [🛠️ Funktionen & Features](#-funktionen--features)
 * [⚙️ Voraussetzungen](#-voraussetzungen)
 * [📦 Installation](#-installation)
@@ -23,30 +23,61 @@ Sie unterstützt **Single-Werte, Arrays und Toggle-Flags**, prüft Werte auf Zah
   * [⚡ Toggle Flags](#-toggle-flags)
   * [🔗 Kombinierte Optionen](#-kombinierte-optionen)
   * [🛡️ Eingabe-Validierung (Allow / Forbid / Full)](#-eingabe-validierung-allow--forbid--full)
+    * [Zeichen-basierte Validierung](#zeichen-basierte-validierung---allow---forbid)
+    * [Wert-basierte Validierung](#wert-basierte-validierung---allow-full---forbid-full)
+    * [Vergleichstabelle](#vergleichstabelle)
+    * [Kombinierte Anwendung](#kombinierte-anwendung)
   * [💎 Maskierte führende Bindestriche](#-maskierte-führende-bindestriche)
-  * [🚩 Flag-Erkennung in Case-Statements](#-flag-erkennung-in-case-statements)
+  * [🔄 Automatische Parameter-Weiterleitung](#-automatische-parameter-weiterleitung)
 * [📌 API-Referenz](#-api-referenz)
 * [🗂️ Changelog](#-changelog)
 * [🤖 Generierungshinweis](#-generierungshinweis)
 
 ---
 
-## ⚠️ Migrationshinweise
+## 🆕 Neu in Version 1.0.0-beta.04
 
-In Version **1.0.0-beta.04** wurde die **Flag-Erkennung** für Case-Statements verbessert:
+### 🔄 Automatische Parameter-Weiterleitung
+Neue Option `--rest-params` (`-R`) gibt **automatisch nicht verarbeitete Parameter** zurück:
 
 ```bash
-# Alt (beta.03)
-parse_case_flags --name "directory" --return dirs --array -i "$@"
-
-# Neu (beta.04)
-parse_case_flags --name "directory" --return tmpdir --array -i "$@"
-directories+=("${tmpdir[@]}")
-shift "${#tmpdir[@]}"
-shift 1
+-d|--directory)
+  local rest_params
+  parse_case_flags --name "directory" --return dir --array --rest-params rest_params -i "$@" || return 1
+  set -- "${rest_params[@]}"
+  ;;
 ```
 
-> Die neue Vorgehensweise nutzt **temporäre Variablen** und `+=`, um **mehrere gleiche Flags** korrekt zu sammeln.
+**Vorteile:**
+- ✅ **Kein manuelles Shiften** mehr nötig
+- ✅ **Automatische Weiterleitung** an nächsten Case
+- ✅ **Funktioniert für Single und Array** gleichermaßen
+- ✅ **Einfachere Code-Struktur**
+
+### 🎯 Vereinfachte Case-Logik
+**Vorher (komplex):**
+```bash
+-d|--directory)
+  parse_case_flags --name "directory" --return tmpdir --array -i "$@" || return 1
+  directories+=("${tmpdir[@]}")
+  shift "${#tmpdir[@]}"
+  shift 1
+  ;;
+```
+
+**Nachher (einfach):**
+```bash
+-d|--directory)
+  local rest_params
+  parse_case_flags --name "directory" --return directories --array --rest-params rest_params -i "$@" || return 1
+  set -- "${rest_params[@]}"
+  ;;
+```
+
+### 🔧 Weitere Verbesserungen
+- **Deduplication Input**: `--dedub-input` (`-DI`) für externe Deduplizierungs-Werte
+- **Verbesserte Fehlerbehandlung**: Konsistente Rückgabecodes
+- **Optimierte Performance**: Effizientere Parameter-Verarbeitung
 
 ---
 
@@ -60,13 +91,12 @@ shift 1
 * 💾 **Variable Zuweisung**: via Nameref (`declare -n`)
 * 💾 **Dropping Array**: ungültige Werte optional speichern (`--dropping`)
 * 💾 **Deduplicate Array**: Duplikate optional entfernen (`--deduplicate`)
-* 🔄 **Restliche Argumente bleiben erhalten**
+* 🔄 **Automatische Parameter-Weiterleitung**: `--rest-params`
 * ⚡ **Toggle-Flags**: Zielvariable wird auf `true` gesetzt, nur Single-Werte
 * 📢 **Verbose**: detaillierte Fehlermeldungen (`--verbose` / `-v`)
 * 💡 **Maskierte führende Bindestriche**: `\-value` → korrekt weitergegeben
 * 🛑 **None-Zero (`--none-zero` / `-nz`)**: zwingt, dass mindestens ein Wert übergeben wird (0 als Wert ist erlaubt)
 * 🚩 **Flag-Erkennung**: Optionale Erkennung von Flags in Array-Modus (`--no-recognize-flags`)
-* ⚠️ **Shift-Regel für Case**: Flags mit Wert `shift 2`, Toggle `shift 1`
 
 ---
 
@@ -91,60 +121,41 @@ source "/pfad/zu/parse_case_flags.sh"
 
 ```bash
 -v|--value)
-  parse_case_flags --name "result" --return output --verbose -i "$2" || return 1
-  shift 2
-;;
+  local rest_params
+  parse_case_flags --name "result" --return output --verbose --rest-params rest_params -i "$@" || return 1
+  set -- "${rest_params[@]}"
+  ;;
 ```
 
-* `$2` wird als Single-Wert übergeben
+* Verarbeitet einen einzelnen Wert
 * `--verbose` optional für Fehlerausgaben
-* Shift 2 für Flag + Wert
+* Restliche Parameter werden automatisch weitergeleitet
 
 ---
 
-### 📦 Array & Multiple Werte (mehrfach gleiche Flags)
+### 📦 Array & Multiple Werte
 
 ```bash
-directories=()
-files=()
-
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    -d|--dir|--directory)
-      parse_case_flags --name "directories" --return tmpdir --array -i "$@" || return 1
-      directories+=("${tmpdir[@]}")
-      shift "${#tmpdir[@]}"
-      shift 1
-      ;;
-    -f|--file)
-      parse_case_flags --name "files" --return tmpfile --array -i "$@" || return 1
-      files+=("${tmpfile[@]}")
-      shift "${#tmpfile[@]}"
-      shift $1
-      ;;
-  esac
-done
-
-echo "Directories: ${directories[*]}"
-echo "Files: ${files[*]}"
+-d|--directory)
+  local rest_params
+  parse_case_flags --name "directories" --return directories --array --rest-params rest_params -i "$@" || return 1
+  set -- "${rest_params[@]}"
+  ;;
 ```
 
-* **tmpdir / tmpfile** → nur nötig, wenn mehrere gleiche Flags vorkommen
-* `+=` → fügt die Werte ans endgültige Array an
-* `shift 2` → Flag + Wert entfernen
+* **Kein temporäres Array** mehr nötig
+* **Kein manuelles Shiften**
+* **Automatische Weiterleitung** an nächsten Case
 
 #### Testaufruf:
 
 ```bash
-create_folder -d "/etc" -d "/home" -f "file1.txt" -f "file2.txt"
+script.sh -d "/etc" "/home" -f "file1.txt" -v "value"
 ```
 
-#### Erwartete Ausgabe:
-
-```
-Directories: /etc /home
-Files: file1.txt file2.txt
-```
+#### Verarbeitung:
+- `-d` verarbeitet `/etc` und `/home`
+- Restliche Parameter (`-f "file1.txt" -v "value"`) werden automatisch weitergeleitet
 
 ---
 
@@ -167,46 +178,126 @@ Files: file1.txt file2.txt
 
 ```bash
 -i|--ids)
-  parse_case_flags --name "ids" --return ids_array --array --number --forbid-full "0" "999" --deduplicate --dropping invalid_ids --verbose -i "$@" || return 1
-
-;;
+  local rest_params
+  parse_case_flags --name "ids" --return ids_array --array --number --forbid-full "0" "999" --deduplicate --dropping invalid_ids --rest-params rest_params --verbose -i "$@" || return 1
+  set -- "${rest_params[@]}"
+  ;;
 ```
 
 * Kombination von Array, Number-Check, Full-Forbid, Deduplication und Dropping
+* Automatische Parameter-Weiterleitung
 
 ---
 
-### 🛡️ Eingabe-Validierung (Allow / Forbid / Full)
+## 🛡️ Eingabe-Validierung (Allow / Forbid / Full)
+
+### 🔤 Zeichen-basierte Validierung (`--allow` / `--forbid`)
+**Prüft einzelne Zeichen** innerhalb der Werte:
 
 ```bash
-parse_case_flags --name "inputs" --return inputs --array \
-  --allow "a-zA-Z0-9._" \
-  --forbid "!@#" \
-  --allow-full "user*" \
-  --forbid-full "root" "admin" \
-  --dropping invalid_inputs --verbose -i "$@" || return 1
+# Nur diese Zeichen erlauben
+parse_case_flags --allow "a-zA-Z0-9._-" --return username
 
-echo "Valid inputs: ${inputs[*]}"
-echo "Dropped invalid inputs: ${invalid_inputs[*]}"
+# Diese Zeichen verbieten
+parse_case_flags --forbid "!@#$%^&*()" --return filename
 ```
+
+**Beispiele:**
+- `--allow "abc"` → erlaubt: "cab", "abc", "a" | verbietet: "abcd", "x"
+- `--forbid "123"` → verbietet: "a1b", "123", "2" | erlaubt: "abc", "xyz"
+
+### 🔍 Wert-basierte Validierung (`--allow-full` / `--forbid-full`)
+**Prüft komplette Werte** (unterstützt Wildcards `*`):
+
+```bash
+# Nur bestimmte Werte erlauben
+parse_case_flags --allow-full "admin" "user*" "guest" --return role
+
+# Bestimmte Werte verbieten
+parse_case_flags --forbid-full "root" "test*" "temp" --return username
+```
+
+**Beispiele:**
+- `--allow-full "admin" "user*"` → erlaubt: "admin", "user1", "user_john" | verbietet: "guest", "admin2"
+- `--forbid-full "test*" "temp"` → verbietet: "test", "test123", "temp" | erlaubt: "prod", "live"
+
+### 📊 Vergleichstabelle
+
+| Feature | `--allow` / `--forbid` | `--allow-full` / `--forbid-full` |
+|---------|------------------------|----------------------------------|
+| **Prüfebene** | Einzelne Zeichen | Komplette Werte |
+| **Wildcards** | ❌ Nein | ✅ Ja (`*` unterstützt) |
+| **Use-Case** | Zeichen-Whitelist/Blacklist | Wert-Whitelist/Blacklist |
+| **Beispiel** | `--allow "a-z0-9"` | `--allow-full "user*" "admin"` |
+| **Performance** | Schneller (Zeichen-Check) | Langsamer (String-Vergleich) |
+
+### 💡 Kombinierte Anwendung
+Beide Methoden können kombiniert werden:
+
+```bash
+local rest_params
+parse_case_flags --name "inputs" --return inputs --array \
+  --allow "a-zA-Z0-9"        # Nur alphanumerische Zeichen \
+  --forbid-full "admin" "root"  # Aber nicht diese spezifischen Werte \
+  --rest-params rest_params \
+  --verbose -i "$@" || return 1
+
+set -- "${rest_params[@]}"
+echo "Valid inputs: ${inputs[*]}"
+```
+
+**Ergebnis:** "user123" ✅ erlaubt, "admin" ❌ verboten, "us$r" ❌ verbotene Zeichen
+
+**Zusammenfassung:**
+- **`--allow`/`--forbid`** = Zeichen-Check ("darf diese Zeichen enthalten/nicht enthalten")
+- **`--allow-full`/`--forbid-full`** = Wert-Check ("muss dieser Wert sein/darf nicht dieser Wert sein")
 
 ---
 
 ### 💎 Maskierte führende Bindestriche
 
 ```bash
-parse_case_flags --name "options" --return opts_array --array -i "\-example" "\-safe" --verbose || return 1
+local rest_params
+parse_case_flags --name "options" --return opts_array --array --rest-params rest_params -i "\-example" "\-safe" --verbose || return 1
+set -- "${rest_params[@]}"
 ```
 
 * `\-example` → korrekt als `-example` weitergegeben
 
 ---
 
-## 🚩 Flag-Erkennung in Case-Statements
+## 🔄 Automatische Parameter-Weiterleitung
 
-* **Mehrfach gleiche Flags** → temporäre Variable + `+=`
-* **Sequenzielle Verarbeitung** → `parse_case_flags` erkennt intern Flag-Enden
-* **Shift**: Flags mit Wert `shift 2`, Toggle `shift 1`
+Die neue `--rest-params` Option macht die Case-Logik **viel einfacher**:
+
+```bash
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -d|--directory)
+      local rest_params
+      parse_case_flags --name "directory" --return directories --array --rest-params rest_params -i "$@" || return 1
+      set -- "${rest_params[@]}"
+      ;;
+
+    -f|--file)
+      local rest_params
+      parse_case_flags --name "files" --return files --array --rest-params rest_params -i "$@" || return 1
+      set -- "${rest_params[@]}"
+      ;;
+
+    *)
+      echo "Unknown option: $1"
+      shift
+      ;;
+  esac
+done
+```
+
+**Vorteile:**
+- ✅ **Weniger Code** in jedem Case
+- ✅ **Keine Shift-Berechnungen** mehr nötig
+- ✅ **Robuster** gegen Parameter-Änderungen
+- ✅ **Bessere Lesbarkeit**
 
 ---
 
@@ -226,10 +317,12 @@ parse_case_flags --name "options" --return opts_array --array -i "\-example" "\-
 | Erlaubte Werte       | `--allow-full` (`-A`)                    | ✅       | ✅      | String / Array |
 | Dropping Array       | `--dropping` (`-d`)                      | ✅       | ❌      | String / Array |
 | Deduplicate Array    | `--deduplicate` (`-D`)                   | ✅       | ❌      | Flag           |
+| Deduplicate Input    | `--dedub-input` (`-DI`)                  | ✅       | ✅      | String / Array |
+| Rest-Parameter       | `--rest-params` (`-R`)                   | ✅       | ❌      | String / Array |
 | Input Values         | `--input` (`-i`)                         | ❌       | ✅      | String / Array |
 | Terminal Output      | `--verbose` (`-v`)                       | ✅       | ❌      | Flag           |
-| Muss Value haben     | `--none-zero` (`-nz`)                    | ✅        | ❌     | Flag           |
-| Keine Flag-Erkennung | `--no-recognize-flags` (`-nrf`, `-NF\`)  | ✅        | ❌     | Flag           |
+| Muss Value haben     | `--none-zero` (`-nz`)                    | ✅       | ❌      | Flag           |
+| Keine Flag-Erkennung | `--no-recognize-flags` (`-nrf`, `-NF`)   | ✅       | ❌      | Flag           |
 
 > ⚠️ Maskierte führende Bindestriche (`\-`) werden automatisch entfernt.
 
@@ -237,26 +330,24 @@ parse_case_flags --name "options" --return opts_array --array -i "\-example" "\-
 
 ## 🗂️ Changelog
 
-**v1.0.0-beta.04**
+**v1.0.0-beta.04** - *Aktuelle Version*
+* ✅ **Neue `--rest-params` Option** für automatische Parameter-Weiterleitung
+* ✅ **Vereinfachte Case-Logik** - kein manuelles Shiften mehr nötig
+* ✅ **Deduplication Input** (`--dedub-input`) für externe Werte
+* ✅ **Verbesserte Fehlerbehandlung** und Konsistenz
 
+**v1.0.0-beta.03**
 * Neue Flag-Erkennung für Case-Statements
 * Temporäre Variablen + `+=` für **mehrere gleiche Flags**
 * Shift 2 / 1 Regel dokumentiert
 * Verbesserte Case-Integration
 
-**v1.0.0-beta.03**
-
+**v1.0.0-beta.02**
 * `--name` und `--return` verpflichtend
 * Toggle-Flags auf Single-Werte beschränkt
 * Maskierte führende Bindestriche (`\`) hinzugefügt
 * Deduplication und Dropping berücksichtigt
 * Validierung Allow/Forbid/Full präzisiert
-
-**v1.0.0-beta.02**
-
-* Einzelwerte, Arrays, Toggle
-* Validierung auf Zahlen und Buchstaben
-* Erlaubte und verbotene Zeichen
 
 ---
 

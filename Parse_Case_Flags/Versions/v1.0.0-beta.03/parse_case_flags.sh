@@ -5,8 +5,8 @@
 #
 #
 # @author      : Marcel Gräfen
-# @version     : 1.0.0-beta.04
-# @date        : 2025-09-26
+# @version     : 1.0.0-beta.03
+# @date        : 2025-09-09
 #
 # @requires    : Bash 4.3+
 #
@@ -16,10 +16,9 @@
 # @license     : MIT License
 # ========================================================================================
 
-
 #---------------------- FUNCTION: parse_case_flags --------------------------------
 #
-# @version 1.0.0-beta.04
+# @version 1.0.0-beta.03
 #
 # Parses, validates, and assigns values from command-line flags within a case block.
 #
@@ -27,15 +26,14 @@
 #   - Supports single values, arrays, and toggle flags
 #   - Validates values as numbers, letters, or alphanumeric combinations
 #   - Rejects specified characters or complete forbidden values (supports wildcards *)
-#   - Deduplicates array elements when requested (with optional external input)
+#   - Deduplicates array elements when requested
 #   - Collects invalid values into a dropping array if specified
 #   - Dynamically assigns values to provided variable names (using nameref)
-#   - Automatically returns unprocessed arguments for subsequent flag handling
+#   - Preserves unprocessed arguments for subsequent flag handling
 #   - Handles multi-value parameters and multiple occurrences of the same flag
 #   - Handles toggle flags, which set the target variable to true
 #   - Optional flag recognition for case statement integration
 #   - Warns if characters are both allowed and forbidden
-#   - Supports masked leading dashes for values that start with hyphens
 #
 # GLOBAL VARIABLES:
 #   None
@@ -61,17 +59,14 @@
 #   -r, --return, -o, --output <var>  Name of variable to assign values to
 #   -d, --dropping <array_name>       Collect invalid values into this array
 #   -D, --deduplicate <array_name>    Collect duplicate values into this array
-#   -DI, --dedub-input <values...>    Additional values for deduplication input
 #   -F, --forbid-full <values...>     Disallow specific full values (supports wildcards *)
 #   -A, --allow-full <values...>      Allow only specific full values (supports wildcards *)
-#   -R, --rest-params <array_name>    Return unprocessed arguments in this array
 #   -i, --input "$@"                  Pass all remaining CLI arguments for processing
 #
 # Usage in case statements:
 #   -d|--dir)
-#     local rest_params
-#     parse_case_flags -v -n "directory" -r directories -y -R rest_params -i "$@" || return 1
-#     set -- "${rest_params[@]}"
+#     parse_case_flags -v -n "directory" -o dirs -y -i "$@" || return 1
+#     shift $?
 #     ;;
 #
 # Requirements:
@@ -80,20 +75,18 @@
 # Returns:
 #   0  on success
 #   1  if required values are missing or validation fails
+#   Number of consumed arguments (for proper shifting in case statements)
 #
 # Notes:
 #   - Designed to be used inside a case block to process CLI flags sequentially
 #   - Arrays, toggles, deduplication, dropping, and validation are handled internally
-#   - Must always be called with "$@" after -i/--input to ensure proper argument processing
+#   - Must always be called with "$@" after -i/--input to ensure unprocessed arguments are preserved
 #   - Works with multi-value flags and multiple occurrences of the same flag
 #   - The --no-recognize-flags option controls whether flags are recognized in array mode
-#   - Use --rest-params for automatic handling of remaining arguments (recommended)
-#   - Masked leading dashes (\-value) are properly handled as values rather than flags
-#   - Deduplication can include external values via --dedub-input for cross-flag deduplication
 
 parse_case_flags() {
 
-  #--------- Defaults ---------
+  # --------- Defaults -----------------
   local type="single"
   local verbose=false
   local allow_numbers=false
@@ -107,13 +100,10 @@ parse_case_flags() {
   local return_var=""
   local dropping_var=""
   local deduplicate_var=""
-  local deduplicate_var_input=()
   local forbid_full=()
   local allow_full=()
-  local rest_array_name=""
-  local end_of_options=false
 
-  #--------- Helper Function ---------
+  # --------- Helper Function -----------------
   parse_full_flag() {
 
     local val="$1"
@@ -136,7 +126,8 @@ parse_case_flags() {
 
   }
 
-  #--------- Parse arguments ---------
+  # --------- Parse arguments ---------
+  local end_of_options=false
   while [[ $# -gt 0 ]]; do
     if [[ "$end_of_options" == false ]]; then
       case "$1" in
@@ -153,18 +144,6 @@ parse_case_flags() {
         -r|--return|-o|--output)  shift; return_var="$1";        shift ;;
         -d|--dropping)            shift; dropping_var="$1";      shift ;;
         -D|--dedub|--deduplicate) shift; deduplicate_var="$1";   shift ;;
-        -R|--rest-params)         shift; rest_array_name="$1";   shift ;;
-        -DI|--dedub-input|--deduplication-input)
-            local current_flag="$1"
-            shift
-            while [[ $# -gt 0 ]]; do
-                if parse_full_flag "$1" "$current_flag" deduplicate_var_input; then
-                    shift
-                else
-                    break
-                fi
-            done
-            ;;
         -F|--forbid-full)
             local current_flag="$1"
             shift
@@ -201,7 +180,7 @@ parse_case_flags() {
     return 1
   fi
 
-  #--------- Setup namerefs for Return ---------
+  # --------- Setup namerefs for Return ---------
   if [[ -n "$return_var" ]]; then
     declare -n target_ref="$return_var"
   else
@@ -209,7 +188,7 @@ parse_case_flags() {
     return 1
   fi
 
-  #--------- Apply toggle flag ---------
+  # --------- Apply toggle flag ---------
   if $toggle ; then
     if [[ "$type" == "array" ]]; then
       type="single"
@@ -219,11 +198,11 @@ parse_case_flags() {
     return 0
   fi
 
-  #--------- Setup namerefs ---------
+  # --------- Setup namerefs ---------
   [[ -n "$dropping_var" ]] && declare -n dropping_ref="$dropping_var"
   [[ "$type" == "array" && -n "$deduplicate_var" ]] && declare -n deduplicate_ref="$deduplicate_var"
 
-  #--------- Collect values after -i / --input ---------
+  # --------- Collect values after -i / --input ---------
   local values=()
 
   # --- Single or Array ---
@@ -255,20 +234,8 @@ parse_case_flags() {
     [[ "$type" != "array" ]] && break
   done
 
-  #--------- Deduplication for Arrays ---------
+  # --- Deduplication for Arrays ---
   if [[ "$type" == "array" && -n "$deduplicate_var" ]]; then
-
-    #--------- Optional: Werte aus deduplicate_var_input hinzufügen ---------
-    if [[ ${#deduplicate_var_input[@]} -gt 0 ]]; then
-
-      echo "${values[*]}"
-
-      values+=( "${deduplicate_var_input[@]}" )
-
-      echo "${values[*]}"
-
-    fi
-
     declare -A seen_values  # Assoziatives Array für schnelle Suche
     local tmp=()
 
@@ -287,7 +254,7 @@ parse_case_flags() {
     unset seen_values  # Cleanup
   fi
 
-  #--------- Validation helper function (check_chars) ---------
+  # --------- Validation helper function (check_chars) ---------
   check_chars() {
     local val="$1"
     local chars="$2"      # Allowed or forbidden characters
@@ -305,7 +272,7 @@ parse_case_flags() {
       esac
     done
 
-    #--------- Check each character ---------
+    # --- Check each character ---
     for (( i=0; i<${#val}; i++ )); do
       local c="${val:i:1}"
       if [[ "$mode" == "allow" && "$processed" != *"$c"* ]]; then
@@ -319,31 +286,31 @@ parse_case_flags() {
     return 0
   }
 
-  #--------- Validate values and handle dropping ---------
+  # --------- Validate values and handle dropping ---------
   local new_values=()
   for val in "${values[@]}"; do
     local invalid=false
     local reason=""
 
-    #--------- Check numbers ---------
+    # --- Check numbers ---
     if $allow_numbers && ! $allow_letters && [[ ! "$val" =~ ^[0-9]+$ ]]; then
       invalid=true
       reason="must be numbers only"
     fi
 
-    #--------- Check letters ---------
+    # --- Check letters ---
     if ! $invalid && $allow_letters && ! $allow_numbers && [[ ! "$val" =~ ^[a-zA-Z]+$ ]]; then
       invalid=true
       reason="must be letters only"
     fi
 
-    #--------- Check numbers & letters ---------
+    # --- Check numbers & letters ---
     if ! $invalid && $allow_numbers && $allow_letters && [[ ! "$val" =~ ^[a-zA-Z0-9]+$ ]]; then
       invalid=true
       reason="must be letters and or numbers only"
     fi
 
-    #--------- Check allowed vs forbidden characters for conflicts ---------
+    # --- Check allowed vs forbidden characters for conflicts ---
     if [[ -n "$allow_chars" ]] && [[ -n "$forbid_chars" ]]; then
       conflicts=()
       for (( i=0; i<${#forbid_chars}; i++ )); do
@@ -353,7 +320,7 @@ parse_case_flags() {
       [[ ${#conflicts[@]} -gt 0 ]] && invalid=true; reason="⚠️ [WARNING] Characters both allowed and forbidden: ${conflicts[*]}"
     fi
 
-    #--------- Check allowed chars ---------
+    # --- Check allowed chars ---
     if ! $invalid && [[ -n "$allow_chars" ]]; then
       if ! check_chars "$val" "$allow_chars" "$name" "allow"; then
         invalid=true
@@ -361,7 +328,7 @@ parse_case_flags() {
       fi
     fi
 
-    #--------- Check forbidden chars ---------
+    # --- Check forbidden chars ---
     if ! $invalid && [[ -n "$forbid_chars" ]]; then
       if ! check_chars "$val" "$forbid_chars" "$name" "forbid"; then
         invalid=true
@@ -369,7 +336,7 @@ parse_case_flags() {
       fi
     fi
 
-    #--------- Check full allowed values ---------
+    # --- Check full allowed values ---
     if ! $invalid && [[ ${#allow_full[@]} -gt 0 ]]; then
       match=false
       for allowed in "${allow_full[@]}"; do
@@ -383,7 +350,7 @@ parse_case_flags() {
       ! $match && { invalid=true; reason="value not allowed"; }
     fi
 
-    #--------- Check full forbidden values ---------
+    # --- Check full forbidden values ---
     if ! $invalid && [[ ${#forbid_full[@]} -gt 0 ]]; then
       for forbidden in "${forbid_full[@]}"; do
         if [[ "$forbidden" == *"*"* ]]; then
@@ -394,7 +361,7 @@ parse_case_flags() {
       done
     fi
 
-    #--------- Handle invalid value ---------
+    # --- Handle invalid value ---
     if $invalid; then
       # Always add to dropping_ref if set
       dropping_ref+=("$val")
@@ -407,21 +374,15 @@ parse_case_flags() {
       continue
     fi
 
-    #--------- Valid element ---------
+    # --- Valid element ---
     new_values+=("$val")
   done
 
-  #--------- Assign values to target ---------
+  # --------- Assign values to target ---------
   if [[ "$type" == "array" ]]; then
     target_ref=("${new_values[@]}")
   else
     target_ref="${new_values[0]}"
-  fi
-
-  #--------- Rest-Parameter setzen ---------
-  if [[ -n "$rest_array_name" ]]; then
-      declare -n rest_ref="$rest_array_name"
-      rest_ref=("$@")
   fi
 
   return 0

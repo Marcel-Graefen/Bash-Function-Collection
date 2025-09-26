@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Demo: create_folder mit parse_case_flags
+# Demo: create_folder mit parse_case_flags (Version 1.1.0)
 
 source "./parse_case_flags.sh"
 
@@ -13,33 +13,40 @@ force=false
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -d|--dir|--directory)
-      parse_case_flags --name "directories" --return tmpdir --array -i "$@" || exit 1
-      directories+=("${tmpdir[@]}")
-      shift "${#tmpdir[@]}"
-      shift 1
+      local rest_params
+      parse_case_flags --name "directories" --return directories --array --rest-params rest_params -i "$@" || exit 1
+      set -- "${rest_params[@]}"
       ;;
+
     -f|--file)
-      parse_case_flags --name "files" --return tmpfile --array -i "$@" || exit 1
-      files+=("${tmpfile[@]}")
-      shift "${#tmpfile[@]}"
-      shift 1
+      local rest_params
+      parse_case_flags --name "files" --return files --array --rest-params rest_params -i "$@" || exit 1
+      set -- "${rest_params[@]}"
       ;;
+
     -D|--depth)
-      parse_case_flags --name "depth" --return depth -i "$2" || exit 1
-      shift 2
+      local rest_params
+      parse_case_flags --name "depth" --return depth --rest-params rest_params -i "$@" || exit 1
+      set -- "${rest_params[@]}"
       ;;
+
     -e|--exists)
-      parse_case_flags --name "exists" --return exists -i "$@" || exit 1
-      shift 2
+      local rest_params
+      parse_case_flags --name "exists" --return exists --rest-params rest_params -i "$@" || exit 1
+      set -- "${rest_params[@]}"
       ;;
+
     -s|--suffix)
-      parse_case_flags --name "suffix" --return suffix -i "$@" || exit 1
-      shift 2
+      local rest_params
+      parse_case_flags --name "suffix" --return suffix --rest-params rest_params -i "$@" || exit 1
+      set -- "${rest_params[@]}"
       ;;
+
     -F|--force)
       parse_case_flags -n "force" --toggle || exit 1
       shift 1
       ;;
+
     *)
       echo "Unbekannte Option: $1" >&2
       exit 1
@@ -48,7 +55,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Demo-Output
-echo "=== Demo: create_folder ==="
+echo "=== Demo: create_folder (v1.1.0) ==="
 echo "Directories: ${directories[*]}"
 echo "Files: ${files[*]}"
 echo "Depth: $depth"
@@ -57,15 +64,26 @@ echo "Suffix: $suffix"
 echo "Force: $force"
 
 
+# **Testaufruf:**
 bash demo_create_folder.sh -d "/etc" -d "/home/user" -f "file1.txt" -f "file2.txt" --depth 3 --exists 2 --suffix "_neu" --force
 
 
-Output Example
+# **Erwarteter Output:**
 
-# === Demo: create_folder ===
+# === Demo: create_folder (v1.1.0) ===
 # Directories: /etc /home/user
 # Files: file1.txt file2.txt
 # Depth: 3
 # Exists: 2
 # Suffix: _neu
 # Force: true
+
+
+# **Vorteile der neuen Syntax:**
+# - ✅ **Keine temporären Variablen** (`tmpdir`, `tmpfile`) mehr nötig
+# - ✅ **Kein manuelles Shiften** mit komplizierten Berechnungen
+# - ✅ **Einheitliche Syntax** für alle Case-Blöcke
+# - ✅ **Weniger Code** pro Case
+# - ✅ **Robuster** gegen Parameter-Änderungen
+
+# Die Demo zeigt jetzt die **empfohlene moderne Syntax** mit automatischer Parameter-Weiterleitung! 🚀
