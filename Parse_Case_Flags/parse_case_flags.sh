@@ -19,7 +19,7 @@
 
 parse_case_flags() {
 
-  #--------- Defaults ---------
+  # === Defaults ===
   local verbose=false
   local allow_numbers=false
   local allow_letters=false
@@ -45,42 +45,52 @@ parse_case_flags() {
   local allow_full=()
 
   local string_sep="|"
+  #!===
 
-  #--------- Helper Function ---------
-  parse_full_flag() {
+  # === Helper Function ===
+    parse_full_flag() {
 
-    local val="$1"
-    local current_flag="$2"
+      local val="$1"
+      local current_flag="$2"
 
-    # Stop if new real flag
-    [[ "$val" == "-"* && "$val" != "$current_flag" && ! "$val" =~ ^\\- ]] && return 1
+      # Stop if new real flag
+      [[ "$val" == "-"* && "$val" != "$current_flag" && ! "$val" =~ ^\\- ]] && return 1
 
-    # Skip repeated same flag
-    [[ "$val" == "$current_flag" ]] && return 0
+      # Skip repeated same flag
+      [[ "$val" == "$current_flag" ]] && return 0
 
-    # Remove leading backslash
-    [[ "$val" =~ ^\\- ]] && val="${val:1}"
+      # Remove leading backslash
+      [[ "$val" =~ ^\\- ]] && val="${val:1}"
 
-    # Append to array
-    local dest="$3"
-    declare -n arr_ref="$dest"
-    arr_ref+=("$val")
-    return 0
+      # Append to array
+      local dest="$3"
+      declare -n arr_ref="$dest"
+      arr_ref+=("$val")
+      return 0
 
-  }
+    }
 
-  #--------- Value Validation Helper ---------
-  validate_has_value() {
-    local flag="$1"
-    local value="$2"
 
-    [[ -z "$value" || "$value" == "-"* ]] && { $verbose && echo "❌ [ERROR] $flag requires a value"; return 1; }
+    #--- Value Validation Helper ---
+    validate_has_value() {
 
-    return 0
+      [[ -z "$2" || "$2" == "-"* ]] && { echo "❌ [ERROR] $1 requires a value"; return 1; }
 
-  }
+      return 0
 
-  #--------- Parse Flags ---------
+    }
+
+    #--- Boolean Flag Validation Helper ---
+    validate_no_value() {
+
+      [[ -n "$2" && "$2" != "-"* ]] && { echo "⚠️ [WARNING] Flag $1 is boolean and should not have a value. Removing value: '$2'"; return 1; }
+
+      return 0
+    }
+
+  #!===
+
+  # === Parse Flags ===
   while [[ $# -gt 0 ]]; do
     case "$1" in
       -i|--input) shift; break ;;
@@ -100,8 +110,8 @@ parse_case_flags() {
       -F|--forbid-full)
         local current_flag="$1"
         shift
-        # Validate that at least one value is provided
-        [[ $# -eq 0 || "$1" == "-"* ]] && { $verbose && echo "❌ [ERROR] $current_flag requires at least one value"; return 1; }
+        # --- Validate that at least one value is provided ---
+        [[ $# -eq 0 || "$1" == "-"* ]] && { echo "❌ [ERROR] $current_flag requires at least one value"; return 1; }
         while [[ $# -gt 0 ]]; do
           if parse_full_flag "$1" "$current_flag" forbid_full; then
             shift
@@ -115,7 +125,7 @@ parse_case_flags() {
         local current_flag="$1"
         shift
         # Validate that at least one value is provided
-        [[ $# -eq 0 || "$1" == "-"* ]] && { $verbose && echo "❌ [ERROR] $current_flag requires at least one value"; return 1; }
+        [[ $# -eq 0 || "$1" == "-"* ]] && { echo "❌ [ERROR] $current_flag requires at least one value"; return 1; }
         while [[ $# -gt 0 ]]; do
           if parse_full_flag "$1" "$current_flag" allow_full; then
             shift
@@ -135,17 +145,16 @@ parse_case_flags() {
       -a|--allow)               shift;  validate_has_value "-a/--allow" "$1"       || return 1; allow_chars="$1";     shift ;;
       -o|--return|--output)     shift;  validate_has_value "-o/--return" "$1"      || return 1; return_var="$1";      shift ;;
 
-      # Longflags für Booleans
-      --verbose)  verbose=true;       shift ;;
-      --number)   allow_numbers=true; shift ;;
-      --letters)  allow_letters=true; shift ;;
-      --toggle)   toggle=true;        shift ;;
-      --required) required=true;      shift ;;
-      --help)     help=true;          shift ;;
+      # --- Long flags for booleans with value validation ---
+      --verbose)  shift; validate_no_value "--verbose" "$1"  || shift; verbose=true         ;;
+      --number)   shift; validate_no_value "--number" "$1"   || shift; allow_numbers=true   ;;
+      --letters)  shift; validate_no_value "--letters" "$1"  || shift; allow_letters=true   ;;
+      --toggle)   shift; validate_no_value "--toggle" "$1"   || shift; toggle=true          ;;
+      --required) shift; validate_no_value "--required" "$1" || shift; required=true        ;;
+      --help)     shift; validate_no_value "--help" "$1"     || shift; help=true            ;;
 
       --string)
-        string_output=true
-        shift
+        shift;  validate_no_value "--string" "$1" || string_output=true ; shift;
         if [[ $# -gt 0 && "$1" != "-"* ]]; then
           string_sep="$1"
           shift
@@ -153,9 +162,15 @@ parse_case_flags() {
         ;;
 
       -*)
-        # Shortflags aufteilen, nur Boolean + -s
+        # Split shortflags, only Boolean + -s
         short_flags="${1:1}"
         shift
+
+        # --- Check if a value follows the short flags ---
+        if [[ "$short_flags" =~ ^[vnltrh]*$ ]]; then  # Only Boolean flags (without s)
+          validate_no_value "-$short_flags" "$1" || shift
+        fi
+
         for (( i=0; i<${#short_flags}; i++ )); do
           flag="${short_flags:i:1}"
           case "$flag" in
@@ -187,30 +202,39 @@ parse_case_flags() {
     esac
   done
 
-  # --------- Check Value is set (none_zero) ---------
+  #!===
+
+  # === Display Help and Exit ===
+  [[ "$help" == true ]] && { __help_parse_case_flags ; exit 1; }
+  #!===
+
+  # === Check Value is set (none_zero) ===
   if $required && [[ -z $1 ]]; then
     $verbose && echo "❌ [ERROR] $label: no values provided"
     return 1
   fi
+  #!===
 
-  #--------- Setup namerefs for Return ---------
+  # === Setup namerefs for Return ===
   if [[ -n "$return_var" ]]; then
     declare -n target_ref="$return_var"
   else
     $verbose && echo "❌ [ERROR] $label: No return variable specified" >&2
     return 1
   fi
+  #!===
 
-  #--------- Apply toggle flag ---------
+  # === Apply toggle flag ===
   if $toggle ; then
     target_ref=(true)
     return 0
   fi
+  #!===
 
-  #--------- Validate count length (min & max zusammen) ---------
+  # === Validate count length (min & max zusammen) ===
   if [[ -n "$min_length" || -n "$max_length" ]]; then
 
-    # Check if min_length is set and the number is > 0
+    # --- Check if min_length is set and the number is > 0 ---
     if [[ -n "$min_length" ]]; then
       if ! [[ "$min_length" =~ ^[0-9]+$ ]]; then
         $verbose && echo "❌ [ERROR] $label: min_length is not a number: $min_length" >&2
@@ -221,7 +245,7 @@ parse_case_flags() {
       fi
     fi
 
-    # Check if max_length is set and the number is > 0
+    # --- Check if max_length is set and the number is > 0 ---
     if [[ -n "$max_length" ]]; then
       if ! [[ "$max_length" =~ ^[0-9]+$ ]]; then
         $verbose && echo "❌ [ERROR] $label: max_length is not a number: $max_length" >&2
@@ -232,7 +256,7 @@ parse_case_flags() {
       fi
     fi
 
-    # Check relationship if both are set
+    # --- Check relationship if both are set ---
     if [[ -n "$min_length" && -n "$max_length" && $max_length -lt $min_length ]]; then
       $verbose && echo "⚠️ [WARNING] $label: max_length ($max_length) is less than min_length ($min_length). Resetting both."
       min_length=""
@@ -240,18 +264,21 @@ parse_case_flags() {
     fi
 
   fi
+  #!===
 
-  #--------- Setup namerefs ---------
+  # === Setup namerefs ===
   [[ -n "$dropping_var" ]] && declare -n dropping_ref="$dropping_var"
   [[ -n "$deduplicate_var" ]] && declare -n deduplicate_ref="$deduplicate_var"
+  #!===
 
-  #--------- Collect values after -i / --input ---------
+  # === Collect values after -i / --input ===
   local values=()
   local current_flag="$1"
   shift
 
   while [[ $# -gt 0 ]]; do
-    # 1️⃣ Recognize a foreign flag
+
+    # --- Recognize a foreign flag ---
     if [[ "$1" == "-"* && "$1" != "$current_flag" && ! "$1" =~ ^\\- ]]; then
       if [[ -n "$rest_array_name" ]]; then
         declare -n rest_ref="$rest_array_name"
@@ -260,13 +287,13 @@ parse_case_flags() {
       break
     fi
 
-    # 2️⃣ Same flag → skip
+    # --- Same flag → skip ---
     if [[ "$1" == "$current_flag" ]]; then
       shift
       continue
     fi
 
-    # 3️⃣ Extract value, remove leading backslash
+    # --- Extract value, remove leading backslash ---
     local val="$1"
     [[ "$val" =~ ^\\- ]] && val="${val:1}"
 
@@ -280,7 +307,9 @@ parse_case_flags() {
       rest_ref=("$@")
   fi
 
-  #--------- Deduplication ---------
+  #!===
+
+  # === Deduplication ===
   if [[ -n "$deduplicate_var" ]]; then
     if [[ ${#deduplicate_var_input[@]} -gt 0 ]]; then
       values+=( "${deduplicate_var_input[@]}" )
@@ -299,8 +328,9 @@ parse_case_flags() {
     values=("${tmp[@]}")
     unset seen_values
   fi
+  #!===
 
-  #--------- Validation helper function ---------
+  # === Validation helper function ===
   check_chars() {
 
     local val="$1"
@@ -330,29 +360,30 @@ parse_case_flags() {
     return 0
 
   }
+  #!===
 
-  #--------- Validate values ---------
+  # === Validate values ===
   local new_values=()
   for val in "${values[@]}"; do
     local invalid=false
     local reason=""
 
-    # numbers only check
+    # --- numbers only check ---
     if $allow_numbers && ! $allow_letters && [[ ! "$val" =~ ^[0-9]+$ ]]; then
       invalid=true; reason="must be numbers only"
     fi
 
-    # letters only check
+    # --- letters only check ---
     if ! $invalid && $allow_letters && ! $allow_numbers && [[ ! "$val" =~ ^[a-zA-Z]+$ ]]; then
       invalid=true; reason="must be letters only"
     fi
 
-    # letters and numbers only check
+    # --- letters and numbers only check ---
     if ! $invalid && $allow_numbers && $allow_letters && [[ ! "$val" =~ ^[a-zA-Z0-9]+$ ]]; then
       invalid=true; reason="must be letters and or numbers only"
     fi
 
-    # Check conflicting allow and forbid chars
+    # --- Check conflicting allow and forbid chars ---
     if [[ -n "$allow_chars" && -n "$forbid_chars" ]]; then
       conflicts=()
       for (( i=0; i<${#forbid_chars}; i++ )); do
@@ -362,21 +393,21 @@ parse_case_flags() {
       [[ ${#conflicts[@]} -gt 0 ]] && invalid=true; reason="⚠️ [WARNING] Characters both allowed and forbidden: ${conflicts[*]}"
     fi
 
-    # check allowed chars
+    # --- check allowed chars ---
     if ! $invalid && [[ -n "$allow_chars" ]]; then
       if ! check_chars "$val" "$allow_chars" "$label" "allow"; then
         invalid=true
       fi
     fi
 
-    #check forbidden chars
+    # --- check forbidden chars ---
     if ! $invalid && [[ -n "$forbid_chars" ]]; then
       if ! check_chars "$val" "$forbid_chars" "$label" "forbid"; then
         invalid=true
       fi
     fi
 
-    # Check full allowed values
+    # --- Check full allowed values ---
     if ! $invalid && [[ ${#allow_full[@]} -gt 0 ]]; then
       match=false
       for allowed in "${allow_full[@]}"; do
@@ -389,7 +420,7 @@ parse_case_flags() {
       ! $match && { invalid=true; reason="value not allowed"; }
     fi
 
-    # Check full forbidden values
+    # --- Check full forbidden values ---
     if ! $invalid && [[ ${#forbid_full[@]} -gt 0 ]]; then
       for forbidden in "${forbid_full[@]}"; do
         if [[ "$forbidden" == *"*"* ]]; then
@@ -400,17 +431,17 @@ parse_case_flags() {
       done
     fi
 
-    # min_length check
+    # --- min_length check ---
     if ! $invalid && [[ -n "$min_length" && ${#val} -lt $min_length ]]; then
       invalid=true; reason="value must have at least $min_length characters"
     fi
 
-    #  max_length check
+    # ---  max_length check ---
     if ! $invalid && [[ -n "$max_length" && ${#val} -gt $max_length ]]; then
       invalid=true; reason="value must have at most $max_length characters"
     fi
 
-    # Handle invalid values
+    # --- Handle invalid values ---
     if $invalid; then
       [[ -n "$dropping_var" ]] && dropping_ref+=("$val")
       $verbose && echo "❌ [ERROR] $label $reason: $val"
@@ -419,8 +450,9 @@ parse_case_flags() {
 
     new_values+=("$val")
   done
+  #!===
 
-  #--------- Assign values to target ---------
+  # === Assign values to target ===
   if [[ "$string_output" == true ]]; then
       local joined=""
       for val in "${new_values[@]}"; do
@@ -433,9 +465,13 @@ parse_case_flags() {
   fi
 
   return 0
+  #!===
 
-  #--------- Help Message ---------
-  if [[ "$help" == true ]]; then
+}
+
+
+  # === Help Message ===
+  __help_parse_case_flags() {
     cat << EOF
 
     parse_case_flags - A versatile bash function to parse command-line flags and options.
@@ -473,5 +509,5 @@ parse_case_flags() {
 
 EOF
     return 0
-  fi
-}
+  }
+  #!===
