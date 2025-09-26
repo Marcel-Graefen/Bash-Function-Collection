@@ -187,13 +187,15 @@ parse_case_flags() {
                 fi
             done
             ;;
-        -i|--input) shift; end_of_options=true; continue ;;     # End of options, start values
+        -i|--input) shift;  end_of_options=true; break  ;;
         *) echo "❌ [ERROR] Unknown parameter: $1"; return 1 ;;
       esac
     else
       break
     fi
   done
+
+
 
   # --------- Check Value is set (none_zero) ---------
   if $none_zero && [[ -z $1 ]]; then
@@ -232,41 +234,50 @@ parse_case_flags() {
     shift
   fi
 
+  # Für Array: Current flag merken
+  local current_flag="$1"
+  shift
+
   while [[ $# -gt 0 ]]; do
-    # Check if it is a real flag (not a masked one)
-    if [[ "$type" == "array" && "$1" == "-"* && "$1" != "$current_flag" && ! "$1" =~ ^\\- && "$recognize_flags" == true ]]; then
-      # Foreign flag → skip including associated values
+      # 1️⃣ Fremdes Flag erkennen (nicht maskiert)
+      if [[ "$type" == "array" && "$1" == "-"* && "$1" != "$current_flag" && ! "$1" =~ ^\\- && "$recognize_flags" == true ]]; then
+          # Rest-Parameter sichern
+          if [[ -n "$rest_array_name" ]]; then
+              declare -n rest_ref="$rest_array_name"
+              rest_ref=("$@")  # Alle verbleibenden Parameter
+          fi
+          break  # sofort aus der Schleife
+      fi
+
+      # 2️⃣ Gleiche Flag → überspringen (nur Array)
+      if [[ "$type" == "array" && "$1" == "$current_flag" ]]; then
+          shift
+          continue
+      fi
+
+      # 3️⃣ Wert extrahieren, führenden Backslash entfernen
+      local val="$1"
+      [[ "$val" =~ ^\\- ]] && val="${val:1}"
+
+      values+=("$val")
       shift
-      while [[ $# -gt 0 && "$1" != "-"* ]]; do shift; done
-      continue
-    fi
 
-    # Same flag → skip (only array)
-    [[ "$type" == "array" && "$1" == "$current_flag" ]] && { shift; continue; }
-
-    # --- Extract value, remove leading backslash only here ---
-    local val="$1"
-    [[ "$val" =~ ^\\- ]] && val="${val:1}"
-
-    values+=("$val")
-    shift
-
-    # For single: only one value → break the loop
-    [[ "$type" != "array" ]] && break
+      # 4️⃣ Single: nur ein Wert → Schleife beenden
+      [[ "$type" != "array" ]] && break
   done
+
+  # --- Optional: Rest-Parameter sichern, falls noch nicht geschehen ---
+  if [[ -n "$rest_array_name" && -z "${rest_ref[*]:-}" ]]; then
+      declare -n rest_ref="$rest_array_name"
+      rest_ref=("$@")
+  fi
 
   #--------- Deduplication for Arrays ---------
   if [[ "$type" == "array" && -n "$deduplicate_var" ]]; then
 
     #--------- Optional: Werte aus deduplicate_var_input hinzufügen ---------
     if [[ ${#deduplicate_var_input[@]} -gt 0 ]]; then
-
-      echo "${values[*]}"
-
       values+=( "${deduplicate_var_input[@]}" )
-
-      echo "${values[*]}"
-
     fi
 
     declare -A seen_values  # Assoziatives Array für schnelle Suche
@@ -419,10 +430,23 @@ parse_case_flags() {
   fi
 
   #--------- Rest-Parameter setzen ---------
-  if [[ -n "$rest_array_name" ]]; then
-      declare -n rest_ref="$rest_array_name"
-      rest_ref=("$@")
-  fi
+  # if [[ -n "$rest_array_name" ]]; then
+  #   declare -n rest_ref="$rest_array_name"
+
+  #   # Zuerst die übrig gebliebenen originalen Argumente bestimmen
+  #   local remaining=()
+  #   local skip=true
+  #   for arg in "${original_args[@]}"; do
+  #     if $skip && [[ "$arg" == "-i" || "$arg" == "--input" ]]; then
+  #       skip=false
+  #       continue
+  #     fi
+  #     $skip && continue
+  #     remaining+=("$arg")
+  #   done
+
+  #   rest_ref=("${remaining[@]}")
+  # fi
 
   return 0
 
