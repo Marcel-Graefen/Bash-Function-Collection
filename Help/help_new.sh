@@ -44,6 +44,8 @@ DEFAULT_BUTTON_CANCEL="Cancel"
 DEFAULT_BUTTON_BACK="Back"
 DEFAULT_BUTTON_BACK_MAIN="To Main Menu"
 DEFAULT_BUTTON_EXIT="Exit"
+DEFAULT_BUTTON_NEXT="Next"
+DEFAULT_BUTTON_CLOSE="Close"
 
 INI_FILES=()
 
@@ -527,6 +529,8 @@ setup_config_variables() {
   BUTTON_BACK="${config[Buttons.back]:-$DEFAULT_BUTTON_BACK}"
   BUTTON_BACK_MAIN="${config[Buttons.back_main]:-$DEFAULT_BUTTON_BACK_MAIN}"
   BUTTON_EXIT="${config[Buttons.exit]:-$DEFAULT_BUTTON_EXIT}"
+  BUTTON_NEXT="${config[Buttons.next]:-$DEFAULT_BUTTON_NEXT}"
+  BUTTON_CLOSE="${config[Buttons.close]:-$DEFAULT_BUTTON_CLOSE}"
 }
 
 # -------------------------------
@@ -585,31 +589,152 @@ show_language_menu() {
 }
 
 # -------------------------------
-# Text / File Anzeige
+# Text / File Anzeige mit Custom Buttons
 # -------------------------------
-show_text() {
+show_text_with_buttons() {
   local title="$1"
   local text="$2"
+  local yes_button="$3"
+  local no_button="$4"
   read -r width height < <(calculate_dimensions "$text")
   whiptail --backtitle "$(build_breadcrumb)" \
            --title "$title" \
-           --ok-button "$BUTTON_BACK" \
-           --msgbox "$text" "$height" "$width"
+           --yes-button "$yes_button" \
+           --no-button "$no_button" \
+           --yesno "$text" "$height" "$width"
 }
 
-show_file() {
+show_file_with_buttons() {
   local title="$1"
   local file="$2"
+  local yes_button="$3"
+  local no_button="$4"
   validate_file_path "$file" || { show_file_error "$file"; return 1; }
-  read -r width height < <(calculate_dimensions "$file")
+  local file_content=$(cat "$file")
+  read -r width height < <(calculate_dimensions "$file_content")
   whiptail --backtitle "$(build_breadcrumb)" \
            --title "$title" \
-           --ok-button "$BUTTON_BACK" \
-           --scrolltext \
-           --textbox "$file" "$height" "$width"
+           --yes-button "$yes_button" \
+           --no-button "$no_button" \
+           --yesno "$file_content" "$height" "$width"
+}
+# -------------------------------
+# Output Content Navigation - Einfache Lösung
+# -------------------------------
+show_output_content() {
+  local section="$1"
+  local title="${section//_/ }"
+
+  # Sammle alle Text/File Inhalte
+  local -a contents
+  local -a content_types
+
+  local current_file="$CURRENT_LANG_FILE"
+
+  if [[ -f "$current_file" ]]; then
+    local in_section=false
+    local current_section=""
+
+    while IFS= read -r line || [[ -n $line ]]; do
+      line="${line#"${line%%[![:space:]]*}"}"
+      line="${line%"${line##*[![:space:]]}"}"
+
+      if [[ "$line" =~ ^\[.*\]$ ]]; then
+        current_section="${line:1:-1}"
+        if [[ "$current_section" == "$section" ]]; then
+          in_section=true
+        else
+          in_section=false
+        fi
+        continue
+      fi
+
+      if [[ "$in_section" == true ]] && [[ "$line" =~ ^[^#\;].*= ]]; then
+        local key="${line%%=*}"
+        local value="${line#*=}"
+
+        if [[ "$key" =~ ^text[0-9]*$ ]]; then
+          contents+=("$value")
+          content_types+=("text")
+        elif [[ "$key" =~ ^file[0-9]*$ ]]; then
+          contents+=("$value")
+          content_types+=("file")
+        fi
+      fi
+    done < "$current_file"
+  fi
+
+  local total_contents=${#contents[@]}
+
+  if [[ $total_contents -eq 0 ]]; then
+    show_option_error "No content found for: $section"
+    return 1
+  fi
+
+  local current_index=0
+
+  while [[ $current_index -lt $total_contents ]]; do
+    local page_number=$((current_index + 1))
+    local page_title="$title (Page $page_number/$total_contents)"
+    local content="${contents[$current_index]}"
+    local content_type="${content_types[$current_index]}"
+
+    # BUTTON-LOGIK:
+    if [[ $page_number -eq 1 ]]; then
+      # SEITE 1: Close (links) und Weiter (rechts)
+      if [[ "$content_type" == "text" ]]; then
+        show_text_with_buttons "$page_title" "$content" "$BUTTON_CLOSE" "$BUTTON_NEXT"
+      else
+        show_file_with_buttons "$page_title" "$content" "$BUTTON_CLOSE" "$BUTTON_NEXT"
+      fi
+    elif [[ $page_number -eq $total_contents ]]; then
+      # LETZTE SEITE: Back (links) und Cancel (rechts)
+      if [[ "$content_type" == "text" ]]; then
+        show_text_with_buttons "$page_title" "$content" "$BUTTON_BACK" "$BUTTON_CANCEL"
+      else
+        show_file_with_buttons "$page_title" "$content" "$BUTTON_BACK" "$BUTTON_CANCEL"
+      fi
+    else
+      # MITTLERE SEITEN: Back (links) und Weiter (rechts)
+      if [[ "$content_type" == "text" ]]; then
+        show_text_with_buttons "$page_title" "$content" "$BUTTON_BACK" "$BUTTON_NEXT"
+      else
+        show_file_with_buttons "$page_title" "$content" "$BUTTON_BACK" "$BUTTON_NEXT"
+      fi
+    fi
+
+    # Navigation
+    local exit_status=$?
+
+    if [[ $exit_status -eq 0 ]]; then
+      # OK Button (links) wurde gedrückt
+      if [[ $page_number -eq 1 ]]; then
+        # Seite 1: Close - beenden
+        break
+      else
+        # Andere Seiten: Back - zurück
+        ((current_index--))
+      fi
+    elif [[ $exit_status -eq 1 ]]; then
+      # Cancel Button (rechts) wurde gedrückt
+      if [[ $page_number -eq $total_contents ]]; then
+        # Letzte Seite: Cancel - beenden
+        break
+      else
+        # Andere Seiten: Next - weiter
+        ((current_index++))
+      fi
+    else
+      # ESC
+      break
+    fi
+  done
+
+  return 0
 }
 
-# -------------------------------
+
+#-------------------------------
 # Hauptmenu mit verbesserter Fehlerbehandlung
 # -------------------------------
 show_help_menu() {
@@ -702,14 +827,8 @@ show_help_menu() {
         MENU_HISTORY+=("$CURRENT_MENU")
         CURRENT_MENU="$selected_value"
       elif [[ "$selected_type" == "output" ]]; then
-        local output_title="${selected_value//_/ }"
-        if [[ -n "${config[${selected_value}.text]}" ]]; then
-          show_text "$output_title" "${config[${selected_value}.text]}"
-        elif [[ -n "${config[${selected_value}.file]}" ]]; then
-          show_file "$output_title" "${config[${selected_value}.file]}"
-        else
-          show_option_error
-        fi
+        # Output mit Navigation anzeigen
+        show_output_content "$selected_value"
       else
         show_option_error
       fi
