@@ -29,17 +29,18 @@ parse_case_flags() {
   local help=false
 
   local string_output=false
-
   local dropping_var_string=false
   local deduplicate_var_string=false
   local rest_array_name_string=false
   local return_var_string=false
+
 
   local min_length=""
   local max_length=""
   local label=""
   local forbid_chars=""
   local allow_chars=""
+
   local return_var=""
   local dropping_var=""
   local deduplicate_var=""
@@ -93,6 +94,17 @@ parse_case_flags() {
       return 0
     }
 
+    apply_global_string() {
+
+        # string_flags = Array der Variablen-Namen
+        local flags=("dropping_var_string" "deduplicate_var_string" "rest_array_name_string" "return_var_string")
+        for f in "${flags[@]}"; do
+            # nur setzen, wenn noch false (Array)
+            [[ "${!f}" == false ]] && declare -g "$f=true"
+        done
+
+    }
+
   #!===
 
   # === Parse Flags ===
@@ -142,13 +154,23 @@ parse_case_flags() {
 
       -m|--min-length)          shift;  validate_has_value "-m/--min-length" "$1"  || return 1; min_length="$1";      shift ;;
       -M|--max-length)          shift;  validate_has_value "-M/--max-length" "$1"  || return 1; max_length="$1";      shift ;;
-      -d|--dropping)            shift;  validate_has_value "-d/--dropping" "$1"    || return 1; dropping_var="$1";    shift ;;
-      -D|--dedub|--deduplicate) shift;  validate_has_value "-D/--dedub" "$1"       || return 1; deduplicate_var="$1"; shift ;;
-      -R|--rest-params)         shift;  validate_has_value "-R/--rest-params" "$1" || return 1; rest_array_name="$1"; shift ;;
-      -L|--label)               shift;  validate_has_value "-l/--label" "$1"       || return 1; label="$1";           shift ;;
+
+      -d|--dropping)            shift;  validate_has_value "-d/--dropping" "$1"    || return 1; dropping_var="$1";    shift ;
+      [[ "$1" =~ ^(s|a)$ ]] && { [[ "$1" == "s" ]] && dropping_var_string=true || dropping_var_string=false; shift; }       ;;
+
+      -D|--dedub|--deduplicate) shift;  validate_has_value "-D/--dedub" "$1"       || return 1; deduplicate_var="$1"; shift ;
+      [[ "$1" =~ ^(s|a)$ ]] && { [[ "$1" == "s" ]] && deduplicate_var_string=true || deduplicate_var_string=false; shift; } ;;
+
+      -R|--rest-params)         shift;  validate_has_value "-R/--rest-params" "$1" || return 1; rest_array_name="$1"; shift ;
+      [[ "$1" =~ ^(s|a)$ ]] && { [[ "$1" == "s" ]] && rest_array_name_string=true || rest_array_name_string=false; shift; } ;;
+
+
+      -l|--label)               shift;  validate_has_value "-l/--label" "$1"       || return 1; label="$1";           shift ;;
       -f|--forbid)              shift;  validate_has_value "-f/--forbid" "$1"      || return 1; forbid_chars="$1";    shift ;;
       -a|--allow)               shift;  validate_has_value "-a/--allow" "$1"       || return 1; allow_chars="$1";     shift ;;
-      -o|--return|--output)     shift;  validate_has_value "-o/--return" "$1"      || return 1; return_var="$1";      shift ;;
+
+      -o|--return|--output)     shift;  validate_has_value "-o/--return" "$1"      || return 1; return_var="$1";      shift ;
+      [[ "$1" =~ ^(s|a)$ ]] && { [[ "$1" == "s" ]] && return_var_string=true || return_var_string=false; shift; }           ;;
 
       # --- Long flags for booleans with value validation ---
       --verbose)  shift; validate_no_value "--verbose" "$1"  || shift; verbose=true         ;;
@@ -208,6 +230,11 @@ parse_case_flags() {
   done
 
   #!===
+
+
+  # === CALL apply_global_string ===
+  [[ "$string_output" == true ]] && apply_global_string
+
 
   # === Display Help and Exit ===
   [[ "$help" == true ]] && { __help_parse_case_flags ; exit 1; }
@@ -279,7 +306,7 @@ parse_case_flags() {
   # === Collect values after -i / --input ===
   local values=()
   local current_flag="$1"
-  echo "$current_flag"
+  shift
 
   while [[ $# -gt 0 ]]; do
 
@@ -458,15 +485,25 @@ parse_case_flags() {
   #!===
 
   # === Assign values to target ===
-  if [[ "$string_output" == true ]]; then
-      local joined=""
-      for val in "${new_values[@]}"; do
-          [[ -n "$joined" ]] && joined+="$string_sep"
-          joined+="$val"
-      done
-      target_ref=("$joined")
-  else
-      target_ref=("${new_values[@]}")
+
+  # Dropping
+  if [[ "$dropping_var_string" == true && -n "${dropping_ref[@]:-}" ]]; then
+      dropping_ref=("${dropping_ref[*]//$'\n'/"$string_sep"}")
+  fi
+
+  # Deduplicate
+  if [[ "$deduplicate_var_string" == true && -n "${deduplicate_ref[@]:-}" ]]; then
+      deduplicate_ref=("${deduplicate_ref[*]//$'\n'/"$string_sep"}")
+  fi
+
+  # Rest Array
+  if [[ "$rest_array_name_string" == true && -n "${rest_ref[@]:-}" ]]; then
+      rest_ref=("${rest_ref[*]//$'\n'/"$string_sep"}")
+  fi
+
+  # Return Var
+  if [[ "$return_var_string" == true && -n "${target_ref[@]:-}" ]]; then
+      target_ref=("${target_ref[*]//$'\n'/"$string_sep"}")
   fi
 
   return 0
